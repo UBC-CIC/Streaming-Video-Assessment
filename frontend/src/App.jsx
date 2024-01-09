@@ -4,8 +4,9 @@ import PrivateRoute from './helpers/PrivateRoute'
 import LoginPage from './pages/Login'
 import CreateAccountPage from './pages/CreateAccount'
 import ForgotPasswordPage from './pages/ForgetPassword';
-import HomePage from './pages/Home'
+import FolderView, { loader as FolderViewLoader } from './pages/FolderView'
 import ErrorPage from './pages/Error'
+
 
 const router = createBrowserRouter([
   {
