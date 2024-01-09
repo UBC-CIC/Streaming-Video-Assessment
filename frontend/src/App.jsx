@@ -11,11 +11,11 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: <Navigate to="/home" />,
+    errorElement: <ErrorPage />
   },
   {
     path: "/home",
     element: PrivateRoute(HomePage),
-    errorElement: <ErrorPage />
   },
   {
     path: "/login",
