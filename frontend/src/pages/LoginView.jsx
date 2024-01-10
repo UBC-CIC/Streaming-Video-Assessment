@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./styles/Login.css";
 
-function LoginPage() {
+function LoginView() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
@@ -56,4 +56,4 @@ function LoginPage() {
   );
 }
 
-export default LoginPage;
+export default LoginView;

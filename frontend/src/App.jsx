@@ -1,11 +1,11 @@
 import './App.css'
 import {createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom';
 import PrivateRoute from './helpers/PrivateRoute'
-import LoginPage from './pages/Login'
-import CreateAccountPage from './pages/CreateAccount'
-import ForgotPasswordPage from './pages/ForgetPassword';
+import LoginView from './pages/LoginView'
+import CreateAccountView from './pages/CreateAccountView'
+import ForgetPasswordView from './pages/ForgetPasswordView';
 import FolderView, { loader as FolderViewLoader } from './pages/FolderView'
-import ErrorPage from './pages/Error'
+import ErrorPage from './pages/ErrorPage'
 
 
 const router = createBrowserRouter([
@@ -25,15 +25,15 @@ const router = createBrowserRouter([
   },
   {
     path: "/login",
-    element: <LoginPage />,
+    element: <LoginView />,
   },
   {
     path: "/create-account",
-    element: <CreateAccountPage />,
+    element: <CreateAccountView />,
   },
   {
     path: "/forgot-password",
-    element: <ForgotPasswordPage />,
+    element: <ForgetPasswordView />,
   },
 ]);
 

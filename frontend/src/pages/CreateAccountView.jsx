@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./styles/Login.css";
 
-function CreateAccountPage() {
+function CreateAccountView() {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -65,4 +65,4 @@ function CreateAccountPage() {
     );
 }
 
-export default CreateAccountPage;
+export default CreateAccountView;
