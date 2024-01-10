@@ -12,11 +12,16 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: <Navigate to="/home" />,
-    errorElement: <ErrorPage />
+    errorElement: <ErrorPage />,
   },
   {
     path: "/home",
-    element: PrivateRoute(HomePage),
+    element: PrivateRoute(<FolderView home={true} />),
+  },
+  {
+    path: "/folder/:folderId",
+    element: PrivateRoute(<FolderView />),
+    loader: FolderViewLoader,
   },
   {
     path: "/login",
