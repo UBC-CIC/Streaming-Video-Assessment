@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
 
-
 import SearchBar from "../components/SearchBar";
 import ToggleViewStyle from "../components/ToggleViewStyle";
 
@@ -8,23 +7,18 @@ import GridView from "../components/GridView";
 import ListView from "../components/ListView";
 
 import { GoPlusCircle } from "react-icons/go";
-import { MdFormatListBulleted } from "react-icons/md";
 import { useLoaderData } from "react-router-dom";
-// TODO: add react router loader function to retrieve all folders and info from backend and then display on frontend
 
 export function loader({params}) {
     let folderId = null;
 
-    console.log({params})
     if (params.folderId) {
         folderId = params.folderId;
-    } else if (true) {
-
     } else {
         // TODO: show unknown page
     }
 
-    return params;
+    return { folderId };
 }
 
 const getHomeFolderId = () => {
@@ -40,14 +34,11 @@ const getFolderData = (folderId) => {
         ],
         name: "Tests",
         id: "xyz2023tests",
-        groups: [
-            {name: "Spanish 30 Students", id: "groupSpanish30"}
-        ],
-        folders: [
-            {name: "Spanish 30", id: "folderSpanish30"}, {name: "Spanish 20", id: "folderSpanish20"}
-        ],
-        assessments: [
-            {name: "Spanish 30 Final", id: "assessmentSpanish30Final"}
+        files: [
+            {type: "group", name: "Spanish 30 Students", id: "groupSpanish30", dateCreated: "2015-01-01 14:48:34.69", dateModified: "2015-01-01 14:48:34.69"},
+            {type: "folder", name: "Spanish 30", id: "folderSpanish30", dateCreated: "2015-02-01 14:48:34.69", dateModified: "2015-02-02 14:48:34.69"}, 
+            {type: "folder", name: "Spanish 20", id: "folderSpanish20", dateCreated: "2015-01-01 14:48:34.69", dateModified: "2015-01-02 14:48:34.69"},
+            {type: "assessment", name: "Spanish 30 Final", id: "assessmentSpanish30Final", dateCreated: "2015-03-01 14:48:34.69", dateModified: "2015-03-05 14:48:34.69"},
         ],
     }
 }
@@ -70,22 +61,22 @@ function FolderView({ home = false }) {
     return (
         <div className="bg-white flex flex-col pl-16 pr-20 py-12 max-md:px-5">
             <SearchBar />
-            <div className="self-center flex w-full max-w-[1206px] items-center justify-between gap-5 mt-7 max-md:max-w-full max-md:flex-wrap">
-                <div className="justify-center text-black text-lg grow shrink basis-auto my-auto">
-                    Home &gt; 2023 &gt; Tests 
+            <div className="self-center flex w-full items-center justify-between gap-5 mt-7 max-md:max-w-full max-md:flex-wrap">
+                <div className="justify-center text-black text-lg">
+                    Home &gt; 2023 &gt; Tests
                 </div>
                 <div className="self-stretch flex items-stretch justify-between gap-2.5">
                     <ToggleViewStyle view={view} setView={setView} />
+                    {/* TODO: Add component for button */}
                     <div className="justify-center text-black text-center text-5xl whitespace-nowrap self-center grow items-stretch my-auto p-3 rounded-[50%] max-md:text-4xl max-md:px-5">
                         <GoPlusCircle />
                     </div>
                 </div>
             </div>
             {
-                view === "grid" ?
-                <GridView folderData={folderData} />
-                : 
-                <ListView folderData={folderData} />
+                view === "grid" ? 
+                    <GridView folderData={folderData} /> : 
+                    <ListView folderData={folderData} />
             } 
         </div>
     );

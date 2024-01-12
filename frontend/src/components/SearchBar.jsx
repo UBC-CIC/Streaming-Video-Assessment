@@ -2,7 +2,7 @@ import { BsSearch } from "react-icons/bs";
 
 function SearchBar() {
     return (
-        <div className="bg-stone-300 self-stretch flex items-stretch gap-5 px-8 py-2 rounded-[40px] max-md:max-w-full max-md:flex-wrap max-md:px-5">
+        <div className="bg-stone-300 self-stretch flex items-stretch gap-5 px-8 py-2 rounded-[40px]">
             <div className="leading-[50px]">
                 <BsSearch className="inline-block" />
             </div>
