@@ -9,6 +9,8 @@ import ListView from "../components/ListView";
 import { GoPlusCircle } from "react-icons/go";
 import { MdFormatListBulleted } from "react-icons/md";
 import { useLoaderData, useSearchParams } from "react-router-dom";
+import SubmitDetails from "../components/submit/SubmitDetails";
+import SubmitRecord from "../components/submit/SubmitRecord";
 // TODO: add react router loader function to retrieve all folders and info from backend and then display on frontend
 
 export function loader({params}) {
@@ -31,6 +33,8 @@ function FolderView() {
 
     const [searchParams, setSearchParams] = useSearchParams();
 
+    const [currentSubmitState, setCurrentSubmitState] = useState("details");
+
     const assignmentId = useLoaderData().assignmentId;
 
     const assignmentData = getAssignmentInfo(assignmentId, searchParams.get("k"));
@@ -40,7 +44,11 @@ function FolderView() {
     }, []);
 
 
-    return (<div>{assignmentData.name}</div>
+    return (
+        {
+            "details": <SubmitDetails assignmentData={assignmentData} begin={() => setCurrentSubmitState("record")} />,
+            "record": <SubmitRecord assignmentData={assignmentData} />,
+        }[currentSubmitState]
     );
 }
 
