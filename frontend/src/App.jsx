@@ -1,12 +1,15 @@
-import './App.css'
-import {createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom';
-import PrivateRoute from './helpers/PrivateRoute'
-import LoginView from './pages/LoginView'
-import CreateAccountView from './pages/CreateAccountView'
-import ForgetPasswordView from './pages/ForgetPasswordView';
-import FolderView, { loader as FolderViewLoader } from './pages/FolderView'
-import ErrorPage from './pages/ErrorPage'
-
+import "./App.css";
+import {
+  createBrowserRouter,
+  RouterProvider,
+  Navigate,
+} from "react-router-dom";
+import PrivateRoute from "./helpers/PrivateRoute";
+import LoginView from "./pages/LoginView";
+import CreateAccountView from "./pages/CreateAccountView";
+import ForgetPasswordView from "./pages/ForgetPasswordView";
+import FolderView, { loader as FolderViewLoader } from "./pages/FolderView";
+import ErrorPage from "./pages/ErrorPage";
 
 const router = createBrowserRouter([
   {
@@ -41,4 +44,4 @@ function App() {
   return <RouterProvider router={router} />;
 }
 
-export default App
+export default App;
