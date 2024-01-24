@@ -17,7 +17,7 @@ function ForgotPasswordView() {
     };
 
     return (
-        <div className="bg-white flex flex-col justify-center items-center max-md:px-5">
+        <div className="flex flex-col justify-center items-center max-md:px-5">
             <div className="flex w-[346px] max-w-full flex-col items-stretch mt-72 mb-52 max-md:my-10">
                 <div className="justify-center text-indigo-500 text-center text-4xl font-black tracking-widest">
                     PASSWORD RESET

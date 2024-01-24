@@ -19,7 +19,7 @@ function CreateAccountView() {
     };
 
     return (
-        <div className="bg-white flex flex-col justify-center items-center max-md:px-5">
+        <div className="flex flex-col justify-center items-center max-md:px-5">
             <div className="flex w-[344px] max-w-full flex-col items-stretch mt-52 mb-36 max-md:my-10">
                 <div className="justify-center text-center text-indigo-500 text-2xl font-black tracking-wider self-stretch">
                     CREATE ACCOUNT

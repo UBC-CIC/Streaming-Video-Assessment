@@ -17,7 +17,7 @@ function getIcon(type) {
 }
 
 function File({ file }) {
-    let icon = getIcon(file.type);
+    const icon = getIcon(file.type);
 
     return (
         <div className="flex flex-col items-center">

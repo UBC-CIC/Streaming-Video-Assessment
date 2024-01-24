@@ -22,7 +22,7 @@ function LoginView() {
   };
 
   return (
-    <div className="bg-white flex flex-col justify-center items-center">
+    <div className="flex flex-col justify-center items-center">
       <div className="flex w-[350px] max-w-full flex-col items-stretch mt-72 mb-44 max-md:my-10">
         <div className="justify-center text-indigo-500 text-center text-6xl font-black tracking-[2.56px] max-md:text-4xl">
           DROPZONE
