@@ -1,16 +1,16 @@
-import './App.css'
+import "./App.css";
 import {
-  createBrowserRouter, 
-  RouterProvider, 
-  Navigate
-} from 'react-router-dom';
-import PrivateRoute from './helpers/PrivateRoute'
-import LoginView from './pages/LoginView'
-import CreateAccountView from './pages/CreateAccountView'
-import ForgetPasswordView from './pages/ForgetPasswordView';
-import FolderView, { loader as FolderViewLoader } from './pages/FolderView'
-import SubmitView, { loader as SubmitViewLoader } from './pages/SubmitView'
-import ErrorPage from './pages/ErrorPage'
+  createBrowserRouter,
+  RouterProvider,
+  Navigate,
+} from "react-router-dom";
+import PrivateRoute from "./helpers/PrivateRoute";
+import LoginView from "./pages/LoginView";
+import CreateAccountView from "./pages/CreateAccountView";
+import ForgetPasswordView from "./pages/ForgetPasswordView";
+import FolderView, { loader as FolderViewLoader } from "./pages/FolderView";
+import SubmitView, { loader as SubmitViewLoader } from "./pages/SubmitView";
+import ErrorPage from "./pages/ErrorPage";
 
 const router = createBrowserRouter([
   {
