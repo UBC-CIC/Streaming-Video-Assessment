@@ -1,28 +1,14 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 
 import { useLoaderData, useSearchParams } from "react-router-dom";
 import SubmitDetails from "../components/submit/SubmitDetails";
 import SubmitRecord from "../components/submit/SubmitRecord";
+
+import { getAssignmentInfo } from "../api/assignment";
 // TODO: add react router loader function to retrieve all folders and info from backend and then display on frontend
 
 export function loader({params}) {
     return params;
-}
-
-// MOCK
-const getAssignmentInfo = async (assignmentId, secret) => {
-    console.log("FETCHED")
-
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    return {
-        completedOn: null,
-        name: "Spanish 30 Final",
-        description: "This is a description of the assignment",
-        dueDate: "2021-12-31",
-        timeLimitMinutes: 30,
-        allowFaceBlur: true,
-    }
 }
 
 function FolderView() {
