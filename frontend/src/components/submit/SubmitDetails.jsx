@@ -1,10 +1,10 @@
-import React from 'react';
+import React from "react";
 
-const SubmitDetails = ({assignmentData, begin}) => {
+const SubmitDetails = ({ assignmentData, begin }) => {
+  const { name, description, dueDate, timeLimitMinutes, completedOn } =
+    assignmentData;
 
-    const {name, description, dueDate, timeLimitMinutes, completedOn} = assignmentData;
-
-    return (
+  return (
     <div className="grid grid-cols-1 place-items-center min-h-dvh py-5 max-md:px-5">
       <div className="self-start flex w-[770px] max-w-full flex-col my-2 max-md:my-10">
         <span className="text-black text-6xl self-center max-md:max-w-full max-md:text-4xl">
@@ -22,24 +22,22 @@ const SubmitDetails = ({assignmentData, begin}) => {
         </div>
       </div>
 
-        
-        <div className="self-end flex justify-center mb-5 mt-5 w-full max-md:w-full">
-            {completedOn ?
-            <span className="text-black text-2xl self-center max-md:max-w-full max-md:text-l">
+      <div className="self-end flex justify-center mb-5 mt-5 w-full max-md:w-full">
+        {completedOn ? (
+          <span className="text-black text-2xl self-center max-md:max-w-full max-md:text-l">
             Completed on: {completedOn}
-            </span>
-            :
-            <button 
-                onClick={begin}
-                className="button text-white text-center text-l font-black uppercase bg-indigo-500 hover:bg-indigo-400 self-center px-10 py-5 rounded-md"
-                >
-                Begin
-            </button>
-            }
-        </div>
+          </span>
+        ) : (
+          <button
+            onClick={begin}
+            className="button text-white text-center text-l font-black uppercase bg-indigo-500 hover:bg-indigo-400 self-center px-10 py-5 rounded-md"
+          >
+            Begin
+          </button>
+        )}
+      </div>
     </div>
-    );
+  );
 };
 
 export default SubmitDetails;
-
