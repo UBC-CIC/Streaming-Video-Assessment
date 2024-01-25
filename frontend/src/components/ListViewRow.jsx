@@ -68,7 +68,7 @@ function ListViewRow({ index, row }) {
           console.log("Edit");
         }}
       >
-        <GoPencil className="text-stone-500 hover:text-stone-600" />
+        <GoPencil className="text-stone-500 hover:text-stone-700 cursor-pointer" />
       </td>
       <td
         className="p-2"
@@ -76,7 +76,7 @@ function ListViewRow({ index, row }) {
           console.log("Trash");
         }}
       >
-        <FaTrash className="text-stone-500 hover:text-stone-600" />
+        <FaTrash className="text-stone-500 hover:text-stone-700 cursor-pointer" />
       </td>
     </tr>
   );
