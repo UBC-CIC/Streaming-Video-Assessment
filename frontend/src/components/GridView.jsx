@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 import File from "./File";
 
 function GridView({ folderData }) {
-  const { files } = folderData;
+  const { files = [] } = folderData;
 
   const sortByDateModified = (a, b) => {
     const dateA = new Date(a.dateModified);

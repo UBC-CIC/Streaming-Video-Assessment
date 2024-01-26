@@ -4,7 +4,7 @@ import { useLoaderData, useSearchParams } from "react-router-dom";
 import SubmitDetails from "../components/submit/SubmitDetails";
 import SubmitRecord from "../components/submit/SubmitRecord";
 
-import { getAssignmentInfo } from "../api/assignment";
+import { getAssignmentInfo } from "../helpers/uploaderApi";
 // TODO: add react router loader function to retrieve all folders and info from backend and then display on frontend
 
 export function loader({ params }) {
