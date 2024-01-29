@@ -10,6 +10,10 @@ import CreateAccountView from "./pages/CreateAccountView";
 import ForgetPasswordView from "./pages/ForgetPasswordView";
 import FolderView, { loader as FolderViewLoader } from "./pages/FolderView";
 import SubmitView, { loader as SubmitViewLoader } from "./pages/SubmitView";
+import ViewSubmission, {
+  loader as SubmissionViewLoader,
+} from "./pages/ViewSubmission";
+import CreateSubmission from "./pages/CreateSubmission";
 import ErrorPage from "./pages/ErrorPage";
 
 const router = createBrowserRouter([
@@ -28,7 +32,16 @@ const router = createBrowserRouter([
     loader: FolderViewLoader,
   },
   {
-    path: "/submit/:assessmentId",
+    path: "/submission/:submissionId",
+    element: PrivateRoute(<ViewSubmission />),
+    loader: SubmissionViewLoader,
+  },
+  {
+    path: "/submission",
+    element: PrivateRoute(<CreateSubmission />),
+  },
+  {
+    path: "/submit/:submissionId",
     element: <SubmitView />,
     loader: SubmitViewLoader,
   },

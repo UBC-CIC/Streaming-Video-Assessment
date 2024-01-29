@@ -12,7 +12,7 @@ function ListViewRow({ index, row }) {
         return <FolderIcon width={"2em"} height={"2em"} />;
       case "group":
         return <GroupIcon width={"2em"} height={"2em"} />;
-      case "assessment":
+      case "submission":
         return <UploadIcon width={"2em"} height={"2em"} />;
       default:
         return <></>;
@@ -22,47 +22,19 @@ function ListViewRow({ index, row }) {
   const icon = getIcon(row.type);
 
   return (
-    <tr key={index} className="bg-white text-stone-500 hover:bg-gray-100">
-      <td
-        className="p-2"
-        onClick={() => {
-          console.log("Selected");
-        }}
-      >
-        {icon}
-      </td>
-      <td
-        className="p-2"
-        onClick={() => {
-          console.log("Selected");
-        }}
-      >
-        {row.name}
-      </td>
-      <td
-        className="p-2"
-        onClick={() => {
-          console.log("Selected");
-        }}
-      >
-        {row.dueDate}
-      </td>
-      <td
-        className="p-2"
-        onClick={() => {
-          console.log("Selected");
-        }}
-      >
-        {row.dateModified}
-      </td>
-      <td
-        className="p-2"
-        onClick={() => {
-          console.log("Selected");
-        }}
-      >
-        {row.dateCreated}
-      </td>
+    // TODO: figure out onclick of rows and icons
+    <tr
+      key={index}
+      className="bg-white text-stone-500 hover:bg-gray-100"
+      onClick={() => {
+        console.log("TESTING");
+      }}
+    >
+      <td className="p-2">{icon}</td>
+      <td className="p-2">{row.name}</td>
+      <td className="p-2">{row.dueDate}</td>
+      <td className="p-2">{row.dateModified}</td>
+      <td className="p-2">{row.dateCreated}</td>
       <td
         className="p-2"
         onClick={() => {

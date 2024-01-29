@@ -30,9 +30,9 @@ export const getFolderData = async (folderId) => {
         dateModified: "2015-01-02 14:48:34.69",
       },
       {
-        type: "assessment",
+        type: "submission",
         name: "Spanish 30 Final",
-        id: "assessmentSpanish30Final",
+        id: "submissionSpanish30Final",
         dateCreated: "2015-03-01 14:48:34.69",
         dateModified: "2015-03-05 14:48:34.69",
       },

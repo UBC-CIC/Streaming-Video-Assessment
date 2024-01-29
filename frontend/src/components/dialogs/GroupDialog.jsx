@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import PropTypes from "prop-types";
 import { IoIosInformationCircleOutline } from "react-icons/io";
 import GroupList from "./GroupList";
-import { getGroupList } from "../../helpers/assessmentCreatorApi";
+import { getGroupList } from "../../helpers/submissionCreatorApi";
 
 function GroupDialog({ isEdit, groupId = "", isOpen = false, setIsOpen }) {
   const initialGroupListRef = useRef([]);
@@ -44,7 +44,6 @@ function GroupDialog({ isEdit, groupId = "", isOpen = false, setIsOpen }) {
       let fetchedGroupList;
 
       if (isEdit && isOpen) {
-        console.log("fetching group list");
         fetchedGroupList = await getGroupList(groupId);
         setGroupList(fetchedGroupList);
       }

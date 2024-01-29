@@ -1,21 +1,14 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
 import FolderIcon from "../assets/icons/FolderIcon";
 import UploadIcon from "../assets/icons/UploadIcon";
 import GroupIcon from "../assets/icons/GroupIcon";
 import GroupDialog from "./dialogs/GroupDialog";
 
-async function getGroupList(groupId) {
-  return [
-    { name: "John Doe", email: "test@gmail.com" },
-    { name: "Jane Doe", email: "test2@gmail.com" },
-    { name: "Billy Joel", email: "test3@gmail.com" },
-    { name: "Bob Smith", email: "test4@gmail.com" },
-  ];
-}
-
 function File({ file }) {
-  const [isOpen, setIsOpen] = useState(false); // [{name: "", email: ""}
+  const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
 
   const getIcon = () => {
     switch (file.type) {
@@ -23,7 +16,7 @@ function File({ file }) {
         return <FolderIcon width={"141"} height={"131"} />;
       case "group":
         return <GroupIcon width={"130"} height={"131"} />;
-      case "assessment":
+      case "submission":
         return <UploadIcon width={"130"} height={"131"} />;
       default:
         return <></>;
@@ -33,14 +26,18 @@ function File({ file }) {
   const getOnClickFunction = () => {
     switch (file.type) {
       case "folder":
-        return () => {};
+        return () => {
+          navigate(`/folder/${file.id}`);
+        };
       case "group":
         return async () => {
           setIsOpen(true);
           document.getElementById("edit-group-modal").showModal();
         };
-      case "assessment":
-        return () => {};
+      case "submission":
+        return () => {
+          navigate(`/submission/${file.id}`);
+        };
       default:
         return () => {};
     }

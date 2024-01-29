@@ -5,7 +5,7 @@ import ToggleViewStyle from "../components/ToggleViewStyle";
 import GridView from "../components/GridView";
 import ListView from "../components/ListView";
 import FolderPath from "../components/FolderPath";
-import { useLoaderData } from "react-router-dom";
+import { useLoaderData, useNavigate } from "react-router-dom";
 import ButtonDropdown from "../components/Dropdown";
 import { GoPlus } from "react-icons/go";
 import FolderIcon from "../assets/icons/FolderIcon";
@@ -13,7 +13,7 @@ import GroupIcon from "../assets/icons/GroupIcon";
 import UploadIcon from "../assets/icons/UploadIcon";
 import CreateFolderDialog from "../components/dialogs/CreateFolderDialog";
 import GroupDialog from "../components/dialogs/GroupDialog";
-import { getFolderData } from "../helpers/assessmentCreatorApi";
+import { getFolderData } from "../helpers/submissionCreatorApi";
 
 export function loader({ params }) {
   let folderId = null;
@@ -32,7 +32,9 @@ const getHomeFolderId = () => {
 };
 
 function FolderView({ home = false }) {
-  const userId = "Bob"; // get userID somehow
+  const navigate = useNavigate();
+
+  const userId = "Bob"; // TODO: get userID somehow
 
   let folderId = useLoaderData();
   if (home) {
@@ -49,8 +51,8 @@ function FolderView({ home = false }) {
       setFolderData(fetchedFolderData);
     };
     fetchFolderData();
-    document.title = folderData.name + " - Dropzone";
-  }, []);
+    document.title = folderData.name;
+  }, [folderData.name, folderId]);
 
   const dropdownItems = [
     {
@@ -71,9 +73,9 @@ function FolderView({ home = false }) {
     },
     {
       icon: <UploadIcon width={20} height={20} />,
-      text: "Upload File",
+      text: "Create Submission",
       onclick: () => {
-        console.log("uploading file");
+        navigate(`/submission`);
       },
     },
   ];
