@@ -1,1 +1,43 @@
-{}
+{
+  "api": {
+    "apitest": {
+      "dependsOn": [
+        {
+          "attributes": [
+            "Name",
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "backendapitest"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "API Gateway"
+    }
+  },
+  "function": {
+    "backendapitest": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    }
+  },
+  "parameters": {
+    "AMPLIFY_function_backendapitest_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "backendapitest"
+        }
+      ]
+    },
+    "AMPLIFY_function_backendapitest_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "backendapitest"
+        }
+      ]
+    }
+  }
+}

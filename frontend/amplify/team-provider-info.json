@@ -10,6 +10,17 @@
       "StackName": "amplify-backend-dev-150049",
       "StackId": "arn:aws:cloudformation:ca-central-1:837905212243:stack/amplify-backend-dev-150049/6a784960-bfc3-11ee-998c-0e43f680ade8",
       "AmplifyAppId": "dmcvp4nfj9t9x"
+    },
+    "categories": {
+      "function": {
+        "backendapitest": {
+          "deploymentBucketName": "amplify-backend-dev-150049-deployment",
+          "s3Key": "amplify-builds/backendapitest-5a62457a31544778427a-build.zip"
+        }
+      },
+      "api": {
+        "apitest": {}
+      }
     }
   }
 }
