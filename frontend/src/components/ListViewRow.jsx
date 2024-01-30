@@ -37,7 +37,8 @@ function ListViewRow({ index, row }) {
       <td className="p-2">{row.dateCreated}</td>
       <td
         className="p-2"
-        onClick={() => {
+        onClick={(e) => {
+          e.stopPropagation();
           console.log("Edit");
         }}
       >
@@ -45,7 +46,8 @@ function ListViewRow({ index, row }) {
       </td>
       <td
         className="p-2"
-        onClick={() => {
+        onClick={(e) => {
+          e.stopPropagation();
           console.log("Trash");
         }}
       >
