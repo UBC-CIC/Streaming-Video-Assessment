@@ -12,6 +12,7 @@
     "format": "prettier --write ."
   },
   "dependencies": {
+    "aws-amplify": "^6.0.13",
     "face-api.js": "^0.22.2",
     "prop-types": "^15.8.1",
     "react": "^18.2.0",
