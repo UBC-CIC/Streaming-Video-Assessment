@@ -6,3 +6,13 @@ Helpful resources:
 - Amplify CLI documentation: https://docs.amplify.aws/cli
 - More details on this folder & generated files: https://docs.amplify.aws/cli/reference/files
 - Join Amplify's community: https://amplify.aws/community/
+
+Run this command in `/frontend`
+```
+npm install -g @aws-amplify/cli && npm i
+```
+
+Then run:
+```
+amplify configure project && amplify init && amplify pull
+```
