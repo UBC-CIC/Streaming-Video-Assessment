@@ -22,7 +22,6 @@ function ListViewRow({ index, row }) {
   const icon = getIcon(row.type);
 
   return (
-    // TODO: figure out onclick of rows and icons
     <tr
       key={index}
       className="bg-white text-stone-500 hover:bg-gray-100"

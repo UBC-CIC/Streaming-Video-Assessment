@@ -1,7 +1,9 @@
-import { useLoaderData } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import { useLoaderData, useNavigate } from "react-router-dom";
 import { BsDownload } from "react-icons/bs";
+import { getSubmissionData } from "../helpers/submissionCreatorApi";
 
-export function loader({ params }) {
+function loader({ params }) {
   let submissionId = null;
 
   if (params.submissionId) {
@@ -14,71 +16,141 @@ export function loader({ params }) {
 }
 
 function ViewAllSubmissions() {
-  let submissionId = useLoaderData();
+  const navigate = useNavigate();
+  const submissionId = useLoaderData();
+  const [submissionData, setSubmissionData] = useState({});
+  const dueDate = useRef(null);
+
+  const getMonthName = (monthIndex) => {
+    const months = [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+    ];
+    return months[monthIndex];
+  };
+
+  const padZero = (num) => {
+    return num < 10 ? `0${num}` : num;
+  };
+
+  useEffect(() => {
+    const fetchSubmissionData = async () => {
+      const fetchedSubmissionData = await getSubmissionData(submissionId);
+      setSubmissionData(fetchedSubmissionData);
+    };
+
+    const getDueDate = (date) => {
+      return `${date.getDate()} ${getMonthName(date.getMonth())} ${date.getFullYear()} at ${padZero(date.getHours())}:${padZero(date.getMinutes())}`;
+    };
+
+    fetchSubmissionData();
+    dueDate.current = getDueDate(new Date(submissionData.dueDate));
+    document.title = submissionData.name;
+  }, [submissionData.dueDate, submissionData.name, submissionId]);
+
   return (
-    <div className="flex flex-col w-full mt-1 lg:flex-row">
-      <div className="pr-5 pl-5 lg:w-[75%]">
-        <div className="flex flex-row justify-between mt-5 pb-6">
-          <div className="flex flex-col text-black">
-            <div className="text-4xl">Spanish Oral Exam</div>
+    <div className="flex flex-col w-full mt-1 md:flex-row">
+      <div className="pr-5 pl-5 md:w-[75%]">
+        <div className="flex flex-col justify-between mt-5 pb-6 md:flex-row">
+          <div className="flex flex-col text-black pb-2 md:pb-0">
+            <div className="text-4xl">{submissionData.name}</div>
             <div className="bg-black h-0.5" />
-            <div className="mt-2 text-2xl text-green-600">Open</div>
-            <div className="mt-5 text-2xl">Complete By: &lt;Date&gt;</div>
-            <div className="mt-5 text-2xl">Time Limit: &lt;Time in min&gt;</div>
+            {submissionData.isOpen ? (
+              <div className="mt-2 text-2xl text-green-600">Open</div>
+            ) : (
+              <div className="mt-2 text-2xl text-red-600">Closed</div>
+            )}
+            <div className="mt-5 text-2xl">Complete By: {dueDate.current}</div>
+            <div className="mt-5 text-2xl">
+              Time Limit: {submissionData.timeLimitMinutes} mins
+            </div>
           </div>
           <div className="flex flex-col">
-            <button className="btn bg-red-600 mb-2 btn-lg text-white hover:text-black">
+            <button
+              className="btn bg-red-600 mb-2 btn-lg text-white hover:text-black"
+              onClick={() => {
+                // TODO: add functionality to close submission
+                console.log("Closing Submission");
+              }}
+            >
               Close Submission
             </button>
-            <button className="btn bg-indigo-500 btn-lg text-white hover:text-black">
+            <button
+              className="btn bg-indigo-500 btn-lg text-white hover:text-black"
+              onClick={() => {
+                navigate(`/submission/${submissionId}/edit`, {
+                  state: { submissionData },
+                });
+              }}
+            >
               Edit
             </button>
           </div>
         </div>
         <div className="bg-gray-200 rounded-lg text-lg overflow-y-auto h-[43rem] p-5">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin congue
-          vitae odio eget condimentum. Fusce rhoncus ultricies libero et
-          molestie. Vivamus eget blandit diam. Quisque vel tortor vitae nulla
-          tincidunt egestas. Aliquam congue, diam sed finibus tincidunt, mauris
-          est efficitur nibh, ac eleifend arcu leo a metus. Quisque gravida
-          massa id mi bibendum, at accumsan lacus tempor. Sed metus odio,
-          tincidunt at rhoncus at, lacinia a erat. Ut eget lorem nec sem maximus
-          accumsan vitae lacinia risus. Aenean luctus congue iaculis. Nam et
+          {submissionData.description}
         </div>
       </div>
-      <div className="divider lg:divider-horizontal"></div>
-      <div className="pr-5 pl-5 flex flex-col justify-between mt-5 items-center lg:w-[25%]">
+      <div className="divider md:divider-horizontal"></div>
+      <div className="pr-5 pl-5 flex flex-col justify-between mt-5 items-center md:w-[25%]">
         <div className="w-full">
-          <div className="text-4xl">Submission</div>
+          <div className="text-4xl">Submissions</div>
           <div className="bg-black h-0.5" />
           <div className="mt-5 overflow-y-auto h-[47rem]">
-            <div
-              className="mb-4 flex flex-row justify-between text-lg btn btn-lg"
-              onClick={() => {
-                console.log("TEST");
-              }}
-            >
-              <div className="truncate w-[70%] flex justify-start">
-                <abbr title="Email" style={{ "text-decoration": "none" }}>
-                  Email
-                </abbr>
-              </div>
-              <BsDownload
-                className="text-stone-500 hover:text-stone-900 cursor-pointer"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  console.log("Inner button clicked");
-                }}
-              />
-            </div>
+            {submissionData.submissions?.map((submission, index) => {
+              return (
+                <div
+                  className="mb-4 flex flex-row justify-between text-lg btn btn-lg"
+                  onClick={() => {
+                    navigate(`/submission/${submission.submissionId}/view`, {
+                      state: { submissions: submissionData.submissions },
+                    });
+                  }}
+                  key={index}
+                >
+                  <div className="truncate w-[70%] flex justify-start">
+                    <abbr
+                      title={submission.name}
+                      style={{ textDecoration: "none" }}
+                    >
+                      {submission.name}
+                    </abbr>
+                  </div>
+                  <BsDownload
+                    className="text-stone-500 hover:text-stone-900 cursor-pointer"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      console.log("Downloading Submission");
+                    }}
+                  />
+                </div>
+              );
+            })}
           </div>
         </div>
-        <button className="btn btn-wide btn-lg justify-center">
+        <button
+          className="btn btn-wide btn-lg justify-center"
+          onClick={() => {
+            console.log("Downloading All");
+          }}
+        >
           Download All
         </button>
       </div>
     </div>
   );
 }
+
+ViewAllSubmissions.loader = loader;
 
 export default ViewAllSubmissions;

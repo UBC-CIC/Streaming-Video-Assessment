@@ -48,3 +48,38 @@ export const getGroupList = async (groupId) => {
     { name: "Bob Smith", email: "test4@gmail.com" },
   ];
 };
+
+export const getSubmissionData = async (submissionId) => {
+  return {
+    name: "Spanish 30 Final",
+    id: "submissionSpanish30Final",
+    dueDate: "2015-03-05 14:48:34.69",
+    isOpen: true,
+    timeLimitMinutes: 60,
+    description: "This is the final test for Spanish 30",
+    allowFaceBlur: true,
+    submissions: [
+      {
+        name: "John Doe",
+        email: "test@gmail.com",
+        uploadedOn: "2015-03-05 14:48:34.69",
+        s3ref: "s3ref1",
+        submissionId: "xyz1",
+      },
+      {
+        name: "Jane Doe",
+        email: "test2@gmail.com",
+        uploadedOn: "2015-03-05 14:48:34.69",
+        s3ref: "s3ref2",
+        submissionId: "xyz2",
+      },
+      {
+        name: "Billy Joel",
+        email: "test3@gmail.com",
+        uploadedOn: "2015-03-05 14:48:34.69",
+        s3ref: "s3ref3",
+        submissionId: "xyz3",
+      },
+    ],
+  };
+};

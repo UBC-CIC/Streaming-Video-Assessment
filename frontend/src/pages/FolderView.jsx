@@ -15,7 +15,7 @@ import CreateFolderDialog from "../components/dialogs/CreateFolderDialog";
 import GroupDialog from "../components/dialogs/GroupDialog";
 import { getFolderData } from "../helpers/submissionCreatorApi";
 
-export function loader({ params }) {
+function loader({ params }) {
   let folderId = null;
 
   if (params.folderId) {
@@ -107,5 +107,7 @@ function FolderView({ home = false }) {
 FolderView.propTypes = {
   home: PropTypes.bool,
 };
+
+FolderView.loader = loader;
 
 export default FolderView;
