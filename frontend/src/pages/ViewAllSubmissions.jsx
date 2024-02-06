@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { useLoaderData, useNavigate } from "react-router-dom";
 import { BsDownload } from "react-icons/bs";
+import { useLoaderData, useNavigate } from "react-router-dom";
 import { getSubmissionData } from "../helpers/submissionCreatorApi";
 
 function loader({ params }) {
