@@ -14,6 +14,7 @@ const SubmitRecordControls = ({
   allowFaceBlur,
   blurface,
   setBlurface,
+  modelsLoaded,
 }) => {
   return (
     <div className="flex flex-wrap place-content-between justify-items-center align-center py-2 order-2 md:col-span-2 md:order-3 max-w-lg">
@@ -51,6 +52,7 @@ const SubmitRecordControls = ({
           <input
             type="checkbox"
             className="toggle toggle-info"
+            disabled={!modelsLoaded}
             onChange={(e) => setBlurface(e.target.checked)}
             checked={blurface}
           />

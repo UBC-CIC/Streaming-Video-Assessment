@@ -1,16 +1,20 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 import { useLoaderData, useSearchParams } from "react-router-dom";
 import SubmitDetails from "../components/submit/SubmitDetails";
 import SubmitRecord from "../components/submit/SubmitRecord";
 
 import { getAssignmentInfo } from "../helpers/uploaderApi";
+import * as faceapi from "face-api.js";
 // TODO: add react router loader function to retrieve all folders and info from backend and then display on frontend
 
 export function loader({ params }) {
   return params;
 }
 
+const faceDetectorOptions = new faceapi.TinyFaceDetectorOptions();
+
+// TODO: change name
 function FolderView() {
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -19,6 +23,30 @@ function FolderView() {
   const assignmentId = useLoaderData().assignmentId;
 
   const [assignmentData, setAssignmentData] = useState(null);
+
+  const [modelsLoaded, setModelsLoaded] = useState(false);
+
+  useEffect(() => {
+    const loadModels = async () => {
+      const MODEL_URL =
+        "https://raw.githubusercontent.com/justadudewhohacks/face-api.js/master/weights";
+
+      Promise.all([
+        faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),
+        faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL),
+        faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL),
+        faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL),
+      ])
+        .then(() => console.log("Loaded models"))
+        .then(setModelsLoaded(true));
+    };
+    console.log("Loading models");
+    loadModels();
+  }, []);
+
+  const detectFaces = useCallback((video) => {
+    return faceapi.detectAllFaces(video, faceDetectorOptions);
+  }, []);
 
   useEffect(() => {
     if (assignmentData && assignmentData.name) {
@@ -73,6 +101,8 @@ function FolderView() {
     ),
     record: (
       <SubmitRecord
+        detectFaces={detectFaces}
+        modelsLoaded={modelsLoaded}
         assignmentData={assignmentData}
         confirmSubmission={() => setCurrentSubmitState("details")}
       />

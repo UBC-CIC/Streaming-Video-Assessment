@@ -1,14 +1,12 @@
 import React, { useRef, useState, useEffect } from "react";
 
-import * as faceapi from "face-api.js";
-
-const Video = ({ class: cls, blurface }) => {
+const Video = ({ class: cls, blurface, modelsLoaded, detectFaces }) => {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const requestRef = useRef();
-  const detectionBufferRef = useRef();
+  const detectionBufferRef = useRef([]);
 
-  const [modelsLoaded, setModelsLoaded] = useState(false);
+  // const [modelsLoaded, setModelsLoaded] = useState(false);
   const [captureVideo, setCaptureVideo] = useState(false);
 
   useEffect(() => {
@@ -16,24 +14,9 @@ const Video = ({ class: cls, blurface }) => {
     const canvas = canvasRef.current;
     const context = canvas.getContext("2d");
 
-    const loadModels = async () => {
-      const MODEL_URL =
-        "https://raw.githubusercontent.com/justadudewhohacks/face-api.js/master/weights";
-
-      Promise.all([
-        faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL),
-        faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL),
-        faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL),
-        faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL),
-      ])
-        .then(() => console.log("Loaded models"))
-        .then(setModelsLoaded(true));
-    };
-    loadModels();
-
     // TODO: Include audio
     navigator.mediaDevices
-      .getUserMedia({ video: true, audio: true })
+      .getUserMedia({ video: true, audio: false })
       .then((stream) => {
         video.srcObject = stream;
         const settings = stream.getVideoTracks()[0].getSettings();
@@ -63,12 +46,7 @@ const Video = ({ class: cls, blurface }) => {
 
     const drawFrame = async () => {
       let detections =
-        modelsLoaded && blurface
-          ? await faceapi.detectAllFaces(
-              videoRef.current,
-              new faceapi.TinyFaceDetectorOptions(),
-            )
-          : [];
+        modelsLoaded && blurface ? await detectFaces(videoRef.current) : [];
 
       // context.clearRect(0, 0, canvas.width, canvas.height)
       context.drawImage(video, 0, 0, canvas.width, canvas.height);
@@ -124,7 +102,7 @@ const Video = ({ class: cls, blurface }) => {
     <div className={cls}>
       <canvas
         className="w-full"
-        style={{ "-webkit-transform": "scaleX(-1)", transform: "scaleX(-1)" }}
+        style={{ WebkitTransform: "scaleX(-1)", transform: "scaleX(-1)" }}
         ref={canvasRef}
       />
       <video className="hidden" playsInline autoPlay muted ref={videoRef} />
