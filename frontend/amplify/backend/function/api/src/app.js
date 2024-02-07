@@ -9,7 +9,12 @@ See the License for the specific language governing permissions and limitations 
 const express = require("express");
 const bodyParser = require("body-parser");
 const awsServerlessExpressMiddleware = require("aws-serverless-express/middleware");
-const { queryDatabase } = require("/opt/db.js");
+
+// router import
+const folderRouter = require("./routers/folder");
+const groupRouter = require("./routers/group");
+const assessmentRouter = require("./routers/assessment");
+const submissionRouter = require("./routers/submission");
 
 // declare a new express app
 const app = express();
@@ -23,24 +28,13 @@ app.use(function (req, res, next) {
   next();
 });
 
-app.get("/group/:groupId", function (req, res) {
-  // Add your code here
-  res.json({ success: "get call succeed!", url: req.url });
-});
+app.use("/api/folder", folderRouter);
+app.use("/api/group", groupRouter);
+app.use("/api/assessment", assessmentRouter);
+app.use("/api/submission", submissionRouter);
 
-app.post("/group", function (req, res) {
-  // Add your code here
-  res.json({ success: "post call succeed!", url: req.url, body: req.body });
-});
-
-app.put("/group/:groupId", function (req, res) {
-  // Add your code here
-  res.json({ success: "put call succeed!", url: req.url, body: req.body });
-});
-
-app.delete("/group/:groupId", function (req, res) {
-  // Add your code here
-  res.json({ success: "delete call succeed!", url: req.url });
+app.get("/api/ping", function (req, res) {
+  res.send("pong");
 });
 
 app.listen(3000, function () {

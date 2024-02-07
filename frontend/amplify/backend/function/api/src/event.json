@@ -1,4 +1,4 @@
 {
   "httpMethod": "GET",
-  "path": "/folder"
+  "path": "/api/folder/1"
 }

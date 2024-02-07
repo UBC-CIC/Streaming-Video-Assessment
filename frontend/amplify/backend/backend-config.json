@@ -1,6 +1,6 @@
 {
   "api": {
-    "api": {
+    "backend": {
       "dependsOn": [
         {
           "attributes": [
@@ -8,31 +8,7 @@
             "Arn"
           ],
           "category": "function",
-          "resourceName": "groupApi"
-        },
-        {
-          "attributes": [
-            "Name",
-            "Arn"
-          ],
-          "category": "function",
-          "resourceName": "assessmentApi"
-        },
-        {
-          "attributes": [
-            "Name",
-            "Arn"
-          ],
-          "category": "function",
-          "resourceName": "submissionApi"
-        },
-        {
-          "attributes": [
-            "Name",
-            "Arn"
-          ],
-          "category": "function",
-          "resourceName": "folderApi"
+          "resourceName": "api"
         }
       ],
       "providerPlugin": "awscloudformation",
@@ -40,146 +16,26 @@
     }
   },
   "function": {
-    "assessmentApi": {
+    "api": {
       "build": true,
-      "dependsOn": [
-        {
-          "attributes": [
-            "Arn"
-          ],
-          "category": "function",
-          "resourceName": "backenddatabaselayer"
-        }
-      ],
-      "providerPlugin": "awscloudformation",
-      "service": "Lambda"
-    },
-    "backenddatabaselayer": {
-      "build": true,
-      "providerPlugin": "awscloudformation",
-      "service": "LambdaLayer"
-    },
-    "folderApi": {
-      "build": true,
-      "dependsOn": [
-        {
-          "attributes": [
-            "Arn"
-          ],
-          "category": "function",
-          "resourceName": "backenddatabaselayer"
-        }
-      ],
-      "providerPlugin": "awscloudformation",
-      "service": "Lambda"
-    },
-    "groupApi": {
-      "build": true,
-      "dependsOn": [
-        {
-          "attributes": [
-            "Arn"
-          ],
-          "category": "function",
-          "resourceName": "backenddatabaselayer"
-        }
-      ],
-      "providerPlugin": "awscloudformation",
-      "service": "Lambda"
-    },
-    "submissionApi": {
-      "build": true,
-      "dependsOn": [
-        {
-          "attributes": [
-            "Arn"
-          ],
-          "category": "function",
-          "resourceName": "backenddatabaselayer"
-        }
-      ],
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
     }
   },
   "parameters": {
-    "AMPLIFY_function_assessmentApi_deploymentBucketName": {
+    "AMPLIFY_function_api_deploymentBucketName": {
       "usedBy": [
         {
           "category": "function",
-          "resourceName": "assessmentApi"
+          "resourceName": "api"
         }
       ]
     },
-    "AMPLIFY_function_assessmentApi_s3Key": {
+    "AMPLIFY_function_api_s3Key": {
       "usedBy": [
         {
           "category": "function",
-          "resourceName": "assessmentApi"
-        }
-      ]
-    },
-    "AMPLIFY_function_backenddatabaselayer_deploymentBucketName": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "backenddatabaselayer"
-        }
-      ]
-    },
-    "AMPLIFY_function_backenddatabaselayer_s3Key": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "backenddatabaselayer"
-        }
-      ]
-    },
-    "AMPLIFY_function_folderApi_deploymentBucketName": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "folderApi"
-        }
-      ]
-    },
-    "AMPLIFY_function_folderApi_s3Key": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "folderApi"
-        }
-      ]
-    },
-    "AMPLIFY_function_groupApi_deploymentBucketName": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "groupApi"
-        }
-      ]
-    },
-    "AMPLIFY_function_groupApi_s3Key": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "groupApi"
-        }
-      ]
-    },
-    "AMPLIFY_function_submissionApi_deploymentBucketName": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "submissionApi"
-        }
-      ]
-    },
-    "AMPLIFY_function_submissionApi_s3Key": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "submissionApi"
+          "resourceName": "api"
         }
       ]
     }

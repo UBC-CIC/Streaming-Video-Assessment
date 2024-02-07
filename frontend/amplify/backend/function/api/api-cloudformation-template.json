@@ -1,6 +1,6 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
-  "Description": "Lambda Function resource stack creation using Amplify CLI",
+  "Description": "{\"createdOn\":\"Mac\",\"createdBy\":\"Amplify\",\"createdWith\":\"12.10.1\",\"stackType\":\"function-Lambda\",\"metadata\":{}}",
   "Parameters": {
     "CloudWatchRule": {
       "Type": "String",
@@ -15,10 +15,6 @@
     },
     "s3Key": {
       "Type": "String"
-    },
-    "functionbackenddatabaselayerArn": {
-      "Type": "String",
-      "Default": "functionbackenddatabaselayerArn"
     }
   },
   "Conditions": {
@@ -51,12 +47,12 @@
         "FunctionName": {
           "Fn::If": [
             "ShouldNotCreateEnvResources",
-            "folderApi",
+            "api",
             {
               "Fn::Join": [
                 "",
                 [
-                  "folderApi",
+                  "api",
                   "-",
                   {
                     "Ref": "env"
@@ -83,11 +79,7 @@
           ]
         },
         "Runtime": "nodejs18.x",
-        "Layers": [
-          {
-            "Ref": "functionbackenddatabaselayerArn"
-          }
-        ],
+        "Layers": [],
         "Timeout": 25
       }
     },
@@ -97,12 +89,12 @@
         "RoleName": {
           "Fn::If": [
             "ShouldNotCreateEnvResources",
-            "backendLambdaRolec57913d3",
+            "backendLambdaRole02ea4fc9",
             {
               "Fn::Join": [
                 "",
                 [
-                  "backendLambdaRolec57913d3",
+                  "backendLambdaRole02ea4fc9",
                   "-",
                   {
                     "Ref": "env"
