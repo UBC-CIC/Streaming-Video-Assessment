@@ -6,6 +6,7 @@ const Video = ({ class: cls, blurface }) => {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const requestRef = useRef();
+  const detectionBufferRef = useRef();
 
   const [modelsLoaded, setModelsLoaded] = useState(false);
   const [captureVideo, setCaptureVideo] = useState(false);
@@ -61,9 +62,7 @@ const Video = ({ class: cls, blurface }) => {
     const context = canvas.getContext("2d");
 
     const drawFrame = async () => {
-      //
-
-      const detections =
+      let detections =
         modelsLoaded && blurface
           ? await faceapi.detectAllFaces(
               videoRef.current,
@@ -73,6 +72,24 @@ const Video = ({ class: cls, blurface }) => {
 
       // context.clearRect(0, 0, canvas.width, canvas.height)
       context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+      if (detections.length > 0) {
+        detectionBufferRef.current = { detections, timestamp: Date.now() };
+      }
+
+      if (detections.length === 0 && blurface) {
+        // console.log("No faces detected");
+        if (detectionBufferRef.current?.timestamp + 1000 < Date.now()) {
+          console.log(
+            "No faces detected for 1 second",
+            detectionBufferRef.current?.timestamp,
+          );
+        } else {
+          detections = detectionBufferRef.current.detections;
+          console.log("Faces detected in last 1 second");
+        }
+      }
+
       for (const detection of detections) {
         context.filter = "blur(10px)";
         context.drawImage(
@@ -89,23 +106,27 @@ const Video = ({ class: cls, blurface }) => {
         context.filter = "none";
       }
 
-      // requestRef.current = requestAnimationFrame(drawFrame);
+      requestRef.current = requestAnimationFrame(drawFrame);
     };
 
     // TODO: fix request animation frames
-    requestRef.current = setInterval(drawFrame, 1000 / 30);
+    // requestRef.current = setInterval(drawFrame, 1000 / 30);
 
-    // requestRef.current = requestAnimationFrame(drawFrame);
+    requestRef.current = requestAnimationFrame(drawFrame);
 
     return () => {
-      // cancelAnimationFrame(requestRef.current);
-      clearInterval(requestRef.current);
+      cancelAnimationFrame(requestRef.current);
+      // clearInterval(requestRef.current);
     };
   }, [blurface, modelsLoaded]);
 
   return (
     <div className={cls}>
-      <canvas className="w-full" ref={canvasRef} />
+      <canvas
+        className="w-full"
+        style={{ "-webkit-transform": "scaleX(-1)", transform: "scaleX(-1)" }}
+        ref={canvasRef}
+      />
       <video className="hidden" playsInline autoPlay muted ref={videoRef} />
     </div>
   );
