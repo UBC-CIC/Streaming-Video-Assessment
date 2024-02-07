@@ -87,7 +87,7 @@ const Video = ({ class: cls, blurface, detectFaces, canvasRef }) => {
 
     return () => {
       cancelAnimationFrame(requestRef.current);
-      video.srcObject.getTracks().forEach((track) => track.stop());
+      video?.srcObject?.getTracks().forEach((track) => track.stop());
     };
   }, []);
 
