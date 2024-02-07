@@ -15,7 +15,7 @@
       "function": {
         "folderApi": {
           "deploymentBucketName": "amplify-backend-dev-150049-deployment",
-          "s3Key": "amplify-builds/folderApi-7a753449737642725959-build.zip"
+          "s3Key": "amplify-builds/folderApi-397270503458596f684c-build.zip"
         },
         "groupApi": {
           "deploymentBucketName": "amplify-backend-dev-150049-deployment",
@@ -28,6 +28,10 @@
         "submissionApi": {
           "deploymentBucketName": "amplify-backend-dev-150049-deployment",
           "s3Key": "amplify-builds/submissionApi-39766d6d586f75596c72-build.zip"
+        },
+        "backenddatabaselayer": {
+          "deploymentBucketName": "amplify-backend-dev-150049-deployment",
+          "s3Key": "amplify-builds/backenddatabaselayer-LambdaLayerVersion56bfaf80-build.zip"
         }
       },
       "api": {

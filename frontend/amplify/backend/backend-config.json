@@ -8,14 +8,6 @@
             "Arn"
           ],
           "category": "function",
-          "resourceName": "folderApi"
-        },
-        {
-          "attributes": [
-            "Name",
-            "Arn"
-          ],
-          "category": "function",
           "resourceName": "groupApi"
         },
         {
@@ -33,6 +25,14 @@
           ],
           "category": "function",
           "resourceName": "submissionApi"
+        },
+        {
+          "attributes": [
+            "Name",
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "folderApi"
         }
       ],
       "providerPlugin": "awscloudformation",
@@ -42,21 +42,62 @@
   "function": {
     "assessmentApi": {
       "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "backenddatabaselayer"
+        }
+      ],
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
     },
+    "backenddatabaselayer": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "LambdaLayer"
+    },
     "folderApi": {
       "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "backenddatabaselayer"
+        }
+      ],
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
     },
     "groupApi": {
       "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "backenddatabaselayer"
+        }
+      ],
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
     },
     "submissionApi": {
       "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "backenddatabaselayer"
+        }
+      ],
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
     }
@@ -75,6 +116,22 @@
         {
           "category": "function",
           "resourceName": "assessmentApi"
+        }
+      ]
+    },
+    "AMPLIFY_function_backenddatabaselayer_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "backenddatabaselayer"
+        }
+      ]
+    },
+    "AMPLIFY_function_backenddatabaselayer_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "backenddatabaselayer"
         }
       ]
     },

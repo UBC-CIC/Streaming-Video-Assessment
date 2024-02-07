@@ -14,6 +14,9 @@ export type AmplifyDependentResourcesAttributes = {
       "Name": "string",
       "Region": "string"
     },
+    "backenddatabaselayer": {
+      "Arn": "string"
+    },
     "folderApi": {
       "Arn": "string",
       "LambdaExecutionRole": "string",

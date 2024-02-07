@@ -15,6 +15,10 @@
     },
     "s3Key": {
       "Type": "String"
+    },
+    "functionbackenddatabaselayerArn": {
+      "Type": "String",
+      "Default": "functionbackenddatabaselayerArn"
     }
   },
   "Conditions": {
@@ -79,7 +83,11 @@
           ]
         },
         "Runtime": "nodejs18.x",
-        "Layers": [],
+        "Layers": [
+          {
+            "Ref": "functionbackenddatabaselayerArn"
+          }
+        ],
         "Timeout": 25
       }
     },
