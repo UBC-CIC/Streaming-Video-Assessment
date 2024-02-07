@@ -10,6 +10,29 @@
       "StackName": "amplify-backend-dev-150049",
       "StackId": "arn:aws:cloudformation:ca-central-1:837905212243:stack/amplify-backend-dev-150049/6a784960-bfc3-11ee-998c-0e43f680ade8",
       "AmplifyAppId": "dmcvp4nfj9t9x"
+    },
+    "categories": {
+      "function": {
+        "folderApi": {
+          "deploymentBucketName": "amplify-backend-dev-150049-deployment",
+          "s3Key": "amplify-builds/folderApi-7a753449737642725959-build.zip"
+        },
+        "groupApi": {
+          "deploymentBucketName": "amplify-backend-dev-150049-deployment",
+          "s3Key": "amplify-builds/groupApi-726f7272666e54637978-build.zip"
+        },
+        "assessmentApi": {
+          "deploymentBucketName": "amplify-backend-dev-150049-deployment",
+          "s3Key": "amplify-builds/assessmentApi-30552f785963336b544f-build.zip"
+        },
+        "submissionApi": {
+          "deploymentBucketName": "amplify-backend-dev-150049-deployment",
+          "s3Key": "amplify-builds/submissionApi-39766d6d586f75596c72-build.zip"
+        }
+      },
+      "api": {
+        "api": {}
+      }
     }
   }
 }

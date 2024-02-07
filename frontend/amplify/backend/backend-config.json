@@ -1,6 +1,6 @@
 {
   "api": {
-    "apitest": {
+    "api": {
       "dependsOn": [
         {
           "attributes": [
@@ -8,7 +8,31 @@
             "Arn"
           ],
           "category": "function",
-          "resourceName": "backendapitest"
+          "resourceName": "folderApi"
+        },
+        {
+          "attributes": [
+            "Name",
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "groupApi"
+        },
+        {
+          "attributes": [
+            "Name",
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "assessmentApi"
+        },
+        {
+          "attributes": [
+            "Name",
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "submissionApi"
         }
       ],
       "providerPlugin": "awscloudformation",
@@ -16,10 +40,91 @@
     }
   },
   "function": {
-    "backendapitest": {
+    "assessmentApi": {
       "build": true,
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
+    },
+    "folderApi": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
+    "groupApi": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
+    "submissionApi": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    }
+  },
+  "parameters": {
+    "AMPLIFY_function_assessmentApi_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "assessmentApi"
+        }
+      ]
+    },
+    "AMPLIFY_function_assessmentApi_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "assessmentApi"
+        }
+      ]
+    },
+    "AMPLIFY_function_folderApi_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "folderApi"
+        }
+      ]
+    },
+    "AMPLIFY_function_folderApi_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "folderApi"
+        }
+      ]
+    },
+    "AMPLIFY_function_groupApi_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "groupApi"
+        }
+      ]
+    },
+    "AMPLIFY_function_groupApi_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "groupApi"
+        }
+      ]
+    },
+    "AMPLIFY_function_submissionApi_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "submissionApi"
+        }
+      ]
+    },
+    "AMPLIFY_function_submissionApi_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "submissionApi"
+        }
+      ]
     }
   }
 }

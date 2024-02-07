@@ -1,4 +1,16 @@
 export const getFolderData = async (folderId) => {
+  // try {
+  //   const restOperation = get({
+  //     apiName: "api",
+  //     path: "/folder",
+  //   });
+  //   const { body } = await restOperation.response;
+  //   const response = await body.json();
+  //   console.log("GET call succeeded: ", response);
+  // } catch (error) {
+  //   console.log("GET call failed: ", error);
+  // }
+
   return {
     path: [
       { name: "Home", id: "HOME" },

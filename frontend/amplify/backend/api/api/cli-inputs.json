@@ -1,0 +1,33 @@
+{
+  "version": 1,
+  "paths": {
+    "/folder": {
+      "name": "/folder",
+      "lambdaFunction": "folderApi",
+      "permissions": {
+        "setting": "open"
+      }
+    },
+    "/group": {
+      "name": "/group",
+      "lambdaFunction": "groupApi",
+      "permissions": {
+        "setting": "open"
+      }
+    },
+    "/assessment": {
+      "name": "/assessment",
+      "lambdaFunction": "assessmentApi",
+      "permissions": {
+        "setting": "open"
+      }
+    },
+    "/submission": {
+      "name": "/submission",
+      "lambdaFunction": "submissionApi",
+      "permissions": {
+        "setting": "open"
+      }
+    }
+  }
+}
