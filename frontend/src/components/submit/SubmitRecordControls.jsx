@@ -8,8 +8,8 @@ const formatSeconds = (seconds) => {
 
 const SubmitRecordControls = ({
   recording,
-  setRecording,
-  setHasRecorded,
+  setIntentRecording,
+  intentRecording,
   secondsRemaining,
   allowFaceBlur,
   blurface,
@@ -23,9 +23,9 @@ const SubmitRecordControls = ({
           <button
             className="button text-white text-center justify-center text-l font-black bg-red-500 hover:bg-red-400 self-center px-5 py-2 text-nowrap rounded-md"
             onClick={() => {
-              setRecording(false);
-              setHasRecorded(true);
+              setIntentRecording(false);
             }}
+            disabled={!intentRecording}
           >
             Stop Recording
           </button>
@@ -33,8 +33,9 @@ const SubmitRecordControls = ({
           <button
             className="button text-white text-center justify-center text-l font-black bg-green-500 hover:bg-green-400 self-center px-5 py-2 text-nowrap rounded-md"
             onClick={() => {
-              setRecording(true);
+              setIntentRecording(true);
             }}
+            disabled={intentRecording}
           >
             Start Recording
           </button>

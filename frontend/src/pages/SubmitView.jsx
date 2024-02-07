@@ -14,8 +14,7 @@ export function loader({ params }) {
 
 const faceDetectorOptions = new faceapi.TinyFaceDetectorOptions();
 
-// TODO: change name
-function FolderView() {
+function SubmitView() {
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [currentSubmitState, setCurrentSubmitState] = useState("details");
@@ -44,9 +43,13 @@ function FolderView() {
     loadModels();
   }, []);
 
-  const detectFaces = useCallback((video) => {
-    return faceapi.detectAllFaces(video, faceDetectorOptions);
-  }, []);
+  const detectFaces = useCallback(
+    (video) => {
+      if (!modelsLoaded) return;
+      return faceapi.detectAllFaces(video, faceDetectorOptions);
+    },
+    [modelsLoaded],
+  );
 
   useEffect(() => {
     if (assignmentData && assignmentData.name) {
@@ -110,4 +113,4 @@ function FolderView() {
   }[currentSubmitState];
 }
 
-export default FolderView;
+export default SubmitView;
