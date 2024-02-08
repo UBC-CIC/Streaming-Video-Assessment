@@ -1,6 +1,6 @@
 {
   "api": {
-    "apitest": {
+    "backend": {
       "dependsOn": [
         {
           "attributes": [
@@ -8,36 +8,88 @@
             "Arn"
           ],
           "category": "function",
-          "resourceName": "backendapitest"
+          "resourceName": "api"
         }
       ],
       "providerPlugin": "awscloudformation",
       "service": "API Gateway"
     }
   },
+  "auth": {
+    "backendd8f920f8": {
+      "customAuth": false,
+      "dependsOn": [],
+      "frontendAuthConfig": {
+        "mfaConfiguration": "OFF",
+        "mfaTypes": [
+          "SMS"
+        ],
+        "passwordProtectionSettings": {
+          "passwordPolicyCharacters": [],
+          "passwordPolicyMinLength": 8
+        },
+        "signupAttributes": [
+          "EMAIL"
+        ],
+        "socialProviders": [],
+        "usernameAttributes": [
+          "EMAIL"
+        ],
+        "verificationMechanisms": [
+          "EMAIL"
+        ]
+      },
+      "providerPlugin": "awscloudformation",
+      "service": "Cognito"
+    }
+  },
   "function": {
-    "backendapitest": {
+    "api": {
       "build": true,
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
     }
   },
   "parameters": {
-    "AMPLIFY_function_backendapitest_deploymentBucketName": {
+    "AMPLIFY_function_api_deploymentBucketName": {
       "usedBy": [
         {
           "category": "function",
-          "resourceName": "backendapitest"
+          "resourceName": "api"
         }
       ]
     },
-    "AMPLIFY_function_backendapitest_s3Key": {
+    "AMPLIFY_function_api_s3Key": {
       "usedBy": [
         {
           "category": "function",
-          "resourceName": "backendapitest"
+          "resourceName": "api"
         }
       ]
+    },
+    "AMPLIFY_storage_backendd759f609_bucketName": {
+      "usedBy": [
+        {
+          "category": "storage",
+          "resourceName": "backendd759f609"
+        }
+      ]
+    },
+    "AMPLIFY_storage_backendd759f609_region": {
+      "usedBy": [
+        {
+          "category": "storage",
+          "resourceName": "backendd759f609"
+        }
+      ]
+    }
+  },
+  "storage": {
+    "backendd759f609": {
+      "dependsOn": [],
+      "providerPlugin": "awscloudformation",
+      "service": "S3",
+      "serviceType": "imported"
     }
   }
 }
