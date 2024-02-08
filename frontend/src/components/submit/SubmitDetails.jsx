@@ -1,5 +1,30 @@
 import React from "react";
 
+const formatSeconds = (seconds) => {
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = seconds % 60;
+
+  const format = [];
+
+  if (minutes > 1) {
+    format.push(`${minutes} minutes`);
+  } else if (minutes === 1) {
+    format.push(`${minutes} minute`);
+  }
+
+  if (remainingSeconds > 1) {
+    format.push(`${remainingSeconds} seconds`);
+  } else if (remainingSeconds === 1) {
+    format.push(`${remainingSeconds} second`);
+  }
+
+  if (format.length === 0) {
+    format.push("0 seconds");
+  }
+
+  return format.join(" ");
+};
+
 const SubmitDetails = ({ assignmentData, begin }) => {
   const { name, description, dueDate, timeLimitSeconds, completedOn } =
     assignmentData;
@@ -15,7 +40,7 @@ const SubmitDetails = ({ assignmentData, begin }) => {
           Complete By: {dueDate}
         </span>
         <span className="text-black text-m mt-2 max-md:max-w-full">
-          Time Limit: {timeLimitSeconds} minutes
+          Time Limit: {formatSeconds(timeLimitSeconds)}
         </span>
         <div className="text-black text-m bg-zinc-200 mt-2 p-2 max-md:max-w-full max-md:pr-5">
           {description}
