@@ -20,7 +20,7 @@ function SubmitView() {
 
   const [currentSubmitState, setCurrentSubmitState] = useState("details");
 
-  const assignmentId = useLoaderData().assignmentId;
+  const assignmentId = useLoaderData().submissionId;
 
   const [assignmentData, setAssignmentData] = useState(null);
 
