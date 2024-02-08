@@ -36,7 +36,7 @@ function FolderPath({ folderPath = [] }) {
 }
 
 FolderPath.propTypes = {
-  folderPath: PropTypes.array.isRequired,
+  folderPath: PropTypes.array,
 };
 
 export default FolderPath;
