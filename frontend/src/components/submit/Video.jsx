@@ -1,6 +1,12 @@
 import React, { useRef, useState, useEffect } from "react";
 
-const Video = ({ class: cls, blurface, detectFaces, canvasRef }) => {
+const Video = ({
+  class: cls,
+  blurface,
+  detectFaces,
+  canvasRef,
+  audioStreamTrackRef,
+}) => {
   const videoRef = useRef(null);
   const requestRef = useRef();
   const detectionBufferRef = useRef([]);
@@ -29,6 +35,7 @@ const Video = ({ class: cls, blurface, detectFaces, canvasRef }) => {
         detectionBufferRef.current = { detections, timestamp: Date.now() };
       }
 
+      // TODO: fix debouncing for more than one face
       if (detections.length === 0 && blurfaceRef.current) {
         if (detectionBufferRef.current?.timestamp + 1000 < Date.now()) {
           // console.log(
@@ -60,13 +67,12 @@ const Video = ({ class: cls, blurface, detectFaces, canvasRef }) => {
       requestRef.current = requestAnimationFrame(drawFrame);
     };
 
-    console.log("Starting video");
-    // TODO: Include audio
     navigator.mediaDevices
-      .getUserMedia({ video: true, audio: false })
+      .getUserMedia({ video: true, audio: true })
       .then((stream) => {
         video.srcObject = stream;
         const settings = stream.getVideoTracks()[0].getSettings();
+        audioStreamTrackRef.current = stream.getAudioTracks()[0];
 
         settings.width;
         settings.height;
@@ -81,7 +87,6 @@ const Video = ({ class: cls, blurface, detectFaces, canvasRef }) => {
         console.error("Error accessing webcam:", error);
       })
       .then(() => {
-        console.log("Starting drawFrame");
         requestRef.current = requestAnimationFrame(drawFrame);
       });
 

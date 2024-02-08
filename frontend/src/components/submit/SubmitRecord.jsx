@@ -2,6 +2,13 @@ import React, { useRef, useState, useEffect } from "react";
 import Video from "./Video";
 import SubmitRecordControls from "./SubmitRecordControls";
 
+import {
+  initializeUpload,
+  completeUpload,
+  uploadPart,
+  getNextUploadUrl,
+} from "../../helpers/uploaderApi";
+
 const SubmitRecord = ({
   assignmentData,
   confirmSubmission,
@@ -11,8 +18,9 @@ const SubmitRecord = ({
   const { timeLimitMinutes, description, allowFaceBlur, name } = assignmentData;
 
   const [uploadedVideoUrl, setUploadedVideoUrl] = useState();
-  const recordedChunksRef = useRef([]);
   const mediaRecorderRef = useRef(null);
+  const audioStreamTrackRef = useRef(null);
+  const uploadData = useRef({});
 
   const [intentRecording, setIntentRecording] = useState(false);
   const [recording, setRecording] = useState(false);
@@ -25,6 +33,27 @@ const SubmitRecord = ({
   const [hasRecorded, setHasRecorded] = useState(false);
   const canvasRef = useRef(null);
 
+  const flushBlobBuffer = () => {
+    while (
+      uploadData.current.blobBuffer.length > 0 &&
+      uploadData.current.uploadUrls.length > 0
+    ) {
+      console.log("Flushing buffer", uploadData.current);
+
+      const blob = uploadData.current.blobBuffer.shift();
+      const uploadUrl = uploadData.current.uploadUrls.shift();
+
+      const promise = uploadPart(uploadUrl.signedUrl, blob).then((etag) => {
+        uploadData.current.parts.push({
+          partNumber: uploadUrl.partNumber,
+          etag,
+        });
+      });
+
+      uploadData.current.promises.push(promise);
+    }
+  };
+
   const startNewRecording = () => {
     if (!canvasRef.current) {
       console.warn("No canvas when starting new recording!");
@@ -33,17 +62,35 @@ const SubmitRecord = ({
     const canvasFrameRate = 25;
     const options = { mimeType: "video/webm; codecs=vp9" };
 
-    console.log("Creating media recorder", { canvas: canvasRef.current });
-    mediaRecorderRef.current = new MediaRecorder(
-      canvasRef.current.captureStream(canvasFrameRate),
-      options,
-    );
+    const stream = canvasRef.current.captureStream(canvasFrameRate);
+
+    if (audioStreamTrackRef.current) {
+      stream.addTrack(audioStreamTrackRef.current);
+    }
+
+    mediaRecorderRef.current = new MediaRecorder(stream, options);
 
     mediaRecorderRef.current.ondataavailable = (e) => {
       console.log("data-available");
       if (e.data.size > 0) {
-        recordedChunksRef.current.push(e.data);
-        console.log(recordedChunksRef.current);
+        // add the data to the buffer
+        uploadData.current.blobBuffer.push(e.data);
+
+        // get the next upload url
+        getNextUploadUrl(
+          assignmentData.id,
+          assignmentData.secret,
+          uploadData.current.uploadId,
+          ++uploadData.current.maxPartNumber,
+        ).then((jsonResponse) => {
+          uploadData.current.uploadUrls.push({
+            partNumber: jsonResponse.partNumber,
+            signedUrl: jsonResponse.signedUrl,
+          });
+        });
+
+        // flush the buffer
+        flushBlobBuffer();
         // download();
       } else {
         // …
@@ -53,32 +100,49 @@ const SubmitRecord = ({
     mediaRecorderRef.current.onstop = () => {
       console.log("Media recorder stopped");
 
-      const blob = new Blob(recordedChunksRef.current, {
-        type: "video/webm",
-      });
-      const url = URL.createObjectURL(blob);
+      console.log("Media recorder stopped", uploadData.current);
 
-      console.log({ blob, url, chunks: recordedChunksRef.current });
-      setUploadedVideoUrl(url);
+      Promise.all(uploadData.current.promises)
+        .then(() =>
+          completeUpload(
+            assignmentData.id,
+            assignmentData.secret,
+            uploadData.current.uploadId,
+            uploadData.current.parts,
+          ),
+        )
+        .then((url) => {
+          setUploadedVideoUrl(url);
 
-      recordedChunksRef.current = [];
-
-      setRecording(false);
-      setHasRecorded(true);
+          setRecording(false);
+          setHasRecorded(true);
+        });
     };
 
-    setRecording(true);
-    mediaRecorderRef.current.start(1000);
+    initializeUpload(assignmentData.id, assignmentData.secret).then(
+      (jsonResponse) => {
+        uploadData.current.uploadId = jsonResponse.uploadId;
+        uploadData.current.parts = [];
+        uploadData.current.promises = [];
+        uploadData.current.blobBuffer = [];
+        uploadData.current.maxPartNumber = jsonResponse.partNumber;
+        uploadData.current.uploadUrls = [
+          {
+            partNumber: jsonResponse.partNumber,
+            signedUrl: jsonResponse.signedUrl,
+          },
+        ];
+
+        setRecording(true);
+        mediaRecorderRef.current.start(1000);
+      },
+    );
   };
 
   useEffect(() => {
-    console.log({ recording });
-
     if (intentRecording) {
-      console.log("Start recording");
       startNewRecording();
     } else {
-      console.log("Stop recording");
       mediaRecorderRef.current?.stop();
     }
   }, [intentRecording]);
@@ -109,6 +173,7 @@ const SubmitRecord = ({
               modelsLoaded={modelsLoaded}
               mediaRecorderRef={mediaRecorderRef}
               canvasRef={canvasRef}
+              audioStreamTrackRef={audioStreamTrackRef}
             />
           )}
         </div>
@@ -116,38 +181,39 @@ const SubmitRecord = ({
         <div className="order-3 md:order-2 md:mx-2">{description}</div>
 
         {/* Controls */}
-
-        {hasRecorded ? (
-          <div className="order-4 md:order-3">
-            <button
-              className="button text-white text-center justify-center text-l font-black bg-green-500 hover:bg-green-400 self-center px-5 py-2 text-nowrap rounded-md"
-              onClick={() => {
-                setHasRecorded(false);
-              }}
-            >
-              Re-record
-            </button>
-            <button
-              className="button text-white text-center justify-center text-l font-black bg-indigo-500 hover:bg-indigo-400 self-center px-5 py-2 text-nowrap rounded-md"
-              onClick={() => {
-                confirmSubmission();
-              }}
-            >
-              Submit
-            </button>
-          </div>
-        ) : (
-          <SubmitRecordControls
-            recording={recording}
-            setIntentRecording={setIntentRecording}
-            intentRecording={intentRecording}
-            secondsRemaining={secondsRemaining}
-            allowFaceBlur={allowFaceBlur}
-            blurface={blurface}
-            setBlurface={setBlurface}
-            modelsLoaded={modelsLoaded}
-          />
-        )}
+        <div className="order-2 md:order-3 py-2 md:col-span-2">
+          {hasRecorded ? (
+            <div className="flex place-content-between justify-items-center">
+              <button
+                className="button text-white text-center justify-center text-l font-black bg-green-500 hover:bg-green-400 self-center px-5 py-2 text-nowrap rounded-md"
+                onClick={() => {
+                  setHasRecorded(false);
+                }}
+              >
+                Re-record
+              </button>
+              <button
+                className="button text-white text-center justify-center text-l font-black bg-indigo-500 hover:bg-indigo-400 self-center px-5 py-2 text-nowrap rounded-md"
+                onClick={() => {
+                  confirmSubmission();
+                }}
+              >
+                Submit
+              </button>
+            </div>
+          ) : (
+            <SubmitRecordControls
+              recording={recording}
+              setIntentRecording={setIntentRecording}
+              intentRecording={intentRecording}
+              secondsRemaining={secondsRemaining}
+              allowFaceBlur={allowFaceBlur}
+              blurface={blurface}
+              setBlurface={setBlurface}
+              modelsLoaded={modelsLoaded}
+            />
+          )}
+        </div>
       </div>
     </div>
   );

@@ -17,7 +17,7 @@ const SubmitRecordControls = ({
   modelsLoaded,
 }) => {
   return (
-    <div className="flex flex-wrap place-content-between justify-items-center align-center py-2 order-2 md:col-span-2 md:order-3 max-w-lg">
+    <div className="flex flex-wrap place-content-between justify-items-center align-center">
       <div>
         {recording ? (
           <button
@@ -41,12 +41,10 @@ const SubmitRecordControls = ({
           </button>
         )}
       </div>
-
       <div className="flex flex-wrap self-center justify-center items-center p-2">
         <span className="mr-1">Time left:</span>
         <span>{formatSeconds(secondsRemaining)}</span>
       </div>
-
       {allowFaceBlur && (
         <label className="flex items-center justify-center flex-wrap p-2 cursor-pointer">
           <span className="mr-2 text-nowrap">Face Blur</span>
