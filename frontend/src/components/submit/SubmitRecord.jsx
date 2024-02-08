@@ -10,7 +10,7 @@ import {
 } from "../../helpers/uploaderApi";
 
 const mimeType = "video/webm; codecs=vp9";
-const RECORDER_TIME_SLICE = 1000; // ms
+const RECORDER_TIME_SLICE = 60000; // ms
 
 const SubmitRecord = ({
   assignmentData,
@@ -114,8 +114,8 @@ const SubmitRecord = ({
             uploadData.current.parts,
           ),
         )
-        .then((url) => {
-          setUploadedVideoUrl(url);
+        .then((jsonResponse) => {
+          setUploadedVideoUrl(jsonResponse.signedUrl);
 
           setRecording(false);
           setHasRecorded(true);

@@ -12,23 +12,19 @@
       "AmplifyAppId": "dmcvp4nfj9t9x"
     },
     "categories": {
-      "function": {
-        "api": {
-          "deploymentBucketName": "amplify-backend-dev-150049-deployment",
-          "s3Key": "amplify-builds/api-48626761504872647a70-build.zip"
-        },
-        "submissionApi": {},
-        "folderApi": {},
-        "groupApi": {},
-        "assessmentApi": {}
-      },
-      "auth": {
-        "backendd8f920f8": {}
-      },
       "storage": {
         "backendd759f609": {
           "bucketName": "video-storage-sf21",
           "region": "ca-central-1"
+        }
+      },
+      "auth": {
+        "backendd8f920f8": {}
+      },
+      "function": {
+        "api": {
+          "deploymentBucketName": "amplify-backend-dev-150049-deployment",
+          "s3Key": "amplify-builds/api-48626761504872647a70-build.zip"
         }
       }
     }
