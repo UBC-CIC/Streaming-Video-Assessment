@@ -1,15 +1,17 @@
+import { get } from "aws-amplify/api";
+
 export const getFolderData = async (folderId) => {
-  // try {
-  //   const restOperation = get({
-  //     apiName: "api",
-  //     path: "/folder",
-  //   });
-  //   const { body } = await restOperation.response;
-  //   const response = await body.json();
-  //   console.log("GET call succeeded: ", response);
-  // } catch (error) {
-  //   console.log("GET call failed: ", error);
-  // }
+  try {
+    const restOperation = get({
+      apiName: "backend",
+      path: "/api/folder/" + folderId,
+    });
+    const { body } = await restOperation.response;
+    const response = await body.json();
+    console.log("GET call succeeded: ", response);
+  } catch (error) {
+    console.log("GET call failed: ", error);
+  }
 
   return {
     path: [

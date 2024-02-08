@@ -1,16 +1,17 @@
-import { useState, useEffect } from "react";
+import { getUrl } from "aws-amplify/storage";
 import PropTypes from "prop-types";
-import SearchBar from "../components/SearchBar";
-import ToggleViewStyle from "../components/ToggleViewStyle";
-import GridView from "../components/GridView";
-import ListView from "../components/ListView";
-import FolderPath from "../components/FolderPath";
-import { useLoaderData, useNavigate } from "react-router-dom";
-import ButtonDropdown from "../components/Dropdown";
+import { useEffect, useState } from "react";
 import { GoPlus } from "react-icons/go";
+import { useLoaderData, useNavigate } from "react-router-dom";
 import FolderIcon from "../assets/icons/FolderIcon";
 import GroupIcon from "../assets/icons/GroupIcon";
 import UploadIcon from "../assets/icons/UploadIcon";
+import ButtonDropdown from "../components/Dropdown";
+import FolderPath from "../components/FolderPath";
+import GridView from "../components/GridView";
+import ListView from "../components/ListView";
+import SearchBar from "../components/SearchBar";
+import ToggleViewStyle from "../components/ToggleViewStyle";
 import CreateFolderDialog from "../components/dialogs/CreateFolderDialog";
 import GroupDialog from "../components/dialogs/GroupDialog";
 import { getFolderData } from "../helpers/submissionCreatorApi";
@@ -49,6 +50,12 @@ function FolderView({ home = false }) {
     const fetchFolderData = async () => {
       const fetchedFolderData = await getFolderData(userId, folderId);
       setFolderData(fetchedFolderData);
+
+      const getUrlResult = await getUrl({
+        key: "test-video.mp4",
+      });
+      console.log("signed URL: ", getUrlResult.url);
+      console.log("URL expires at: ", getUrlResult.expiresAt);
     };
     fetchFolderData();
     document.title = folderData.name;

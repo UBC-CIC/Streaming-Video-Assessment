@@ -15,7 +15,7 @@
       "function": {
         "api": {
           "deploymentBucketName": "amplify-backend-dev-150049-deployment",
-          "s3Key": "amplify-builds/api-47595139393837764449-build.zip"
+          "s3Key": "amplify-builds/api-344365514d7247434a54-build.zip"
         },
         "submissionApi": {},
         "folderApi": {},
@@ -24,6 +24,15 @@
       },
       "api": {
         "backend": {}
+      },
+      "auth": {
+        "backendd8f920f8": {}
+      },
+      "storage": {
+        "backendd759f609": {
+          "bucketName": "video-storage-sf21",
+          "region": "ca-central-1"
+        }
       }
     }
   }

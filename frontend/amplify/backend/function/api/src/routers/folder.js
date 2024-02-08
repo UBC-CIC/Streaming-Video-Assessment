@@ -1,9 +1,15 @@
 const express = require("express");
 const router = express.Router();
+const { queryDatabase } = require("../db");
 
 // Define your routes here
-router.get("/:folderId", (req, res) => {
-  res.json({ success: "get call succeed!", url: req.url });
+router.get("/:folderId", async (req, res) => {
+  try {
+    const query = await queryDatabase(`SELECT * FROM test`);
+    res.json({ success: "get call succeed!", url: req.url, data: query });
+  } catch (error) {
+    console.log("GET call failed: ", error);
+  }
 });
 
 router.post("/", (req, res) => {
