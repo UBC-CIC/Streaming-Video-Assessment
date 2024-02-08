@@ -1,7 +1,7 @@
 import React from "react";
 
 const SubmitDetails = ({ assignmentData, begin }) => {
-  const { name, description, dueDate, timeLimitMinutes, completedOn } =
+  const { name, description, dueDate, timeLimitSeconds, completedOn } =
     assignmentData;
 
   return (
@@ -15,7 +15,7 @@ const SubmitDetails = ({ assignmentData, begin }) => {
           Complete By: {dueDate}
         </span>
         <span className="text-black text-m mt-2 max-md:max-w-full">
-          Time Limit: {timeLimitMinutes} minutes
+          Time Limit: {timeLimitSeconds} minutes
         </span>
         <div className="text-black text-m bg-zinc-200 mt-2 p-2 max-md:max-w-full max-md:pr-5">
           {description}

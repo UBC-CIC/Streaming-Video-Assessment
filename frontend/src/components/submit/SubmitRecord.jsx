@@ -9,13 +9,16 @@ import {
   getNextUploadUrl,
 } from "../../helpers/uploaderApi";
 
+const mimeType = "video/webm; codecs=vp9";
+const RECORDER_TIME_SLICE = 1000; // ms
+
 const SubmitRecord = ({
   assignmentData,
   confirmSubmission,
   detectFaces,
   modelsLoaded,
 }) => {
-  const { timeLimitMinutes, description, allowFaceBlur, name } = assignmentData;
+  const { timeLimitSeconds, description, allowFaceBlur, name } = assignmentData;
 
   const [uploadedVideoUrl, setUploadedVideoUrl] = useState();
   const mediaRecorderRef = useRef(null);
@@ -25,9 +28,7 @@ const SubmitRecord = ({
   const [intentRecording, setIntentRecording] = useState(false);
   const [recording, setRecording] = useState(false);
 
-  const [secondsRemaining, setSecondsRemaining] = useState(
-    timeLimitMinutes * 60,
-  );
+  const [secondsRemaining, setSecondsRemaining] = useState(timeLimitSeconds);
   const [blurface, setBlurface] = useState(false);
 
   const [hasRecorded, setHasRecorded] = useState(false);
@@ -60,7 +61,7 @@ const SubmitRecord = ({
     }
 
     const canvasFrameRate = 25;
-    const options = { mimeType: "video/webm; codecs=vp9" };
+    const options = { mimeType };
 
     const stream = canvasRef.current.captureStream(canvasFrameRate);
 
@@ -102,6 +103,8 @@ const SubmitRecord = ({
 
       console.log("Media recorder stopped", uploadData.current);
 
+      clearInterval(uploadData.current.interval);
+
       Promise.all(uploadData.current.promises)
         .then(() =>
           completeUpload(
@@ -116,6 +119,7 @@ const SubmitRecord = ({
 
           setRecording(false);
           setHasRecorded(true);
+          setSecondsRemaining(timeLimitSeconds);
         });
     };
 
@@ -132,9 +136,23 @@ const SubmitRecord = ({
             signedUrl: jsonResponse.signedUrl,
           },
         ];
+        uploadData.current.startTimestamp = Date.now();
+
+        uploadData.current.interval = setInterval(() => {
+          const timeElapsed = Math.floor(
+            (Date.now() - uploadData.current.startTimestamp) / 1000,
+          );
+
+          if (timeElapsed > timeLimitSeconds) {
+            mediaRecorderRef.current.stop();
+            return;
+          }
+
+          setSecondsRemaining(Math.max(0, timeLimitSeconds - timeElapsed));
+        }, 1000);
 
         setRecording(true);
-        mediaRecorderRef.current.start(1000);
+        mediaRecorderRef.current.start(RECORDER_TIME_SLICE);
       },
     );
   };

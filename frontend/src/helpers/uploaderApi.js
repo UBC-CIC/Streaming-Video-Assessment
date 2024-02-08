@@ -12,7 +12,7 @@ export const getAssignmentInfo = async (assignmentId, secret) => {
     name: "Spanish 30 Final",
     description: "This is a description of the assignment",
     dueDate: "2021-12-31",
-    timeLimitMinutes: 30,
+    timeLimitSeconds: 6,
     allowFaceBlur: true,
   };
 };
