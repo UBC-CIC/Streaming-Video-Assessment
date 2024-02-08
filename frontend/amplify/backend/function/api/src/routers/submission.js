@@ -1,12 +1,12 @@
-const express = require("express");
-const router = express.Router();
-
-const {
-  initializeUpload,
+import express from "express";
+import {
+  completeUpload,
   getUploadUrl,
   getUrlForKey,
-  completeUpload,
-} = require("../helpers/s3");
+  initializeUpload,
+} from "../helpers/s3.js";
+
+const router = express.Router();
 
 // Define your routes here
 // router.get("/:submissionId", (req, res) => {
@@ -73,4 +73,4 @@ router.delete("/:submissionId", (req, res) => {
 });
 
 // Export the router
-module.exports = router;
+export default router;

@@ -1,6 +1,6 @@
-const express = require("express");
+import express from "express";
+import { queryDatabase } from "../db.js";
 const router = express.Router();
-const { queryDatabase } = require("../db");
 
 // Define your routes here
 router.get("/:folderId", async (req, res) => {
@@ -25,4 +25,4 @@ router.delete("/:folderId", (req, res) => {
 });
 
 // Export the router
-module.exports = router;
+export default router;

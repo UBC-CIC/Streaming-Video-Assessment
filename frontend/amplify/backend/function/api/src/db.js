@@ -1,4 +1,4 @@
-const mysql = require("mysql");
+import mysql from "mysql";
 
 // Function to establish a MySQL connection
 function connectToDatabase() {
@@ -42,4 +42,4 @@ function executeQuery(connection, query, params) {
   });
 }
 
-module.exports = { connectToDatabase, queryDatabase };
+export { connectToDatabase, queryDatabase };

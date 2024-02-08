@@ -1,12 +1,12 @@
-const {
-  S3Client,
-  CreateMultipartUploadCommand,
-  UploadPartCommand,
+import {
   CompleteMultipartUploadCommand,
+  CreateMultipartUploadCommand,
   GetObjectCommand,
-} = require("@aws-sdk/client-s3");
-const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
-const getCredentials = require("./getCredentials");
+  S3Client,
+  UploadPartCommand,
+} from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { getCredentials } from "./getCredentials.js";
 
 const BUCKET = "video-storage-sf21";
 
@@ -91,9 +91,4 @@ const getUrlForKey = async (key) => {
   return `https://${BUCKET}.s3.ca-central-1.amazonaws.com/${key}`;
 };
 
-module.exports = {
-  initializeUpload,
-  getUploadUrl,
-  getUrlForKey,
-  completeUpload,
-};
+export { completeUpload, getUploadUrl, getUrlForKey, initializeUpload };

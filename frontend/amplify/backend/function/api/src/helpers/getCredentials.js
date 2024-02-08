@@ -1,13 +1,12 @@
-const {
+import {
   CognitoIdentityClient,
-  GetIdCommand,
   GetCredentialsForIdentityCommand,
-} = require("@aws-sdk/client-cognito-identity");
-const {
+  GetIdCommand,
+} from "@aws-sdk/client-cognito-identity";
+import {
   CognitoIdentityProviderClient,
   InitiateAuthCommand,
-  RespondToAuthChallengeCommand,
-} = require("@aws-sdk/client-cognito-identity-provider");
+} from "@aws-sdk/client-cognito-identity-provider";
 
 // TODO: make this a superuser
 const USER_POOL_ID = "ca-central-1_RGMoyaPVY";
@@ -17,7 +16,7 @@ const TEST_USERNAME = "1c1d25d8-d001-7037-7c64-a30371112e53";
 const TEST_PASSWORD = "Password123!";
 const CLIENT_ID = "pslvatj55d6as87b8cj12i0r5";
 
-module.exports = async function getCredentials() {
+export async function getCredentials() {
   const cognitoIdentityProviderClient = new CognitoIdentityProviderClient({
     region: REGION,
   });
@@ -77,4 +76,4 @@ module.exports = async function getCredentials() {
   };
 
   return credentials;
-};
+}

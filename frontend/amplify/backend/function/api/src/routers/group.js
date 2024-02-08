@@ -1,4 +1,4 @@
-const express = require("express");
+import express from "express";
 const router = express.Router();
 
 // Define your routes here
@@ -19,4 +19,4 @@ router.delete("/:groupId", (req, res) => {
 });
 
 // Export the router
-module.exports = router;
+export default router;

@@ -1,4 +1,3 @@
-import { getUrl } from "aws-amplify/storage";
 import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
 import { GoPlus } from "react-icons/go";
@@ -50,12 +49,6 @@ function FolderView({ home = false }) {
     const fetchFolderData = async () => {
       const fetchedFolderData = await getFolderData(userId, folderId);
       setFolderData(fetchedFolderData);
-
-      const getUrlResult = await getUrl({
-        key: "test-video.mp4",
-      });
-      console.log("signed URL: ", getUrlResult.url);
-      console.log("URL expires at: ", getUrlResult.expiresAt);
     };
     fetchFolderData();
     document.title = folderData.name;
