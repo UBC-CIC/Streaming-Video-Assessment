@@ -1,18 +1,18 @@
-import "./App.css";
 import {
-  createBrowserRouter,
-  RouterProvider,
   Navigate,
+  RouterProvider,
+  createBrowserRouter,
 } from "react-router-dom";
+import "./App.css";
 import PrivateRoute from "./helpers/PrivateRoute";
-import LoginView from "./pages/LoginView";
 import CreateAccountView from "./pages/CreateAccountView";
-import ForgetPasswordView from "./pages/ForgetPasswordView";
-import FolderView from "./pages/FolderView";
-import SubmitView, { loader as SubmitViewLoader } from "./pages/SubmitView";
-import ViewAllSubmissions from "./pages/ViewAllSubmissions";
 import CreateAndEditSubmission from "./pages/CreateAndEditSubmission";
 import ErrorPage from "./pages/ErrorPage";
+import FolderView from "./pages/FolderView";
+import ForgetPasswordView from "./pages/ForgetPasswordView";
+import LoginView from "./pages/LoginView";
+import SubmitView, { loader as SubmitViewLoader } from "./pages/SubmitView";
+import ViewAllSubmissions from "./pages/ViewAllSubmissions";
 import ViewSubmission from "./pages/ViewSubmission";
 
 const router = createBrowserRouter([
