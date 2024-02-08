@@ -47,12 +47,12 @@
         "FunctionName": {
           "Fn::If": [
             "ShouldNotCreateEnvResources",
-            "backendapitest",
+            "api",
             {
               "Fn::Join": [
                 "",
                 [
-                  "backendapitest",
+                  "api",
                   "-",
                   {
                     "Ref": "env"
@@ -89,12 +89,12 @@
         "RoleName": {
           "Fn::If": [
             "ShouldNotCreateEnvResources",
-            "backendLambdaRolee984e5ce",
+            "backendLambdaRole02ea4fc9",
             {
               "Fn::Join": [
                 "",
                 [
-                  "backendLambdaRolee984e5ce",
+                  "backendLambdaRole02ea4fc9",
                   "-",
                   {
                     "Ref": "env"

@@ -6,6 +6,7 @@ import SubmitRecord from "../components/submit/SubmitRecord";
 
 import { getAssignmentInfo } from "../helpers/uploaderApi";
 import * as faceapi from "face-api.js";
+
 // TODO: add react router loader function to retrieve all folders and info from backend and then display on frontend
 
 export function loader({ params }) {

@@ -1,13 +1,24 @@
 export type AmplifyDependentResourcesAttributes = {
   "api": {
-    "apitest": {
+    "backend": {
       "ApiId": "string",
       "ApiName": "string",
       "RootUrl": "string"
     }
   },
+  "auth": {
+    "backendd8f920f8": {
+      "AppClientID": "string",
+      "AppClientIDWeb": "string",
+      "IdentityPoolId": "string",
+      "IdentityPoolName": "string",
+      "UserPoolArn": "string",
+      "UserPoolId": "string",
+      "UserPoolName": "string"
+    }
+  },
   "function": {
-    "backendapitest": {
+    "api": {
       "Arn": "string",
       "LambdaExecutionRole": "string",
       "LambdaExecutionRoleArn": "string",

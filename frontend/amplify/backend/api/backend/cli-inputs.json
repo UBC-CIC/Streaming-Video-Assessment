@@ -1,9 +1,9 @@
 {
   "version": 1,
   "paths": {
-    "/items": {
-      "name": "/items",
-      "lambdaFunction": "backendapitest",
+    "/api": {
+      "name": "/api",
+      "lambdaFunction": "api",
       "permissions": {
         "setting": "open"
       }

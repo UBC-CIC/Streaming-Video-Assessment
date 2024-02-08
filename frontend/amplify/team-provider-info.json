@@ -13,13 +13,23 @@
     },
     "categories": {
       "function": {
-        "backendapitest": {
+        "api": {
           "deploymentBucketName": "amplify-backend-dev-150049-deployment",
-          "s3Key": "amplify-builds/backendapitest-5a62457a31544778427a-build.zip"
-        }
+          "s3Key": "amplify-builds/api-48626761504872647a70-build.zip"
+        },
+        "submissionApi": {},
+        "folderApi": {},
+        "groupApi": {},
+        "assessmentApi": {}
       },
-      "api": {
-        "apitest": {}
+      "auth": {
+        "backendd8f920f8": {}
+      },
+      "storage": {
+        "backendd759f609": {
+          "bucketName": "video-storage-sf21",
+          "region": "ca-central-1"
+        }
       }
     }
   }
