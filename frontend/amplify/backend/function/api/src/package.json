@@ -13,7 +13,10 @@
     "aws-serverless-express": "^3.3.5",
     "body-parser": "^1.17.1",
     "express": "^4.15.2",
-    "mysql": "^2.18.1"
+    "mysql": "^2.18.1",
+    "sequelize": "^6.36.0",
+    "sqlite": "^5.1.1",
+    "sqlite3": "^5.1.7"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.92"
