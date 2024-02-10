@@ -1,17 +1,17 @@
-import { get } from "aws-amplify/api";
+// import { get } from "aws-amplify/api";
 
 export const getFolderData = async (folderId) => {
-  try {
-    const restOperation = get({
-      apiName: "backend",
-      path: "/api/folder/" + folderId,
-    });
-    const { body } = await restOperation.response;
-    const response = await body.json();
-    console.log("GET call succeeded: ", response);
-  } catch (error) {
-    console.log("GET call failed: ", error);
-  }
+  // try {
+  //   const restOperation = get({
+  //     apiName: "backend",
+  //     path: "/api/folder/" + folderId,
+  //   });
+  //   const { body } = await restOperation.response;
+  //   const response = await body.json();
+  //   console.log("GET call succeeded: ", response);
+  // } catch (error) {
+  //   console.log("GET call failed: ", error);
+  // }
 
   return {
     path: [
@@ -74,7 +74,7 @@ export const getSubmissionData = async (submissionId) => {
     allowFaceBlur: true,
     submissions: [
       {
-        name: "John Doe",
+        name: "Harrison Mitgang",
         email: "test@gmail.com",
         uploadedOn: "2015-03-05 14:48:34.69",
         s3ref: "s3ref1",

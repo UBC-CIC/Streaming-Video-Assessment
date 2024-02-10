@@ -16,7 +16,7 @@ DropdownItem.propTypes = {
   icon: PropTypes.elementType.isRequired,
   text: PropTypes.string.isRequired,
   onclick: PropTypes.func.isRequired,
-  modal: PropTypes.elementType.isRequired,
+  modal: PropTypes.elementType,
 };
 
 function ButtonDropdown({ buttonIcon, dropdownItems }) {
