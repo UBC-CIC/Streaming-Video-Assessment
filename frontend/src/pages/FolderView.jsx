@@ -14,6 +14,8 @@ import ToggleViewStyle from "../components/ToggleViewStyle";
 import CreateFolderDialog from "../components/dialogs/CreateFolderDialog";
 import GroupDialog from "../components/dialogs/GroupDialog";
 import { getFolderData } from "../helpers/submissionCreatorApi";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
 
 function loader({ params }) {
   let folderId = null;
@@ -59,6 +61,10 @@ function FolderView({ home = false }) {
       icon: <FolderIcon width={20} height={20} />,
       text: "Create Folder",
       onclick: () => {
+        const elem = document.activeElement;
+        if (elem) {
+          elem?.blur();
+        }
         document.getElementById("folder-modal").showModal();
       },
       modal: <CreateFolderDialog />,
@@ -67,6 +73,10 @@ function FolderView({ home = false }) {
       icon: <GroupIcon width={20} height={20} />,
       text: "Create Group",
       onclick: () => {
+        const elem = document.activeElement;
+        if (elem) {
+          elem?.blur();
+        }
         document.getElementById("create-group-modal").showModal();
       },
       modal: <GroupDialog isEdit={false} />,
@@ -85,7 +95,9 @@ function FolderView({ home = false }) {
       <SearchBar />
       <div className="self-center flex w-full items-center justify-between gap-5 mt-7 max-md:max-w-full max-md:flex-wrap">
         <div className="justify-center text-black text-lg flex flex-row">
-          <FolderPath folderPath={folderData.path} />
+          <DndProvider backend={HTML5Backend}>
+            <FolderPath folderPath={folderData.path} />
+          </DndProvider>
         </div>
         <div className="self-stretch flex items-stretch justify-between gap-2.5">
           <ToggleViewStyle view={view} setView={setView} />
