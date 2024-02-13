@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { BsDownload } from "react-icons/bs";
 import { useLoaderData, useNavigate } from "react-router-dom";
 import { getSubmissionData } from "../helpers/submissionCreatorApi";
+import { getDueDate } from "../helpers/dateHandler";
 
 function loader({ params }) {
   let submissionId = null;
@@ -21,36 +22,10 @@ function ViewAllSubmissions() {
   const [submissionData, setSubmissionData] = useState({});
   const dueDate = useRef(null);
 
-  const getMonthName = (monthIndex) => {
-    const months = [
-      "Jan",
-      "Feb",
-      "Mar",
-      "Apr",
-      "May",
-      "Jun",
-      "Jul",
-      "Aug",
-      "Sep",
-      "Oct",
-      "Nov",
-      "Dec",
-    ];
-    return months[monthIndex];
-  };
-
-  const padZero = (num) => {
-    return num < 10 ? `0${num}` : num;
-  };
-
   useEffect(() => {
     const fetchSubmissionData = async () => {
       const fetchedSubmissionData = await getSubmissionData(submissionId);
       setSubmissionData(fetchedSubmissionData);
-    };
-
-    const getDueDate = (date) => {
-      return `${date.getDate()} ${getMonthName(date.getMonth())} ${date.getFullYear()} at ${padZero(date.getHours())}:${padZero(date.getMinutes())}`;
     };
 
     fetchSubmissionData();
@@ -59,7 +34,7 @@ function ViewAllSubmissions() {
   }, [submissionData.dueDate, submissionData.name, submissionId]);
 
   return (
-    <div className="flex flex-col w-full mt-1 md:flex-row">
+    <div className="flex flex-col w-full md:flex-row h-[100vh]">
       <div className="pr-5 pl-5 md:w-[75%]">
         <div className="flex flex-col justify-between mt-5 pb-6 md:flex-row">
           <div className="flex flex-col text-black pb-2 md:pb-0">
@@ -97,7 +72,7 @@ function ViewAllSubmissions() {
             </button>
           </div>
         </div>
-        <div className="bg-gray-200 rounded-lg text-lg overflow-y-auto h-[43rem] p-5">
+        <div className="bg-gray-200 rounded-lg text-lg overflow-y-auto p-5 h-[70%]">
           {submissionData.description}
         </div>
       </div>
@@ -106,14 +81,18 @@ function ViewAllSubmissions() {
         <div className="w-full">
           <div className="text-4xl">Submissions</div>
           <div className="bg-black h-0.5" />
-          <div className="mt-5 overflow-y-auto h-[47rem]">
+          <div className="mt-5 overflow-y-auto">
             {submissionData.submissions?.map((submission, index) => {
               return (
                 <div
                   className="mb-4 flex flex-row justify-between text-lg btn btn-lg"
                   onClick={() => {
                     navigate(`/submission/${submission.submissionId}/view`, {
-                      state: { submissions: submissionData.submissions },
+                      state: {
+                        submissionData,
+                        submissions: submissionData.submissions,
+                        submissionIndex: index,
+                      },
                     });
                   }}
                   key={index}
@@ -138,14 +117,6 @@ function ViewAllSubmissions() {
             })}
           </div>
         </div>
-        <button
-          className="btn btn-wide btn-lg justify-center"
-          onClick={() => {
-            console.log("Downloading All");
-          }}
-        >
-          Download All
-        </button>
       </div>
     </div>
   );

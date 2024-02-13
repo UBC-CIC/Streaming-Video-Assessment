@@ -67,9 +67,12 @@ export const getSubmissionData = async (submissionId) => {
   return {
     name: "Spanish 30 Final",
     id: "submissionSpanish30Final",
-    dueDate: "2015-03-05 14:48:34.69",
+    dueDate: "2015-03-05 14:48",
     isOpen: true,
-    timeLimitMinutes: 60,
+    timeLimit: {
+      hours: 1,
+      minutes: 50,
+    },
     description: "This is the final test for Spanish 30",
     allowFaceBlur: true,
     submissions: [
