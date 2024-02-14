@@ -21,9 +21,12 @@ function CreateAndEditSubmission({ edit = false }) {
     if (edit) {
       setName(submissionData.name);
       setDescription(submissionData.description);
+      const hours = Math.floor(submissionData.timeLimitSeconds / 3600);
+      const remainingSeconds = submissionData.timeLimitSeconds % 3600;
+      const minutes = Math.floor(remainingSeconds / 60);
       setTimeLimit({
-        hours: submissionData.timeLimit.hours,
-        minutes: submissionData.timeLimit.minutes,
+        hours: hours,
+        minutes: minutes,
       });
       setAllowFaceBlur(submissionData.allowFaceBlur);
       setDueDate(submissionData.dueDate);
