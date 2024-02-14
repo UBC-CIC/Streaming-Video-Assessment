@@ -42,6 +42,36 @@ function applyExtraSetup(sequelize) {
 
   assessment.hasMany(video, { foreignKey: "assessmentId" });
   video.belongsTo(assessment, { foreignKey: "assessmentId" });
+
+  user.prototype.getRoot = async function () {
+    const root = await this.getFolders({ where: { parentId: null } });
+
+    return root.at(0);
+  };
+
+  folder.prototype.getContents = async function () {
+    return await Promise.allSettled([
+      this.getUploaderGroups().then((groups) =>
+        groups.map((g) => ({ ...g.dataValues, type: "group" })),
+      ),
+      this.getAssessments().then((assessments) =>
+        assessments.map((a) => ({ ...a.dataValues, type: "assessment" })),
+      ),
+      this.getChildFolders().then((folders) =>
+        folders.map((f) => ({ ...f.dataValues, type: "folder" })),
+      ),
+    ]);
+  };
+
+  folder.prototype.getFolderPath = async function () {
+    const path = [];
+    let currentFolder = this;
+    while (currentFolder) {
+      path.unshift({ name: currentFolder.name, id: currentFolder.id });
+      currentFolder = await currentFolder.getParentFolder();
+    }
+    return path;
+  };
 }
 
 module.exports = { applyExtraSetup };
