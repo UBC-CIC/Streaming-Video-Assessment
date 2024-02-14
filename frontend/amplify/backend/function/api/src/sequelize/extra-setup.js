@@ -59,15 +59,25 @@ function applyExtraSetup(sequelize) {
   folder.prototype.getContents = async function () {
     return await Promise.allSettled([
       this.getUploaderGroups().then((groups) =>
-        groups.map((g) => ({ ...g, type: "group" })),
+        groups.map((g) => ({ ...g.dataValues, type: "group" })),
       ),
       this.getAssessments().then((assessments) =>
-        assessments.map((a) => ({ ...a, type: "assessment" })),
+        assessments.map((a) => ({ ...a.dataValues, type: "assessment" })),
       ),
       this.getChildFolders().then((folders) =>
-        folders.map((f) => ({ ...f, type: "folder" })),
+        folders.map((f) => ({ ...f.dataValues, type: "folder" })),
       ),
     ]);
+  };
+
+  folder.prototype.getFolderPath = async function () {
+    const path = [];
+    let currentFolder = this;
+    while (currentFolder) {
+      path.unshift({ name: currentFolder.name, id: currentFolder.id });
+      currentFolder = await currentFolder.getParentFolder();
+    }
+    return path;
   };
 }
 
