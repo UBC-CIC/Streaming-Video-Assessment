@@ -69,10 +69,7 @@ export const getSubmissionData = async (submissionId) => {
     id: "submissionSpanish30Final",
     dueDate: "2015-03-05 14:48",
     isOpen: true,
-    timeLimit: {
-      hours: 1,
-      minutes: 50,
-    },
+    timeLimitSeconds: 6600,
     description: "This is the final test for Spanish 30",
     allowFaceBlur: true,
     submissions: [
