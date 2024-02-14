@@ -4,8 +4,7 @@ const { DataTypes } = require("sequelize");
 // This function will automatically receive as parameter the Sequelize connection object.
 module.exports = (sequelize) => {
   sequelize.define("user", {
-    // The following specification of the 'id' attribute could be omitted
-    // since it is the default.
+    // TODO: Add cognito user id or reference to cognito user and add unique index
     id: {
       allowNull: false,
       autoIncrement: true,

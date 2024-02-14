@@ -24,12 +24,12 @@ module.exports = (sequelize) => {
       },
     },
     {
-      indexes: [
-        {
-          unique: true,
-          fields: ["name", "folderId"],
-        },
-      ],
+      // indexes: [
+      //   {
+      //     unique: true,
+      //     fields: ["name", "folderId"],
+      //   },
+      // ],
     },
   );
 };
