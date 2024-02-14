@@ -23,12 +23,12 @@ module.exports = (sequelize) => {
       },
     },
     {
-      indexes: [
-        {
-          unique: true,
-          fields: ["email"],
-        },
-      ],
+      // indexes: [
+      //   {
+      //     unique: true,
+      //     fields: ["email"],
+      //   },
+      // ],
     },
   );
 };
