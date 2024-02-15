@@ -78,7 +78,9 @@ function FolderView({ home = false }) {
       icon: <UploadIcon width={20} height={20} />,
       text: "Create Submission",
       onclick: () => {
-        navigate(`/submission`);
+        navigate(`/submission`, {
+          state: { folderId },
+        });
       },
     },
   ];

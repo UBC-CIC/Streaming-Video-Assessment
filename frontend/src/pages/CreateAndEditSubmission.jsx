@@ -1,11 +1,14 @@
+// TODO: CLEAN UP THIS FILE and CODE
 import { useEffect, useState } from "react";
 import ReactPropTypes from "prop-types";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import { createAssessment } from "../helpers/submissionCreatorApi";
 
-// TODO: add error handling for timing and dates
+// TODO: add error handling for all input types
 
 function CreateAndEditSubmission({ edit = false }) {
-  const { submissionData } = useLocation().state || {};
+  const { submissionData, folderId } = useLocation().state || {};
+  const navigate = useNavigate();
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [timeLimit, setTimeLimit] = useState({ hours: 0, minutes: 0 });
@@ -13,8 +16,10 @@ function CreateAndEditSubmission({ edit = false }) {
   const [dueDate, setDueDate] = useState(null);
   // TODO: figure out how to get this list and how to deal with individuals and groups
   const [sharedWithList, setSharedWithList] = useState([]);
-
-  console.log(submissionData);
+  const [uploaders, setUploaders] = useState([]);
+  const [groups, setGroups] = useState([]);
+  const [email, setEmail] = useState("");
+  const [usersName, setUsersName] = useState("");
 
   useEffect(() => {
     // Check the checkbox if its value matches the value to check against
@@ -30,8 +35,64 @@ function CreateAndEditSubmission({ edit = false }) {
       });
       setAllowFaceBlur(submissionData.allowFaceBlur);
       setDueDate(submissionData.dueDate);
+      setSharedWithList(
+        submissionData.submissions.map((submission) => ({
+          name: submission.name,
+          email: submission.email,
+        })),
+      );
     }
   }, [submissionData]); // Re-run effect when valueToCheck changes
+
+  const removeSharedWithUser = (index) => {
+    // TODO: need to figure otu handling of group and individuals here
+    const newSharedWithList = [...sharedWithList]; // Create a copy of the original array
+    newSharedWithList.splice(index, 1);
+    setSharedWithList(newSharedWithList);
+  };
+
+  const addToSharedList = () => {
+    const newSharedWithList = [...sharedWithList];
+    const newUploaders = [...uploaders];
+    newSharedWithList.push({
+      name: usersName,
+      email: email,
+      type: "individual",
+    });
+    setSharedWithList(newSharedWithList);
+    newUploaders.push({ name: usersName, email: email });
+    setUploaders(newUploaders);
+    setUsersName("");
+    setEmail("");
+  };
+
+  const assessmentHandler = async () => {
+    if (edit) {
+      // TODO: add functionality to edit assessment
+      console.log("handling editing of assessment");
+    } else {
+      // need folderId, name, description, timeLimit, allowFaceBlur, dueDate, sharedUploaders, sharedGroups
+      const data = {
+        folderId: folderId,
+        name: name,
+        description: description,
+        timeLimitSeconds: timeLimit.hours * 3600 + timeLimit.minutes * 60,
+        faceBlurAllowed: allowFaceBlur,
+        dueDate: dueDate,
+        sharedUploaders: uploaders,
+        sharedGroups: groups,
+      };
+
+      const message = await createAssessment(data);
+      if (message.success) {
+        alert("Assessment created successfully");
+        // TODO: figure out where to navigate to
+        navigate("/");
+      } else {
+        alert("Assessment creation failed");
+      }
+    }
+  };
 
   return (
     <div className="flex flex-col m-10">
@@ -132,14 +193,20 @@ function CreateAndEditSubmission({ edit = false }) {
                 type="text"
                 placeholder="Name"
                 className="input input-bordered w-full max-w-md border-black"
+                value={usersName}
+                onChange={(e) => setUsersName(e.target.value)}
               />
               <input
                 type="text"
                 placeholder="Email"
                 className="input input-bordered w-full max-w-md border-black"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
               />
               <div></div>
-              <button className="btn btn-sm self-end">Add</button>
+              <button className="btn btn-sm self-end" onClick={addToSharedList}>
+                Add
+              </button>
             </div>
             <div className="divider">OR</div>
             <div className="flex justify-center">
@@ -162,17 +229,29 @@ function CreateAndEditSubmission({ edit = false }) {
                 </div>
               </dialog>
             </div>
-            <div className="grid grid-rows-1 gap-2 grid-flow-col w-full mt-4">
-              <div className="font-bold">Name</div>
-              <div className="divider divider-horizontal divider-neutral"></div>
-              <div className="font-bold">email</div>
-              <div className="btn btn-sm">x</div>
-            </div>
+            {sharedWithList.map((sharedWith, index) => (
+              <div className="grid grid-rows-1 gap-2 grid-flow-col w-full mt-4">
+                <div className="font-bold">{sharedWith.name}</div>
+                <div className="divider divider-horizontal divider-neutral"></div>
+                <div className="font-bold">{sharedWith.email}</div>
+                <div
+                  className="btn btn-sm"
+                  onClick={() => {
+                    removeSharedWithUser(index);
+                  }}
+                >
+                  x
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
       <div className="flex justify-end mt-10">
-        <button className="btn bg-indigo-500 btn-lg text-white hover:text-black">
+        <button
+          className="btn bg-indigo-500 btn-lg text-white hover:text-black"
+          onClick={assessmentHandler}
+        >
           {edit ? "Save" : "Create"}
         </button>
       </div>

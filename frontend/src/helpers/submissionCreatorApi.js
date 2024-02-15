@@ -70,3 +70,23 @@ export const getSubmissionData = async (submissionId) => {
     console.error("GET call failed: ", error);
   }
 };
+
+export const createAssessment = async (assessmentData) => {
+  try {
+    const restOperation = post({
+      apiName: "backend",
+      path: "/api/assessment/",
+      options: {
+        body: assessmentData,
+      },
+    });
+    const { body } = await restOperation.response;
+    const response = await body.json();
+    console.log("POST call succeeded: ", response);
+    return response;
+  } catch (error) {
+    console.error("POST call failed: ", error);
+  }
+
+  return null;
+};

@@ -105,35 +105,37 @@ function ViewAllSubmissions() {
           <div className="mt-5 overflow-y-auto">
             {submissionData.submissions?.map((submission, index) => {
               return (
-                <div
-                  className="mb-4 flex flex-row justify-between text-lg btn btn-lg"
-                  onClick={() => {
-                    navigate(`/submission/${submission.submissionId}/view`, {
-                      state: {
-                        submissionData,
-                        submissions: submissionData.submissions,
-                        submissionIndex: index,
-                      },
-                    });
-                  }}
-                  key={index}
-                >
-                  <div className="truncate w-[70%] flex justify-start">
-                    <abbr
-                      title={submission.name}
-                      style={{ textDecoration: "none" }}
-                    >
-                      {submission.name}
-                    </abbr>
-                  </div>
-                  <BsDownload
-                    className="text-stone-500 hover:text-stone-900 cursor-pointer"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      console.log("Downloading Submission");
+                submission.s3ref && (
+                  <div
+                    className="mb-4 flex flex-row justify-between text-lg btn btn-lg"
+                    onClick={() => {
+                      navigate(`/submission/${submission.submissionId}/view`, {
+                        state: {
+                          submissionData,
+                          submissions: submissionData.submissions,
+                          submissionIndex: index,
+                        },
+                      });
                     }}
-                  />
-                </div>
+                    key={index}
+                  >
+                    <div className="truncate w-[70%] flex justify-start">
+                      <abbr
+                        title={submission.name}
+                        style={{ textDecoration: "none" }}
+                      >
+                        {submission.name}
+                      </abbr>
+                    </div>
+                    <BsDownload
+                      className="text-stone-500 hover:text-stone-900 cursor-pointer"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        console.log("Downloading Submission");
+                      }}
+                    />
+                  </div>
+                )
               );
             })}
           </div>
