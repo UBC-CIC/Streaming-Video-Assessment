@@ -31,9 +31,11 @@ function ViewSubmission() {
 
   useState(() => {
     const getVideoURL = async () => {
+      // TODO: move this to the backend and retrive the s3url from there based on submission id
       const getUrlResult = await getUrl({
-        key: "abc/1.webm",
+        key: currentSubmission.s3ref.substr("public/".length),
       });
+      console.log(getUrlResult);
       setVideoURL(getUrlResult.url);
     };
     getVideoURL();
