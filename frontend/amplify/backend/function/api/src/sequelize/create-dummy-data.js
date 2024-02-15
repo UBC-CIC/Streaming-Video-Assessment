@@ -3,10 +3,12 @@
 // CREATE DATABASE dropzone;
 //
 // Sequelize will recreate the tables, and this will populate it with some dummy data.
-
+const {
+  createUploadRequestsForAssessment,
+} = require("../helpers/uploadRequests");
 const sequelize = require(".");
 
-const { user, folder, uploaderGroup, uploader } = sequelize.models;
+const { user, folder, uploaderGroup, uploader, assessment } = sequelize.models;
 
 async function create() {
   const user1 = await user.create(
@@ -58,6 +60,23 @@ async function create() {
     ownerId: user1.id,
     parentId: spanish1.id,
   });
+
+  const spanish1test1 = await assessment.create({
+    name: "Test 1",
+    folderId: spanish1tests.id,
+    dueDate: new Date("2024-04-05"),
+    timeLimitSeconds: 60,
+    faceBlurAllowed: true,
+  });
+
+  // add student group to test
+  await spanish1test1.addUploaderGroup(spanish1students);
+
+  await spanish1test1.addUploader(uploader1);
+  await spanish1test1.addUploaderGroup(spanish1students);
+
+  // Trigger upload requests
+  console.log(await createUploadRequestsForAssessment(spanish1test1));
 
   const rootChildrenFolders = await root.getChildFolders({
     include: [{ model: folder, as: "childFolders" }],
