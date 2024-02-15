@@ -9,6 +9,7 @@ const {
 } = require("../helpers/s3");
 
 const { getUploadRequest } = require("../helpers/uploadRequests");
+const sequelize = require("../sequelize");
 
 // Define your routes here
 router.get("/assessment-info/:assessmentId", async (req, res) => {
@@ -16,6 +17,10 @@ router.get("/assessment-info/:assessmentId", async (req, res) => {
   const secret = req.query["secret"];
 
   const uploadRequest = await getUploadRequest(secret, assessmentId);
+
+  const videoUpload = await uploadRequest.getVideo();
+
+  const completedOn = videoUpload?.submitted ? videoUpload.updatedAt : null;
 
   if (!uploadRequest) {
     res.status(404).send("Not found");
@@ -30,11 +35,8 @@ router.get("/assessment-info/:assessmentId", async (req, res) => {
     dueDate: uploadRequest.assessment.dueDate,
     timeLimitSeconds: uploadRequest.assessment.timeLimitSeconds,
     allowFaceBlur: uploadRequest.assessment.faceBlurAllowed,
-    completedOn: null, // TODO: get this from the database
+    completedOn,
   });
-
-  res.json(JSON.stringify(await getUploadRequest(secret, assessmentId)));
-  // res.json({ success: "get call succeed!", url: req.url });
 });
 
 // router.post("/", (req, res) => {
@@ -42,9 +44,15 @@ router.get("/assessment-info/:assessmentId", async (req, res) => {
 // });
 
 router.post("/init-upload", async (req, res) => {
-  const assignmentId = req.body["assignmentId"];
+  const assessmentId = req.body["assessmentId"];
   const secret = req.body["secret"];
-  const key = `public/${assignmentId}/${secret}.webm`;
+  const key = `public/${assessmentId}/${secret}.webm`;
+
+  const uploadRequest = await getUploadRequest(secret, assessmentId);
+  if (!uploadRequest) {
+    res.status(401).send("Unauthorized");
+    return;
+  }
 
   console.log("INIT UPLOAD", key, req.body);
 
@@ -59,12 +67,18 @@ router.post("/init-upload", async (req, res) => {
 });
 
 router.post("/next-upload-url", async (req, res) => {
-  const assignmentId = req.body["assignmentId"];
+  const assessmentId = req.body["assessmentId"];
   const secret = req.body["secret"];
   const uploadId = req.body["uploadId"];
   const partNumber = req.body["partNumber"];
-  const key = `public/${assignmentId}/${secret}.webm`;
+  const key = `public/${assessmentId}/${secret}.webm`;
   console.log("NEXT UPLOAD URL", key, req.body);
+
+  const uploadRequest = await getUploadRequest(secret, assessmentId);
+  if (!uploadRequest) {
+    res.status(401).send("Unauthorized");
+    return;
+  }
 
   const signedUrl = await getUploadUrl(key, uploadId, partNumber);
 
@@ -75,25 +89,42 @@ router.post("/next-upload-url", async (req, res) => {
 });
 
 router.post("/complete-upload", async (req, res) => {
-  const assignmentId = req.body["assignmentId"];
+  const assessmentId = req.body["assessmentId"];
   const secret = req.body["secret"];
   const uploadId = req.body["uploadId"];
   const parts = req.body["parts"];
 
-  console.log("COMPLETE UPLOAD", req.body);
-  const key = `public/${assignmentId}/${secret}.webm`;
+  const uploadRequest = await getUploadRequest(secret, assessmentId);
+  if (!uploadRequest) {
+    res.status(401).send("Unauthorized");
+    return;
+  }
 
-  await completeUpload(key, uploadId, parts);
+  console.log("COMPLETE UPLOAD", req.body);
+  const key = `public/${assessmentId}/${secret}.webm`;
+
+  const out = await completeUpload(key, uploadId, parts);
+
+  await sequelize.models.video.create({
+    s3Key: key,
+    uploaderId: uploadRequest.uploaderId,
+    assessmentId,
+  });
 
   res.json({ signedUrl: await getUrlForKey(key) });
 });
 
-router.put("/:submissionId", (req, res) => {
-  res.json({ success: "put call succeed!", url: req.url, body: req.body });
-});
+router.post("/submit", async (req, res) => {
+  const assessmentId = req.body["assessmentId"];
+  const secret = req.body["secret"];
 
-router.delete("/:submissionId", (req, res) => {
-  res.json({ success: "delete call succeed!", url: req.url });
+  const uploadRequest = await getUploadRequest(secret, assessmentId);
+
+  const video = await uploadRequest.getVideo();
+
+  await video.update({ submitted: true });
+
+  res.status(200).send();
 });
 
 // Export the router

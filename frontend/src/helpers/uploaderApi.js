@@ -1,30 +1,28 @@
-import { post } from "aws-amplify/api";
+import { post, get } from "aws-amplify/api";
 
-export const getAssignmentInfo = async (assignmentId, secret) => {
+export const getAssessmentInfo = async (assessmentId, secret) => {
   console.log("FETCHED");
 
-  await new Promise((resolve) => setTimeout(resolve, 1000));
+  const restOperation = get({
+    apiName: "backend",
+    path: `/api/submission/assessment-info/${assessmentId}`,
+    options: {
+      queryParams: { secret },
+    },
+  });
 
-  return {
-    secret,
-    id: assignmentId,
-    completedOn: null,
-    name: "Spanish 30 Final",
-    description: "This is a description of the assignment",
-    dueDate: "2021-12-31",
-    timeLimitSeconds: 65,
-    allowFaceBlur: true,
-  };
+  const { body } = await restOperation.response;
+  return await body.json();
 };
 
-export const initializeUpload = async (assignmentId, secret) => {
-  console.log("init upload", { assignmentId, secret });
+export const initializeUpload = async (assessmentId, secret) => {
+  console.log("init upload", { assessmentId, secret });
   const restOperation = post({
     apiName: "backend",
     path: `/api/submission/init-upload`,
     options: {
       body: {
-        assignmentId,
+        assessmentId,
         secret,
       },
     },
@@ -34,13 +32,13 @@ export const initializeUpload = async (assignmentId, secret) => {
   return await body.json();
 };
 
-export const completeUpload = async (assignmentId, secret, uploadId, parts) => {
+export const completeUpload = async (assessmentId, secret, uploadId, parts) => {
   const restOperation = post({
     apiName: "backend",
     path: `/api/submission/complete-upload`,
     options: {
       body: {
-        assignmentId,
+        assessmentId,
         secret,
         uploadId,
         parts: parts.map((part) => ({
@@ -56,7 +54,7 @@ export const completeUpload = async (assignmentId, secret, uploadId, parts) => {
 };
 
 export const getNextUploadUrl = async (
-  assignmentId,
+  assessmentId,
   secret,
   uploadId,
   partNumber,
@@ -66,7 +64,7 @@ export const getNextUploadUrl = async (
     path: `/api/submission/next-upload-url`,
     options: {
       body: {
-        assignmentId,
+        assessmentId,
         secret,
         uploadId,
         partNumber,
@@ -89,4 +87,20 @@ export const uploadPart = async (url, blob) => {
 
   const etag = response.headers.get("Etag");
   return etag.substring(1, etag.length - 1);
+};
+
+export const submitVideo = async (assessmentId, secret) => {
+  const restOperation = post({
+    apiName: "backend",
+    path: `/api/submission/submit`,
+    options: {
+      body: {
+        assessmentId,
+        secret,
+      },
+    },
+  });
+
+  const resp = await restOperation.response;
+  return resp.statusCode;
 };

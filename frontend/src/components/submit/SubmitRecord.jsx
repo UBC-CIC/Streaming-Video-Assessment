@@ -13,12 +13,12 @@ const mimeType = "video/webm; codecs=vp9";
 const RECORDER_TIME_SLICE = 60000; // ms
 
 const SubmitRecord = ({
-  assignmentData,
+  assessmentData,
   confirmSubmission,
   detectFaces,
   modelsLoaded,
 }) => {
-  const { timeLimitSeconds, description, allowFaceBlur, name } = assignmentData;
+  const { timeLimitSeconds, description, allowFaceBlur, name } = assessmentData;
 
   const [uploadedVideoUrl, setUploadedVideoUrl] = useState();
   const mediaRecorderRef = useRef(null);
@@ -79,8 +79,8 @@ const SubmitRecord = ({
 
         // get the next upload url
         getNextUploadUrl(
-          assignmentData.id,
-          assignmentData.secret,
+          assessmentData.id,
+          assessmentData.secret,
           uploadData.current.uploadId,
           ++uploadData.current.maxPartNumber,
         ).then((jsonResponse) => {
@@ -108,8 +108,8 @@ const SubmitRecord = ({
       Promise.all(uploadData.current.promises)
         .then(() =>
           completeUpload(
-            assignmentData.id,
-            assignmentData.secret,
+            assessmentData.id,
+            assessmentData.secret,
             uploadData.current.uploadId,
             uploadData.current.parts,
           ),
@@ -123,7 +123,7 @@ const SubmitRecord = ({
         });
     };
 
-    initializeUpload(assignmentData.id, assignmentData.secret).then(
+    initializeUpload(assessmentData.id, assessmentData.secret).then(
       (jsonResponse) => {
         uploadData.current.uploadId = jsonResponse.uploadId;
         uploadData.current.parts = [];

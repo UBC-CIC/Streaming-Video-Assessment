@@ -82,6 +82,12 @@ function applyExtraSetup(sequelize) {
 
     return countUploaderGroupsOnAssessmentWhereUploaderIsMember > 0;
   };
+
+  uploadRequest.prototype.getVideo = async function () {
+    return await video.findOne({
+      where: { uploaderId: this.uploaderId, assessmentId: this.assessmentId },
+    });
+  };
 }
 
 module.exports = { applyExtraSetup };
