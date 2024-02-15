@@ -93,7 +93,7 @@ function ViewAllSubmissions() {
             </button>
           </div>
         </div>
-        <div className="bg-gray-200 rounded-lg text-lg overflow-y-auto p-5 h-[70%]">
+        <div className="bg-gray-200 rounded-lg text-lg overflow-y-auto p-5 h-[70%] whitespace-pre-wrap">
           {submissionData.description}
         </div>
       </div>

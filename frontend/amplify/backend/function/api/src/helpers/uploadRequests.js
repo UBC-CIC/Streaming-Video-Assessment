@@ -35,7 +35,7 @@ async function createUploadRequestForUser(assessment, user, sendEmail = false) {
     assessmentId: assessment.id,
   });
 
-  const url = `http://localhost:3000/submit/${assessment.id}?secret=${uploadRequest.id}`;
+  const url = `http://localhost:5173/submit/${assessment.id}?secret=${uploadRequest.id}`;
 
   console.log(`*** Created upload url for ${user.name} at ${url}`);
 

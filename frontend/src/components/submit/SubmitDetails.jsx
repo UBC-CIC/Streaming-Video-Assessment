@@ -44,7 +44,7 @@ const SubmitDetails = ({ assessmentData, begin }) => {
         <span className="text-black text-m mt-2 max-md:max-w-full">
           Time Limit: {formatSeconds(timeLimitSeconds)}
         </span>
-        <div className="text-black text-m bg-zinc-200 mt-2 p-2 max-md:max-w-full max-md:pr-5">
+        <div className="text-black text-m bg-zinc-200 mt-2 p-2 max-md:max-w-full max-md:pr-5 whitespace-pre-wrap">
           {description}
         </div>
       </div>

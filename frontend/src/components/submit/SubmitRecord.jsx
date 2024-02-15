@@ -200,7 +200,9 @@ const SubmitRecord = ({
           )}
         </div>
 
-        <div className="order-3 md:order-2 md:mx-2">{description}</div>
+        <div className="order-3 md:order-2 md:mx-2 whitespace-pre-wrap">
+          {description}
+        </div>
 
         {/* Controls */}
         <div className="order-2 md:order-3 py-2 md:col-span-2">
