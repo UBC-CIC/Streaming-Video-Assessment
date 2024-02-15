@@ -36,7 +36,24 @@ async function createUploadRequestForUser(assessment, user, sendEmail = false) {
   });
 }
 
+async function getUploadRequest(pk, assessmentId) {
+  const uploadRequest = await sequelize.models.uploadRequest.findByPk(pk, {
+    where: {
+      assessmentId,
+    },
+    include: [sequelize.models.uploader, sequelize.models.assessment],
+  });
+
+  if (!uploadRequest) return;
+
+  if (await uploadRequest.uploader.canUploadTo(assessmentId))
+    return uploadRequest;
+
+  return;
+}
+
 module.exports = {
   createUploadRequestsForAssessment,
   createUploadRequestForUser,
+  getUploadRequest,
 };

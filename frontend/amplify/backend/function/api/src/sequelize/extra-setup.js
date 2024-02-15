@@ -69,6 +69,19 @@ function applyExtraSetup(sequelize) {
       ),
     ]);
   };
+
+  uploader.prototype.canUploadTo = async function (assessmentId) {
+    if (await this.hasAssessment(assessmentId)) return true;
+
+    const countUploaderGroupsOnAssessmentWhereUploaderIsMember =
+      await this.countUploaderGroups({
+        include: [
+          { model: sequelize.models.assessment, where: { id: assessmentId } },
+        ],
+      });
+
+    return countUploaderGroupsOnAssessmentWhereUploaderIsMember > 0;
+  };
 }
 
 module.exports = { applyExtraSetup };

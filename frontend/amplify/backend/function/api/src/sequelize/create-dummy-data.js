@@ -47,6 +47,11 @@ async function create() {
     name: "Harrison Mitgang",
   });
 
+  const uploader2 = await uploader.create({
+    email: "hmitgang+1@student.ubc.ca",
+    name: "Harrison Not Mitgang",
+  });
+
   await spanish1students.addUploader(uploader1);
 
   const spanish2 = await folder.create({
@@ -74,6 +79,10 @@ async function create() {
 
   await spanish1test1.addUploader(uploader1);
   await spanish1test1.addUploaderGroup(spanish1students);
+
+  await spanish1students.addUploader(uploader2);
+  await spanish1test1.removeUploader(uploader2);
+  console.log(await uploader2.canUploadTo(spanish1test1.id));
 
   // Trigger upload requests
   console.log(await createUploadRequestsForAssessment(spanish1test1));
