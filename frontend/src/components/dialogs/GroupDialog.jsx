@@ -2,11 +2,12 @@ import { useEffect, useRef, useState } from "react";
 import PropTypes from "prop-types";
 import { IoIosInformationCircleOutline } from "react-icons/io";
 import GroupList from "./GroupList";
-import { getGroupList } from "../../helpers/submissionCreatorApi";
+import { getGroupInfo } from "../../helpers/submissionCreatorApi";
 
 function GroupDialog({ isEdit, groupId = "", isOpen = false, setIsOpen }) {
   const initialGroupListRef = useRef([]);
   const [groupList, setGroupList] = useState([]); // [{name: "", email: ""}
+  const [groupInfo, setGroupInfo] = useState(null);
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [groupName, setGroupName] = useState("");
@@ -42,10 +43,14 @@ function GroupDialog({ isEdit, groupId = "", isOpen = false, setIsOpen }) {
   useEffect(() => {
     const fetchGroupList = async () => {
       let fetchedGroupList;
+      let groupInfo;
 
       if (isEdit && isOpen) {
-        fetchedGroupList = await getGroupList(groupId);
+        groupInfo = await getGroupInfo(groupId);
+        fetchedGroupList = groupInfo.users;
         setGroupList(fetchedGroupList);
+        setGroupInfo(groupInfo);
+        setGroupName(groupInfo.name);
       }
 
       // Update the mutable value in the useRef

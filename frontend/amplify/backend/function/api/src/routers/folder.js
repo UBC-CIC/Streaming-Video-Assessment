@@ -1,26 +1,61 @@
 const express = require("express");
 const router = express.Router();
-const { queryDatabase } = require("../db");
+const sequelize = require("../sequelize");
+const { folder } = sequelize.models;
 
 // Define your routes here
 router.get("/:folderId", async (req, res) => {
   try {
-    const query = await queryDatabase(`SELECT * FROM test`);
-    res.json({ success: "get call succeed!", url: req.url, data: query });
+    // TODO: Implement get, must get all children folders and files
+    const query = await folder.findByPk(req.params.folderId);
+    query.dataValues.path = await query.getFolderPath();
+    query.dataValues.files = await query
+      .getContents()
+      .then((results) => {
+        const contents = results.map((result) => {
+          if (result.status === "fulfilled") {
+            return result.value;
+          }
+        });
+        return contents;
+      })
+      .then((mappedContents) => mappedContents.flat());
+    res.json({ success: "get call succeed!", data: query });
   } catch (error) {
     console.log("GET call failed: ", error);
+    res.status(500).json({ error: "GET call failed", error: error });
   }
 });
 
-router.post("/", (req, res) => {
-  res.json({ success: "post call succeed!", url: req.url, body: req.body });
+router.post("/", async (req, res) => {
+  try {
+    const folderObj = {
+      name: req.body.name,
+      ownerId: req.body.ownerId,
+      parentId: req.body.parentId,
+    };
+    const newFolder = await folder.create(folderObj);
+    res.json({ success: "post call succeed!", data: newFolder });
+  } catch (e) {
+    console.log("POST call failed: ", e);
+    res.status(500).json({ error: "POST call failed", error: e });
+  }
 });
 
-router.put("/:folderId", (req, res) => {
-  res.json({ success: "put call succeed!", url: req.url, body: req.body });
+router.patch("/:folderId", async (req, res) => {
+  try {
+    const updatedFolder = await folder.update(req.body, {
+      where: { id: req.params.folderId },
+    });
+    res.json({ success: "patch call succeed!", data: updatedFolder });
+  } catch (e) {
+    console.log("PUT call failed: ", e);
+    res.status(500).json({ error: "PUT call failed", error: e });
+  }
 });
 
 router.delete("/:folderId", (req, res) => {
+  // TODO: Implement delete, must delete all children folders and files
   res.json({ success: "delete call succeed!", url: req.url });
 });
 

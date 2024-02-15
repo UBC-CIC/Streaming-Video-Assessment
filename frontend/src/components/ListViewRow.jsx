@@ -12,7 +12,7 @@ function ListViewRow({ index, row }) {
         return <FolderIcon width={"2em"} height={"2em"} />;
       case "group":
         return <GroupIcon width={"2em"} height={"2em"} />;
-      case "submission":
+      case "assessment":
         return <UploadIcon width={"2em"} height={"2em"} />;
       default:
         return <></>;
