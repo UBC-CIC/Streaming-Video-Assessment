@@ -8,7 +8,8 @@ const {
 } = require("../helpers/uploadRequests");
 const sequelize = require(".");
 
-const { user, folder, uploaderGroup, uploader, assessment } = sequelize.models;
+const { user, folder, uploaderGroup, uploader, assessment, video } =
+  sequelize.models;
 
 async function create() {
   const user1 = await user.create(
@@ -89,6 +90,12 @@ async function create() {
 
   const rootChildrenFolders = await root.getChildFolders({
     include: [{ model: folder, as: "childFolders" }],
+  });
+
+  const video1 = await video.create({
+    s3Key: "public/abc/1.webm",
+    uploaderId: uploader1.id,
+    assessmentId: spanish1test1.id,
   });
 }
 
