@@ -125,9 +125,9 @@ function applyExtraSetup(sequelize) {
         return {
           name: uploader.name,
           email: uploader.email,
-          uploadedOn: video[0].createdAt,
-          s3ref: video[0].s3Key,
-          submissionId: video[0].id,
+          uploadedOn: video.length > 0 ? video[0].createdAt : null,
+          s3ref: video.length > 0 ? video[0].s3Key : null,
+          submissionId: video.length > 0 ? video[0].id : null,
         };
       }),
     );
