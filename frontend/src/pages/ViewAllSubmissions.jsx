@@ -48,7 +48,7 @@ function ViewAllSubmissions() {
           <div className="flex flex-col text-black pb-2 md:pb-0">
             <div className="text-4xl">{submissionData.name}</div>
             <div className="bg-black h-0.5" />
-            {submissionData.isOpen ? (
+            {!submissionData.closed ? (
               <div className="mt-2 text-2xl text-green-600">Open</div>
             ) : (
               <div className="mt-2 text-2xl text-red-600">Closed</div>
@@ -60,7 +60,7 @@ function ViewAllSubmissions() {
             </div>
           </div>
           <div className="flex flex-col">
-            {submissionData.isOpen ? (
+            {!submissionData.closed ? (
               <button
                 className="btn bg-red-600 mb-2 btn-lg text-white hover:text-black"
                 onClick={() => {
