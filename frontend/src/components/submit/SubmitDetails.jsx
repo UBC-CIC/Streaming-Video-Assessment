@@ -25,9 +25,9 @@ const formatSeconds = (seconds) => {
   return format.join(" ");
 };
 
-const SubmitDetails = ({ assignmentData, begin }) => {
+const SubmitDetails = ({ assessmentData, begin }) => {
   const { name, description, dueDate, timeLimitSeconds, completedOn } =
-    assignmentData;
+    assessmentData;
 
   return (
     <div className="grid grid-cols-1 place-items-center min-h-dvh py-5 max-md:px-5">

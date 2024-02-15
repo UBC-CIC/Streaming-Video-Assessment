@@ -1,6 +1,7 @@
 import React, { useRef, useState, useEffect } from "react";
 import Video from "./Video";
 import SubmitRecordControls from "./SubmitRecordControls";
+import HasRecordedVideo from "./HasRecordedVideo";
 
 import {
   initializeUpload,
@@ -13,12 +14,12 @@ const mimeType = "video/webm; codecs=vp9";
 const RECORDER_TIME_SLICE = 60000; // ms
 
 const SubmitRecord = ({
-  assignmentData,
+  assessmentData,
   confirmSubmission,
   detectFaces,
   modelsLoaded,
 }) => {
-  const { timeLimitSeconds, description, allowFaceBlur, name } = assignmentData;
+  const { timeLimitSeconds, description, allowFaceBlur, name } = assessmentData;
 
   const [uploadedVideoUrl, setUploadedVideoUrl] = useState();
   const mediaRecorderRef = useRef(null);
@@ -79,8 +80,8 @@ const SubmitRecord = ({
 
         // get the next upload url
         getNextUploadUrl(
-          assignmentData.id,
-          assignmentData.secret,
+          assessmentData.id,
+          assessmentData.secret,
           uploadData.current.uploadId,
           ++uploadData.current.maxPartNumber,
         ).then((jsonResponse) => {
@@ -105,56 +106,63 @@ const SubmitRecord = ({
 
       clearInterval(uploadData.current.interval);
 
+      setUploadedVideoUrl(null);
+
       Promise.all(uploadData.current.promises)
         .then(() =>
           completeUpload(
-            assignmentData.id,
-            assignmentData.secret,
+            assessmentData.id,
+            assessmentData.secret,
             uploadData.current.uploadId,
             uploadData.current.parts,
           ),
         )
         .then((jsonResponse) => {
           setUploadedVideoUrl(jsonResponse.signedUrl);
-
-          setRecording(false);
-          setHasRecorded(true);
-          setSecondsRemaining(timeLimitSeconds);
         });
+
+      setRecording(false);
+      setHasRecorded(true);
+      setSecondsRemaining(timeLimitSeconds);
     };
 
-    initializeUpload(assignmentData.id, assignmentData.secret).then(
-      (jsonResponse) => {
+    uploadData.current.parts = [];
+    uploadData.current.promises = [];
+    uploadData.current.blobBuffer = [];
+    uploadData.current.uploadUrls = [];
+
+    initializeUpload(assessmentData.id, assessmentData.secret)
+      .then((jsonResponse) => {
         uploadData.current.uploadId = jsonResponse.uploadId;
-        uploadData.current.parts = [];
-        uploadData.current.promises = [];
-        uploadData.current.blobBuffer = [];
         uploadData.current.maxPartNumber = jsonResponse.partNumber;
-        uploadData.current.uploadUrls = [
-          {
-            partNumber: jsonResponse.partNumber,
-            signedUrl: jsonResponse.signedUrl,
-          },
-        ];
-        uploadData.current.startTimestamp = Date.now();
+        uploadData.current.uploadUrls.push({
+          partNumber: jsonResponse.partNumber,
+          signedUrl: jsonResponse.signedUrl,
+        });
+      })
+      .catch((e) => {
+        // TODO: how do we want to handle this error better?
+        console.error("Error initializing upload", e);
+        setIntentRecording(false);
+      });
 
-        uploadData.current.interval = setInterval(() => {
-          const timeElapsed = Math.floor(
-            (Date.now() - uploadData.current.startTimestamp) / 1000,
-          );
+    uploadData.current.interval = setInterval(() => {
+      const timeElapsed = Math.floor(
+        (Date.now() - uploadData.current.startTimestamp) / 1000,
+      );
 
-          if (timeElapsed > timeLimitSeconds) {
-            mediaRecorderRef.current.stop();
-            return;
-          }
+      if (timeElapsed > timeLimitSeconds) {
+        mediaRecorderRef.current.stop();
+        return;
+      }
 
-          setSecondsRemaining(Math.max(0, timeLimitSeconds - timeElapsed));
-        }, 1000);
+      setSecondsRemaining(Math.max(0, timeLimitSeconds - timeElapsed));
+    }, 1000);
 
-        setRecording(true);
-        mediaRecorderRef.current.start(RECORDER_TIME_SLICE);
-      },
-    );
+    uploadData.current.startTimestamp = Date.now();
+
+    setRecording(true);
+    mediaRecorderRef.current.start(RECORDER_TIME_SLICE);
   };
 
   useEffect(() => {
@@ -178,11 +186,7 @@ const SubmitRecord = ({
         {/* TODO: set max height on video to not push controls off the page */}
         <div className="w-full border order-1 md:col-span-2">
           {hasRecorded && !recording ? (
-            <video
-              controls
-              // TODO: replace with actual video
-              src={uploadedVideoUrl}
-            ></video>
+            <HasRecordedVideo uploadedVideoUrl={uploadedVideoUrl} />
           ) : (
             <Video
               blurface={blurface}
@@ -203,7 +207,7 @@ const SubmitRecord = ({
           {hasRecorded ? (
             <div className="flex place-content-between justify-items-center">
               <button
-                className="button text-white text-center justify-center text-l font-black bg-green-500 hover:bg-green-400 self-center px-5 py-2 text-nowrap rounded-md"
+                className="button text-white text-center justify-center text-l bg-green-500 hover:bg-green-400 self-center px-5 py-2 text-nowrap rounded-md"
                 onClick={() => {
                   setHasRecorded(false);
                 }}
@@ -211,10 +215,11 @@ const SubmitRecord = ({
                 Re-record
               </button>
               <button
-                className="button text-white text-center justify-center text-l font-black bg-indigo-500 hover:bg-indigo-400 self-center px-5 py-2 text-nowrap rounded-md"
+                className="button text-white text-center justify-center text-l bg-indigo-500 hover:bg-indigo-400 self-center px-5 py-2 text-nowrap rounded-md disabled:bg-slate-500 disabled:hover:bg-slate-400 disabled:hover:cursor-not-allowed"
                 onClick={() => {
                   confirmSubmission();
                 }}
+                disabled={!uploadedVideoUrl}
               >
                 Submit
               </button>

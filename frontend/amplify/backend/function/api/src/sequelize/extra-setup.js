@@ -138,6 +138,12 @@ function applyExtraSetup(sequelize) {
         self.findIndex((t) => t.submissionId === uploader.submissionId),
     );
   };
+
+  uploadRequest.prototype.getVideo = async function () {
+    return await video.findOne({
+      where: { uploaderId: this.uploaderId, assessmentId: this.assessmentId },
+    });
+  };
 }
 
 module.exports = { applyExtraSetup };
