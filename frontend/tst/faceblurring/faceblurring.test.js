@@ -40,16 +40,24 @@ if (faceapi.nets.tinyFaceDetector.params && faceapi.nets.faceLandmark68Net.param
     let numImagesWithOvercountedFaces = 0;
     let numImagesCorrect = 0;
 
-    for (const dirPath of fs.readdirSync("./images")) {
-    // const dirPath = "13--Interview"
+    // for (const dirPath of fs.readdirSync("./images")) {
+    const dirPath = "13--Interview"
         console.log("Conducting test of " + dirPath)
         for (const imagePath of fs.readdirSync(`./images/${dirPath}`)) {
             const img = await canvas.loadImage(`./images/${dirPath}/${imagePath}`);
             const detections = await faceapi.detectAllFaces(img, faceDetectorOptions);
             const numFaces = labels[`${dirPath}/${imagePath}`][0][0]
-            // console.log("Testing image " + imagePath);
-            // console.log("Predicted number of faces: " + detections.length);
-            // console.log("Actual number of faces: " + numFaces)
+            // if (numFaces > 2) {
+            //     console.log("Skipping testing image " + imagePath + " with " + numFaces + " faces");
+            //     continue;
+            // }
+            if (numFaces > 1) {
+                console.log("Skipping testing image " + imagePath + " with " + numFaces + " faces");
+                continue;
+            }
+            console.log("Testing image " + imagePath);
+            console.log("Predicted number of faces: " + detections.length);
+            console.log("Actual number of faces: " + numFaces)
             numImages++;
             numTotalFaces += numFaces;
             if (detections.length < numFaces) {
@@ -62,7 +70,7 @@ if (faceapi.nets.tinyFaceDetector.params && faceapi.nets.faceLandmark68Net.param
                 numImagesCorrect++;
             }
         }
-    }
+    // }
 
     console.log("Total images processed: " + numImages);
     console.log("Total number of faces in images: " + numTotalFaces);
