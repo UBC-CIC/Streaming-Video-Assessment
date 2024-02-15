@@ -1,4 +1,11 @@
-function CreateFolderDialog() {
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { createFolder } from "../../helpers/submissionCreatorApi";
+
+function CreateFolderDialog({ folderId }) {
+  const navigate = useNavigate();
+  const [folderName, setFolderName] = useState("");
+
   return (
     <dialog id="folder-modal" className="modal">
       <div className="modal-box">
@@ -16,15 +23,18 @@ function CreateFolderDialog() {
             type="text"
             placeholder="Folder Name"
             className="input input-bordered w-full max-w-sm border-black"
+            onChange={(e) => setFolderName(e.target.value)}
           />
         </div>
         <div className="modal-action flex justify-center">
           <form method="dialog">
             <button
               className="btn w-44 text-white bg-indigo-500 btn-lg"
-              onClick={() => {
-                // TODO: make api call to create folder and refresh page
-                console.log("Created");
+              onClick={async () => {
+                // TODO: allow this a user handling not constant user
+                await createFolder(folderName, folderId, 1);
+                setFolderName(null);
+                navigate(0);
               }}
             >
               Create

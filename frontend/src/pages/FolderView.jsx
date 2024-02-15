@@ -14,6 +14,8 @@ import ToggleViewStyle from "../components/ToggleViewStyle";
 import CreateFolderDialog from "../components/dialogs/CreateFolderDialog";
 import GroupDialog from "../components/dialogs/GroupDialog";
 import { getFolderData } from "../helpers/submissionCreatorApi";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
 
 function loader({ params }) {
   let folderId = null;
@@ -28,7 +30,8 @@ function loader({ params }) {
 }
 
 const getHomeFolderId = () => {
-  return "HOME";
+  // TODO: determine what the home folder id should be
+  return 1;
 };
 
 function FolderView({ home = false }) {
@@ -47,7 +50,7 @@ function FolderView({ home = false }) {
 
   useEffect(() => {
     const fetchFolderData = async () => {
-      const fetchedFolderData = await getFolderData(userId, folderId);
+      const fetchedFolderData = await getFolderData(folderId);
       setFolderData(fetchedFolderData);
     };
     fetchFolderData();
@@ -61,7 +64,7 @@ function FolderView({ home = false }) {
       onclick: () => {
         document.getElementById("folder-modal").showModal();
       },
-      modal: <CreateFolderDialog />,
+      modal: <CreateFolderDialog folderId={folderId} />,
     },
     {
       icon: <GroupIcon width={20} height={20} />,
@@ -75,7 +78,9 @@ function FolderView({ home = false }) {
       icon: <UploadIcon width={20} height={20} />,
       text: "Create Submission",
       onclick: () => {
-        navigate(`/submission`);
+        navigate(`/submission`, {
+          state: { folderId },
+        });
       },
     },
   ];
@@ -85,7 +90,9 @@ function FolderView({ home = false }) {
       <SearchBar />
       <div className="self-center flex w-full items-center justify-between gap-5 mt-7 max-md:max-w-full max-md:flex-wrap">
         <div className="justify-center text-black text-lg flex flex-row">
-          <FolderPath folderPath={folderData.path} />
+          <DndProvider backend={HTML5Backend}>
+            <FolderPath folderPath={folderData.path} />
+          </DndProvider>
         </div>
         <div className="self-stretch flex items-stretch justify-between gap-2.5">
           <ToggleViewStyle view={view} setView={setView} />

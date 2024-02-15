@@ -1,10 +1,12 @@
+import PropTypes from "prop-types";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import PropTypes from "prop-types";
 import FolderIcon from "../assets/icons/FolderIcon";
-import UploadIcon from "../assets/icons/UploadIcon";
 import GroupIcon from "../assets/icons/GroupIcon";
+import UploadIcon from "../assets/icons/UploadIcon";
 import GroupDialog from "./dialogs/GroupDialog";
+import { useDrag, useDrop } from "react-dnd";
+import { BsThreeDots } from "react-icons/bs";
 
 function File({ file }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -16,7 +18,7 @@ function File({ file }) {
         return <FolderIcon width={"141"} height={"131"} />;
       case "group":
         return <GroupIcon width={"130"} height={"131"} />;
-      case "submission":
+      case "assessment":
         return <UploadIcon width={"130"} height={"131"} />;
       default:
         return <></>;
@@ -34,7 +36,7 @@ function File({ file }) {
           setIsOpen(true);
           document.getElementById("edit-group-modal").showModal();
         };
-      case "submission":
+      case "assessment":
         return () => {
           navigate(`/submission/${file.id}`);
         };
@@ -45,18 +47,120 @@ function File({ file }) {
 
   const icon = getIcon();
   const onClickHandler = getOnClickFunction();
+  const moveHandler = () => {
+    const elem = document.activeElement;
+    if (elem) {
+      elem?.blur();
+    }
+    console.log("move");
+  };
+  const renameHandler = () => {
+    const elem = document.activeElement;
+    if (elem) {
+      elem?.blur();
+    }
+    console.log("rename");
+  };
+  const deleteHandler = () => {
+    const elem = document.activeElement;
+    if (elem) {
+      elem?.blur();
+    }
+    console.log("delete");
+  };
+
+  const [{ canDrop, isOver }, drop] = useDrop(
+    () => ({
+      accept: file.type != "folder" ? [] : ["group", "folder", "assessment"],
+      drop: () => ({
+        name: file.name,
+        allowedDropEffect: "folder",
+      }),
+      collect: (monitor) => ({
+        isOver: monitor.isOver(),
+        canDrop: monitor.canDrop(),
+      }),
+    }),
+    ["folder"],
+  );
+
+  const [{ opacity }, drag] = useDrag(
+    () => ({
+      type: file.type,
+      item: { name: file.name },
+      end(item, monitor) {
+        // TODO: add logic for moving files
+        const dropResult = monitor.getDropResult();
+        if (item && dropResult) {
+          let alertMessage = "";
+          if (
+            dropResult.allowedDropEffect === "folder" &&
+            dropResult.name !== file.name
+          ) {
+            // const isCopyAction = dropResult.dropEffect === "copy";
+            // const actionName = isCopyAction ? "copied" : "moved";
+            // alertMessage = `You ${actionName} ${item.name} into ${dropResult.name}!`;
+            // alert(alertMessage);
+            console.log("dropped into folder");
+          } else if (dropResult.allowedDropEffect === "folderPath") {
+            console.log("dropped into folder path");
+          }
+        }
+      },
+      collect: (monitor) => ({
+        opacity: monitor.isDragging() ? 0.4 : 1,
+      }),
+    }),
+    [file.name],
+  );
+
+  const isActive = canDrop && isOver;
+  const selectBackgroundColor = () => {
+    if (isActive && opacity === 1) {
+      return "darkgreen";
+    }
+  };
+  const backgroundColor = selectBackgroundColor();
 
   return (
-    <>
+    <div ref={drop} class="pt-3">
       <div
-        className="flex flex-col items-center cursor-pointer"
-        onClick={onClickHandler}
+        ref={drag}
+        class="w-full rounded-3xl max-w-sm bg-gray-300 border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
+        style={{ backgroundColor, opacity }}
       >
-        <div className="bg-zinc-300 flex flex-col w-full mt-1.5 pt-7 px-18 rounded-[40px] items-center">
-          <div className="justify-center text-black text-center text-xl truncate w-[75%]">
-            {file.name}
-          </div>
+        <div class="dropdown dropdown-bottom dropdown-end flex justify-end px-2 pt-1">
+          <button
+            id="dropdownButton"
+            data-dropdown-toggle="dropdown"
+            class="inline-block text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:ring-4 focus:outline-none focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-1.5"
+            type="button"
+          >
+            <BsThreeDots size={22} />
+          </button>
+          <ul
+            tabindex="0"
+            class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-40"
+          >
+            <li onClick={moveHandler}>
+              <a>Move</a>
+            </li>
+            <li onClick={renameHandler}>
+              <a>Rename</a>
+            </li>
+            <li onClick={deleteHandler}>
+              <a class="text-rose-600">Delete</a>
+            </li>
+          </ul>
+        </div>
+        <div
+          class="flex flex-col items-center pb-5 cursor-pointer"
+          onClick={onClickHandler}
+        >
           {icon}
+          <h5 class="mb-1 text-xl font-medium text-gray-900 dark:text-white truncate w-[95%] text-center">
+            {file.name}
+          </h5>
         </div>
       </div>
       {file.type === "group" && (
@@ -67,7 +171,7 @@ function File({ file }) {
           setIsOpen={setIsOpen}
         />
       )}
-    </>
+    </div>
   );
 }
 

@@ -24,7 +24,7 @@
       "function": {
         "api": {
           "deploymentBucketName": "amplify-backend-dev-150049-deployment",
-          "s3Key": "amplify-builds/api-48626761504872647a70-build.zip"
+          "s3Key": "amplify-builds/api-582f6f45424c4b394265-build.zip"
         }
       }
     }

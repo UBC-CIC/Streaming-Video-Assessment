@@ -1,9 +1,14 @@
 const express = require("express");
 const router = express.Router();
+const sequelize = require("../sequelize");
+const { uploaderGroup } = sequelize.models;
 
 // Define your routes here
-router.get("/:groupId", (req, res) => {
-  res.json({ success: "get call succeed!", url: req.url });
+router.get("/:groupId", async (req, res) => {
+  const group = await uploaderGroup.findByPk(req.params.groupId);
+  const groupMembers = await group.getUploaders();
+  group.dataValues.users = groupMembers;
+  res.json({ success: "get call succeed!", data: group });
 });
 
 router.post("/", (req, res) => {
