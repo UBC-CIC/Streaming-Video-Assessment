@@ -9,11 +9,18 @@ function applyExtraSetup(sequelize) {
     video,
   } = sequelize.models;
 
-  user.hasMany(folder, { foreignKey: "ownerId" });
-  folder.belongsTo(user, { foreignKey: "ownerId" });
+  user.folders = user.hasMany(folder, { foreignKey: "ownerId", as: "folders" });
+  folder.user = folder.belongsTo(user, { foreignKey: "ownerId", as: "owner" });
 
-  folder.hasMany(folder, { foreignKey: "parentId", as: "childFolders" });
-  folder.belongsTo(folder, { foreignKey: "parentId", as: "parentFolder" });
+  folder.childFolders = folder.hasMany(folder, {
+    foreignKey: "parentId",
+    as: "childFolders",
+  });
+
+  folder.belongsTo(folder, {
+    foreignKey: "parentId",
+    as: "parentFolder",
+  });
 
   folder.hasMany(uploaderGroup, { foreignKey: "folderId" });
   uploaderGroup.belongsTo(folder, { foreignKey: "folderId" });
@@ -22,14 +29,14 @@ function applyExtraSetup(sequelize) {
   assessment.belongsTo(folder, { foreignKey: "folderId" });
   //TODO: add constraint so (name, parentId) is unique across file types
 
-  assessment.belongsToMany(uploaderGroup, { through: "AssessmentGroups" });
-  uploaderGroup.belongsToMany(assessment, { through: "AssessmentGroups" });
+  assessment.belongsToMany(uploaderGroup, { through: "assessmentGroups" });
+  uploaderGroup.belongsToMany(assessment, { through: "assessmentGroups" });
 
-  uploaderGroup.belongsToMany(uploader, { through: "UploaderGroupMembers" });
-  uploader.belongsToMany(uploaderGroup, { through: "UploaderGroupMembers" });
+  uploaderGroup.belongsToMany(uploader, { through: "uploaderGroupMembers" });
+  uploader.belongsToMany(uploaderGroup, { through: "uploaderGroupMembers" });
 
-  assessment.belongsToMany(uploader, { through: "AssessmentUploaders" });
-  uploader.belongsToMany(assessment, { through: "AssessmentUploaders" });
+  assessment.belongsToMany(uploader, { through: "assessmentUploaders" });
+  uploader.belongsToMany(assessment, { through: "assessmentUploaders" });
 
   uploader.hasMany(uploadRequest, { foreignKey: "uploaderId" });
   uploadRequest.belongsTo(uploader, { foreignKey: "uploaderId" });
