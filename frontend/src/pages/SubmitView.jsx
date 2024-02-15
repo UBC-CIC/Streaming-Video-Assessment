@@ -4,7 +4,7 @@ import { useLoaderData, useSearchParams } from "react-router-dom";
 import SubmitDetails from "../components/submit/SubmitDetails";
 import SubmitRecord from "../components/submit/SubmitRecord";
 
-import { getAssignmentInfo } from "../helpers/uploaderApi";
+import { getAssessmentInfo, submitVideo } from "../helpers/uploaderApi";
 import * as faceapi from "face-api.js";
 
 // TODO: add react router loader function to retrieve all folders and info from backend and then display on frontend
@@ -20,9 +20,9 @@ function SubmitView() {
 
   const [currentSubmitState, setCurrentSubmitState] = useState("details");
 
-  const assignmentId = useLoaderData().submissionId;
+  const assessmentId = useLoaderData().submissionId;
 
-  const [assignmentData, setAssignmentData] = useState(null);
+  const [assessmentData, setAssessmentData] = useState(null);
 
   const [modelsLoaded, setModelsLoaded] = useState(false);
 
@@ -52,23 +52,28 @@ function SubmitView() {
     [modelsLoaded],
   );
 
+  const confirmSubmission = async () => {
+    await submitVideo(assessmentId, searchParams.get("secret"));
+    setCurrentSubmitState("details");
+  };
+
   useEffect(() => {
-    if (assignmentData && assignmentData.name) {
-      document.title = assignmentData.name + " - Dropzone";
+    if (assessmentData && assessmentData.name) {
+      document.title = assessmentData.name + " - Dropzone";
     } else {
       document.title = "Dropzone";
     }
-  }, [assignmentData]);
+  }, [assessmentData]);
 
   useEffect(() => {
     if (currentSubmitState === "record") return;
-    setAssignmentData(null);
-    getAssignmentInfo(assignmentId, searchParams.get("secret")).then(
-      setAssignmentData,
+    setAssessmentData(null);
+    getAssessmentInfo(assessmentId, searchParams.get("secret")).then(
+      setAssessmentData,
     );
-  }, [currentSubmitState, searchParams, assignmentId]);
+  }, [currentSubmitState, searchParams, assessmentId]);
 
-  if (!assignmentData) {
+  if (!assessmentData) {
     return (
       <div className="flex items-center justify-center h-screen">
         <div className="mx-auto">
@@ -99,7 +104,7 @@ function SubmitView() {
   return {
     details: (
       <SubmitDetails
-        assignmentData={assignmentData}
+        assessmentData={assessmentData}
         begin={() => setCurrentSubmitState("record")}
       />
     ),
@@ -107,8 +112,8 @@ function SubmitView() {
       <SubmitRecord
         detectFaces={detectFaces}
         modelsLoaded={modelsLoaded}
-        assignmentData={assignmentData}
-        confirmSubmission={() => setCurrentSubmitState("details")}
+        assessmentData={assessmentData}
+        confirmSubmission={confirmSubmission}
       />
     ),
   }[currentSubmitState];
