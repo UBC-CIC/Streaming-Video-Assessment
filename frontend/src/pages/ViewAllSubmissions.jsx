@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { BsDownload } from "react-icons/bs";
 import { useLoaderData, useNavigate } from "react-router-dom";
 import { getSubmissionData } from "../helpers/submissionCreatorApi";
-import { getDueDate } from "../helpers/dateHandler";
+import { formatDateTime } from "../helpers/dateHandler";
 
 function loader({ params }) {
   let submissionId = null;
@@ -30,7 +30,7 @@ function ViewAllSubmissions() {
     };
 
     fetchSubmissionData();
-    dueDate.current = getDueDate(new Date(submissionData.dueDate));
+    dueDate.current = formatDateTime(new Date(submissionData.dueDate));
     const hours = Math.floor(submissionData.timeLimitSeconds / 3600);
     const remainingSeconds = submissionData.timeLimitSeconds % 3600;
     const minutes = Math.floor(remainingSeconds / 60);

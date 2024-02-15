@@ -20,6 +20,6 @@ const padZero = (num) => {
   return num < 10 ? `0${num}` : num;
 };
 
-export const getDueDate = (date) => {
+export const formatDateTime = (date) => {
   return `${date.getDate()} ${getMonthName(date.getMonth())} ${date.getFullYear()} at ${padZero(date.getHours())}:${padZero(date.getMinutes())}`;
 };

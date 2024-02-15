@@ -2,7 +2,7 @@ import { getUrl } from "aws-amplify/storage";
 import { useState } from "react";
 import { useLocation } from "react-router-dom";
 import { BsDownload } from "react-icons/bs";
-import { getDueDate } from "../helpers/dateHandler";
+import { formatDateTime } from "../helpers/dateHandler";
 import { useNavigate } from "react-router-dom";
 
 function SubmissionDropdown({ submissions, submissionIndex }) {
@@ -72,7 +72,8 @@ function ViewSubmission() {
           <div> Email: {currentSubmission.email}</div>
           <div>
             {" "}
-            Submitted On: {getDueDate(new Date(currentSubmission.uploadedOn))}
+            Submitted On:{" "}
+            {formatDateTime(new Date(currentSubmission.uploadedOn))}
           </div>
         </div>
       </div>

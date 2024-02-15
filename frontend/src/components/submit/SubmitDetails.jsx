@@ -1,5 +1,7 @@
 import React from "react";
 
+import { formatDateTime } from "../../helpers/dateHandler";
+
 const formatSeconds = (seconds) => {
   const minutes = Math.floor(seconds / 60);
   const remainingSeconds = seconds % 60;
@@ -37,7 +39,7 @@ const SubmitDetails = ({ assessmentData, begin }) => {
         </span>
         <div className="bg-black self-stretch mt-1 shrink-0 h-0.5 max-md:max-w-full" />
         <span className="text-black text-m mt-2 max-md:max-w-full">
-          Complete By: {dueDate}
+          Complete By: {formatDateTime(new Date(dueDate))}
         </span>
         <span className="text-black text-m mt-2 max-md:max-w-full">
           Time Limit: {formatSeconds(timeLimitSeconds)}
@@ -50,7 +52,7 @@ const SubmitDetails = ({ assessmentData, begin }) => {
       <div className="self-end flex justify-center mb-5 mt-5 w-full max-md:w-full">
         {completedOn ? (
           <span className="text-black text-2xl self-center max-md:max-w-full max-md:text-l">
-            Completed on: {completedOn}
+            Completed on: {formatDateTime(new Date(completedOn))}
           </span>
         ) : (
           <button
