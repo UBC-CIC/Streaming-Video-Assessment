@@ -6,12 +6,8 @@ const { assessment } = sequelize.models;
 // Define your routes here
 router.get("/:assessmentId", async (req, res) => {
   const query = await assessment.findByPk(req.params.assessmentId);
-  const assessmentGroups = await query.getUploaderGroups();
-  const assessmentUploaders = await query.getUploaders();
-  console.log(query);
-  console.log(assessmentGroups);
-  console.log(assessmentUploaders);
-  res.json({ success: "get call succeed!", url: req.url });
+  query.dataValues.submissions = await query.getSubmissions();
+  res.json({ success: "get call succeed!", data: query });
 });
 
 router.post("/", (req, res) => {

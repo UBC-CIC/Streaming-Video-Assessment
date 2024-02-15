@@ -92,6 +92,52 @@ function applyExtraSetup(sequelize) {
     }
     return path;
   };
+
+  assessment.prototype.getSubmissions = async function () {
+    const groupSubmissions = await this.getUploaderGroups({
+      include: [sequelize.models.uploader],
+    })
+      .then(async (uploaderGroups) => {
+        const uploaderPromises = uploaderGroups.map(async (uploaderGroup) => {
+          const uploaderData = await Promise.all(
+            uploaderGroup.uploaders.map(async (uploader) => {
+              const video = await uploader.getVideos();
+              return {
+                name: uploader.name,
+                email: uploader.email,
+                uploadedOn: video[0].createdAt,
+                s3ref: video[0].s3Key,
+                submissionId: video[0].id,
+              };
+            }),
+          );
+          return uploaderData;
+        });
+        return Promise.all(uploaderPromises);
+      })
+      .then((uploaderDataArrays) => uploaderDataArrays.flat());
+
+    const individualSubmissions = await this.getUploaders({
+      include: [sequelize.models.video],
+    }).then((uploaders) =>
+      uploaders.map((uploader) => {
+        const video = uploader.videos;
+        return {
+          name: uploader.name,
+          email: uploader.email,
+          uploadedOn: video[0].createdAt,
+          s3ref: video[0].s3Key,
+          submissionId: video[0].id,
+        };
+      }),
+    );
+
+    return [...groupSubmissions, ...individualSubmissions].filter(
+      (uploader, index, self) =>
+        index ===
+        self.findIndex((t) => t.submissionId === uploader.submissionId),
+    );
+  };
 }
 
 module.exports = { applyExtraSetup };

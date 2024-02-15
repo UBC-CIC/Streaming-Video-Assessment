@@ -21,6 +21,7 @@ function ViewAllSubmissions() {
   const submissionId = useLoaderData();
   const [submissionData, setSubmissionData] = useState({});
   const dueDate = useRef(null);
+  const timeLimit = useRef({ hours: 0, minutes: 0 });
 
   useEffect(() => {
     const fetchSubmissionData = async () => {
@@ -30,6 +31,13 @@ function ViewAllSubmissions() {
 
     fetchSubmissionData();
     dueDate.current = getDueDate(new Date(submissionData.dueDate));
+    const hours = Math.floor(submissionData.timeLimitSeconds / 3600);
+    const remainingSeconds = submissionData.timeLimitSeconds % 3600;
+    const minutes = Math.floor(remainingSeconds / 60);
+    timeLimit.current = {
+      hours: hours,
+      minutes: minutes,
+    };
     document.title = submissionData.name;
   }, [submissionData.dueDate, submissionData.name, submissionId]);
 
@@ -47,19 +55,32 @@ function ViewAllSubmissions() {
             )}
             <div className="mt-5 text-2xl">Complete By: {dueDate.current}</div>
             <div className="mt-5 text-2xl">
-              Time Limit: {submissionData.timeLimitMinutes} mins
+              Time Limit: {timeLimit.current.hours} hours{" "}
+              {timeLimit.current.minutes} mins
             </div>
           </div>
           <div className="flex flex-col">
-            <button
-              className="btn bg-red-600 mb-2 btn-lg text-white hover:text-black"
-              onClick={() => {
-                // TODO: add functionality to close submission
-                console.log("Closing Submission");
-              }}
-            >
-              Close Submission
-            </button>
+            {submissionData.isOpen ? (
+              <button
+                className="btn bg-red-600 mb-2 btn-lg text-white hover:text-black"
+                onClick={() => {
+                  // TODO: add functionality to close submission
+                  console.log("Closing Submission");
+                }}
+              >
+                Close Submission
+              </button>
+            ) : (
+              <button
+                className="btn bg-green-500 mb-2 btn-lg text-white hover:text-black"
+                onClick={() => {
+                  // TODO: add functionality to close submission
+                  console.log("Opening Submission");
+                }}
+              >
+                Open Submission
+              </button>
+            )}
             <button
               className="btn bg-indigo-500 btn-lg text-white hover:text-black"
               onClick={() => {
