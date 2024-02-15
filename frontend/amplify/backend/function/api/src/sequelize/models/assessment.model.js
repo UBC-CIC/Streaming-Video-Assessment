@@ -18,6 +18,10 @@ module.exports = (sequelize) => {
         allowNull: false,
         type: DataTypes.STRING,
       },
+      description: {
+        allowNull: true,
+        type: DataTypes.TEXT,
+      },
       folderId: {
         allowNull: false,
         type: DataTypes.INTEGER,

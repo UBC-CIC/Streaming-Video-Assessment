@@ -3,15 +3,18 @@
 // CREATE DATABASE dropzone;
 //
 // Sequelize will recreate the tables, and this will populate it with some dummy data.
-
+const {
+  createUploadRequestsForAssessment,
+} = require("../helpers/uploadRequests");
 const sequelize = require(".");
 
-const { user, folder } = sequelize.models;
+const { user, folder, uploaderGroup, uploader, assessment, video } =
+  sequelize.models;
 
 async function create() {
   const user1 = await user.create(
     {
-      email: "hmitgang+4@student.ubc.ca",
+      email: "hmitgang+5@student.ubc.ca",
       isPlatformManager: true,
       isAssessmentCreator: true,
       folders: [
@@ -35,6 +38,23 @@ async function create() {
     parentId: root.id,
   });
 
+  const spanish1students = await uploaderGroup.create({
+    name: "Students",
+    folderId: spanish1.id,
+  });
+
+  const uploader1 = await uploader.create({
+    email: "hmitgang@student.ubc.ca",
+    name: "Harrison Mitgang",
+  });
+
+  const uploader2 = await uploader.create({
+    email: "hmitgang+1@student.ubc.ca",
+    name: "Harrison Not Mitgang",
+  });
+
+  await spanish1students.addUploader(uploader1);
+
   const spanish2 = await folder.create({
     name: "Spanish 2",
     ownerId: user1.id,
@@ -47,8 +67,35 @@ async function create() {
     parentId: spanish1.id,
   });
 
+  const spanish1test1 = await assessment.create({
+    name: "Test 1",
+    folderId: spanish1tests.id,
+    dueDate: new Date("2024-04-05"),
+    timeLimitSeconds: 60,
+    faceBlurAllowed: true,
+  });
+
+  // add student group to test
+  await spanish1test1.addUploaderGroup(spanish1students);
+
+  await spanish1test1.addUploader(uploader1);
+  await spanish1test1.addUploaderGroup(spanish1students);
+
+  await spanish1students.addUploader(uploader2);
+  await spanish1test1.removeUploader(uploader2);
+  console.log(await uploader2.canUploadTo(spanish1test1.id));
+
+  // Trigger upload requests
+  console.log(await createUploadRequestsForAssessment(spanish1test1));
+
   const rootChildrenFolders = await root.getChildFolders({
     include: [{ model: folder, as: "childFolders" }],
+  });
+
+  const video1 = await video.create({
+    s3Key: "public/abc/1.webm",
+    uploaderId: uploader1.id,
+    assessmentId: spanish1test1.id,
   });
 }
 

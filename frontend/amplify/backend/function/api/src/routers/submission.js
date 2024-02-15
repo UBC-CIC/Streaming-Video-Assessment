@@ -8,10 +8,34 @@ const {
   completeUpload,
 } = require("../helpers/s3");
 
+const { getUploadRequest } = require("../helpers/uploadRequests");
+
 // Define your routes here
-// router.get("/:submissionId", (req, res) => {
-//   res.json({ success: "get call succeed!", url: req.url });
-// });
+router.get("/assessment-info/:assessmentId", async (req, res) => {
+  const assessmentId = req.params["assessmentId"];
+  const secret = req.query["secret"];
+
+  const uploadRequest = await getUploadRequest(secret, assessmentId);
+
+  if (!uploadRequest) {
+    res.status(404).send("Not found");
+    return;
+  }
+
+  res.json({
+    secret,
+    id: assessmentId,
+    name: uploadRequest.assessment.name,
+    description: uploadRequest.assessment.description,
+    dueDate: uploadRequest.assessment.dueDate,
+    timeLimitSeconds: uploadRequest.assessment.timeLimitSeconds,
+    allowFaceBlur: uploadRequest.assessment.faceBlurAllowed,
+    completedOn: null, // TODO: get this from the database
+  });
+
+  res.json(JSON.stringify(await getUploadRequest(secret, assessmentId)));
+  // res.json({ success: "get call succeed!", url: req.url });
+});
 
 // router.post("/", (req, res) => {
 //   res.json({ success: "post call succeed!", url: req.url, body: req.body });
