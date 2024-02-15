@@ -30,7 +30,8 @@ function loader({ params }) {
 }
 
 const getHomeFolderId = () => {
-  return "HOME";
+  // TODO: determine what the home folder id should be
+  return 1;
 };
 
 function FolderView({ home = false }) {
@@ -49,7 +50,7 @@ function FolderView({ home = false }) {
 
   useEffect(() => {
     const fetchFolderData = async () => {
-      const fetchedFolderData = await getFolderData(userId, folderId);
+      const fetchedFolderData = await getFolderData(folderId);
       setFolderData(fetchedFolderData);
     };
     fetchFolderData();
@@ -61,22 +62,14 @@ function FolderView({ home = false }) {
       icon: <FolderIcon width={20} height={20} />,
       text: "Create Folder",
       onclick: () => {
-        const elem = document.activeElement;
-        if (elem) {
-          elem?.blur();
-        }
         document.getElementById("folder-modal").showModal();
       },
-      modal: <CreateFolderDialog />,
+      modal: <CreateFolderDialog folderId={folderId} />,
     },
     {
       icon: <GroupIcon width={20} height={20} />,
       text: "Create Group",
       onclick: () => {
-        const elem = document.activeElement;
-        if (elem) {
-          elem?.blur();
-        }
         document.getElementById("create-group-modal").showModal();
       },
       modal: <GroupDialog isEdit={false} />,

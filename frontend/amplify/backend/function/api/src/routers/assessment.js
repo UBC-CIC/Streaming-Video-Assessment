@@ -1,8 +1,16 @@
 const express = require("express");
 const router = express.Router();
+const sequelize = require("../sequelize");
+const { assessment } = sequelize.models;
 
 // Define your routes here
-router.get("/:assessmentId", (req, res) => {
+router.get("/:assessmentId", async (req, res) => {
+  const query = await assessment.findByPk(req.params.assessmentId);
+  const assessmentGroups = await query.getUploaderGroups();
+  const assessmentUploaders = await query.getUploaders();
+  console.log(query);
+  console.log(assessmentGroups);
+  console.log(assessmentUploaders);
   res.json({ success: "get call succeed!", url: req.url });
 });
 

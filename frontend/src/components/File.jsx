@@ -18,7 +18,7 @@ function File({ file }) {
         return <FolderIcon width={"141"} height={"131"} />;
       case "group":
         return <GroupIcon width={"130"} height={"131"} />;
-      case "submission":
+      case "assessment":
         return <UploadIcon width={"130"} height={"131"} />;
       default:
         return <></>;
@@ -36,7 +36,7 @@ function File({ file }) {
           setIsOpen(true);
           document.getElementById("edit-group-modal").showModal();
         };
-      case "submission":
+      case "assessment":
         return () => {
           navigate(`/submission/${file.id}`);
         };
@@ -71,7 +71,7 @@ function File({ file }) {
 
   const [{ canDrop, isOver }, drop] = useDrop(
     () => ({
-      accept: file.type != "folder" ? [] : ["group", "folder", "submission"],
+      accept: file.type != "folder" ? [] : ["group", "folder", "assessment"],
       drop: () => ({
         name: file.name,
         allowedDropEffect: "folder",

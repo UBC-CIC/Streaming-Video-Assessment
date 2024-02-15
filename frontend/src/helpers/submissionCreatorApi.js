@@ -1,57 +1,44 @@
-// import { get } from "aws-amplify/api";
+import { get, post } from "aws-amplify/api";
 
 export const getFolderData = async (folderId) => {
-  // try {
-  //   const restOperation = get({
-  //     apiName: "backend",
-  //     path: "/api/folder/" + folderId,
-  //   });
-  //   const { body } = await restOperation.response;
-  //   const response = await body.json();
-  //   console.log("GET call succeeded: ", response);
-  // } catch (error) {
-  //   console.log("GET call failed: ", error);
-  // }
+  try {
+    const restOperation = get({
+      apiName: "backend",
+      path: "/api/folder/" + folderId,
+    });
+    const { body } = await restOperation.response;
+    const response = await body.json();
+    console.log("GET call succeeded: ", response);
+    return response.data;
+  } catch (error) {
+    console.log("GET call failed: ", error);
+  }
 
-  return {
-    path: [
-      { name: "Home", id: "HOME" },
-      { name: "2023", id: "xyz2023" },
-      { name: "Tests", id: "xyz2023tests" },
-    ],
-    name: "Tests",
-    id: "xyz2023tests",
-    files: [
-      {
-        type: "group",
-        name: "Spanish 30 Students",
-        id: "groupSpanish30",
-        dateCreated: "2015-01-01 14:48:34.69",
-        dateModified: "2015-01-01 14:48:34.69",
+  return null;
+};
+
+export const createFolder = async (folderName, parentId, userId) => {
+  try {
+    const restOperation = post({
+      apiName: "backend",
+      path: "/api/folder/",
+      options: {
+        body: {
+          name: folderName,
+          parentId: parentId,
+          ownerId: userId,
+        },
       },
-      {
-        type: "folder",
-        name: "Spanish 30",
-        id: "folderSpanish30",
-        dateCreated: "2015-02-01 14:48:34.69",
-        dateModified: "2015-02-02 14:48:34.69",
-      },
-      {
-        type: "folder",
-        name: "Spanish 20",
-        id: "folderSpanish20",
-        dateCreated: "2015-01-01 14:48:34.69",
-        dateModified: "2015-01-02 14:48:34.69",
-      },
-      {
-        type: "submission",
-        name: "Spanish 30 Final",
-        id: "submissionSpanish30Final",
-        dateCreated: "2015-03-01 14:48:34.69",
-        dateModified: "2015-03-05 14:48:34.69",
-      },
-    ],
-  };
+    });
+    const { body } = await restOperation.response;
+    const response = await body.json();
+    console.log("POST call succeeded: ", response);
+    return response.data;
+  } catch (error) {
+    console.log("POST call failed: ", error);
+  }
+
+  return null;
 };
 
 export const getGroupList = async (groupId) => {
@@ -64,6 +51,19 @@ export const getGroupList = async (groupId) => {
 };
 
 export const getSubmissionData = async (submissionId) => {
+  // try {
+  //   const restOperation = get({
+  //     apiName: "backend",
+  //     path: "/api/assessment/" + submissionId,
+  //   });
+  //   const { body } = await restOperation.response;
+  //   const response = await body.json();
+  //   console.log("GET call succeeded: ", response);
+  //   return response.data;
+  // } catch (error) {
+  //   console.log("GET call failed: ", error);
+  // }
+
   return {
     name: "Spanish 30 Final",
     id: "submissionSpanish30Final",

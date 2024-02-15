@@ -6,7 +6,7 @@ function Crumb({ path, index, lastPath, allowedDropEffect = "any" }) {
   const navigate = useNavigate();
 
   const handlePathClick = (id) => {
-    if (id === "HOME") {
+    if (id === 1) {
       return navigate(`/home`);
     }
 
@@ -15,7 +15,7 @@ function Crumb({ path, index, lastPath, allowedDropEffect = "any" }) {
 
   const [{ canDrop, isOver }, drop] = useDrop(
     () => ({
-      accept: ["group", "folder", "submission"],
+      accept: ["group", "folder", "assessment"],
       drop: () => ({
         name: path.name,
         allowedDropEffect: "folderPath",
