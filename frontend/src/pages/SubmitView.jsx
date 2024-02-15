@@ -63,7 +63,7 @@ function SubmitView() {
   useEffect(() => {
     if (currentSubmitState === "record") return;
     setAssignmentData(null);
-    getAssignmentInfo(assignmentId, searchParams.get("k")).then(
+    getAssignmentInfo(assignmentId, searchParams.get("secret")).then(
       setAssignmentData,
     );
   }, [currentSubmitState, searchParams, assignmentId]);
