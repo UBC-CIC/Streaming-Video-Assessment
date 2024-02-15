@@ -18,7 +18,7 @@ import ViewSubmission from "./pages/ViewSubmission";
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Navigate to="/home" />,
+    element: <Navigate to="/login" />,
     errorElement: <ErrorPage />,
   },
   {
