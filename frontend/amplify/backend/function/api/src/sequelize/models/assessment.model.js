@@ -39,6 +39,17 @@ module.exports = (sequelize) => {
         type: DataTypes.BOOLEAN,
         defaultValue: false,
       },
+      closedEarly: {
+        allowNull: false,
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+      },
+      closed: {
+        type: DataTypes.VIRTUAL,
+        get() {
+          return this.closedEarly || this.dueDate < new Date();
+        },
+      },
     },
     {
       // indexes: [
