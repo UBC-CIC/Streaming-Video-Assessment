@@ -30,10 +30,16 @@ async function createUploadRequestsForAssessment(
 
 async function createUploadRequestForUser(assessment, user, sendEmail = false) {
   // TODO: add email sending
-  return await sequelize.models.uploadRequest.create({
+  const uploadRequest = await sequelize.models.uploadRequest.create({
     uploaderId: user.id,
     assessmentId: assessment.id,
   });
+
+  const url = `http://localhost:3000/submit/${assessment.id}?secret=${uploadRequest.id}`;
+
+  console.log(`*** Created upload url for ${user.name} at ${url}`);
+
+  return uploadRequest;
 }
 
 async function getUploadRequest(pk, assessmentId) {
