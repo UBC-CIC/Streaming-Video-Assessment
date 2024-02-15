@@ -13,19 +13,19 @@ const sequelize = require("../sequelize");
 
 // Define your routes here
 router.get("/assessment-info/:assessmentId", async (req, res) => {
-  const assessmentId = req.params["assessmentId"];
+  const assessmentId = parseInt(req.params["assessmentId"]);
   const secret = req.query["secret"];
 
   const uploadRequest = await getUploadRequest(secret, assessmentId);
-
-  const videoUpload = await uploadRequest.getVideo();
-
-  const completedOn = videoUpload?.submitted ? videoUpload.updatedAt : null;
 
   if (!uploadRequest) {
     res.status(404).send("Not found");
     return;
   }
+
+  const videoUpload = await uploadRequest.getVideo();
+
+  const completedOn = videoUpload?.submitted ? videoUpload.updatedAt : null;
 
   res.json({
     secret,
@@ -44,7 +44,7 @@ router.get("/assessment-info/:assessmentId", async (req, res) => {
 // });
 
 router.post("/init-upload", async (req, res) => {
-  const assessmentId = req.body["assessmentId"];
+  const assessmentId = parseInt(req.body["assessmentId"]);
   const secret = req.body["secret"];
   const key = `public/${assessmentId}/${secret}.webm`;
 
@@ -67,7 +67,7 @@ router.post("/init-upload", async (req, res) => {
 });
 
 router.post("/next-upload-url", async (req, res) => {
-  const assessmentId = req.body["assessmentId"];
+  const assessmentId = parseInt(req.body["assessmentId"]);
   const secret = req.body["secret"];
   const uploadId = req.body["uploadId"];
   const partNumber = req.body["partNumber"];
@@ -89,7 +89,7 @@ router.post("/next-upload-url", async (req, res) => {
 });
 
 router.post("/complete-upload", async (req, res) => {
-  const assessmentId = req.body["assessmentId"];
+  const assessmentId = parseInt(req.body["assessmentId"]);
   const secret = req.body["secret"];
   const uploadId = req.body["uploadId"];
   const parts = req.body["parts"];
@@ -115,7 +115,7 @@ router.post("/complete-upload", async (req, res) => {
 });
 
 router.post("/submit", async (req, res) => {
-  const assessmentId = req.body["assessmentId"];
+  const assessmentId = parseInt(req.body["assessmentId"]);
   const secret = req.body["secret"];
 
   const uploadRequest = await getUploadRequest(secret, assessmentId);
