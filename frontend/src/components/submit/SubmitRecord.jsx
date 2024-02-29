@@ -79,17 +79,21 @@ const SubmitRecord = ({
         uploadData.current.blobBuffer.push(e.data);
 
         // get the next upload url
-        getNextUploadUrl(
-          assessmentData.id,
-          assessmentData.secret,
-          uploadData.current.uploadId,
-          ++uploadData.current.maxPartNumber,
-        ).then((jsonResponse) => {
-          uploadData.current.uploadUrls.push({
-            partNumber: jsonResponse.partNumber,
-            signedUrl: jsonResponse.signedUrl,
+        uploadData.current.initialization // Wait for the initialization to complete
+          .then(() =>
+            getNextUploadUrl(
+              assessmentData.id,
+              assessmentData.secret,
+              uploadData.current.uploadId,
+              ++uploadData.current.maxPartNumber,
+            ),
+          )
+          .then((jsonResponse) => {
+            uploadData.current.uploadUrls.push({
+              partNumber: jsonResponse.partNumber,
+              signedUrl: jsonResponse.signedUrl,
+            });
           });
-        });
 
         // flush the buffer
         flushBlobBuffer();
@@ -108,18 +112,20 @@ const SubmitRecord = ({
 
       setUploadedVideoUrl(null);
 
-      Promise.all(uploadData.current.promises)
-        .then(() =>
-          completeUpload(
-            assessmentData.id,
-            assessmentData.secret,
-            uploadData.current.uploadId,
-            uploadData.current.parts,
-          ),
-        )
-        .then((jsonResponse) => {
-          setUploadedVideoUrl(jsonResponse.signedUrl);
-        });
+      uploadData.current.initialization.then(flushBlobBuffer).then(() =>
+        Promise.all(uploadData.current.promises)
+          .then(() =>
+            completeUpload(
+              assessmentData.id,
+              assessmentData.secret,
+              uploadData.current.uploadId,
+              uploadData.current.parts,
+            ),
+          )
+          .then((jsonResponse) => {
+            setUploadedVideoUrl(jsonResponse.signedUrl);
+          }),
+      );
 
       setRecording(false);
       setHasRecorded(true);
@@ -130,8 +136,10 @@ const SubmitRecord = ({
     uploadData.current.promises = [];
     uploadData.current.blobBuffer = [];
     uploadData.current.uploadUrls = [];
-
-    initializeUpload(assessmentData.id, assessmentData.secret)
+    uploadData.current.initialization = initializeUpload(
+      assessmentData.id,
+      assessmentData.secret,
+    )
       .then((jsonResponse) => {
         uploadData.current.uploadId = jsonResponse.uploadId;
         uploadData.current.maxPartNumber = jsonResponse.partNumber;
