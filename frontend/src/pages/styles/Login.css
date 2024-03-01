@@ -65,6 +65,21 @@
     sans-serif;
 }
 
+.create-button-disabled{
+  color: #fff;
+  text-align: center;
+  letter-spacing: 0.52px;
+  white-space: nowrap;
+  border-radius: 6px;
+  border: 2px solid #b3bde0;
+  background-color: #b3bde0;
+  justify-content: center;
+  padding: 27px 13px;
+  font:
+    900 13px Roboto,
+    sans-serif;
+}
+
 .back-to-login-button {
   justify-content: center;
   color: #000;

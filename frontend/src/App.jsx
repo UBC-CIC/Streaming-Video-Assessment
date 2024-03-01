@@ -14,6 +14,7 @@ import LoginView from "./pages/LoginView";
 import SubmitView, { loader as SubmitViewLoader } from "./pages/SubmitView";
 import ViewAllSubmissions from "./pages/ViewAllSubmissions";
 import ViewSubmission from "./pages/ViewSubmission";
+import ConfirmSignUpView from "./pages/ConfirmSignUpView";
 
 const router = createBrowserRouter([
   {
@@ -59,6 +60,10 @@ const router = createBrowserRouter([
   {
     path: "/create-account",
     element: <CreateAccountView />,
+  },
+  {
+    path: "/confirm-sign-up",
+    element:<ConfirmSignUpView/>
   },
   {
     path: "/forgot-password",

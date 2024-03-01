@@ -13,6 +13,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "@aws-amplify/auth": "^6.0.16",
     "aws-amplify": "^6.0.13",
     "face-api.js": "^0.22.2",
     "prop-types": "^15.8.1",
