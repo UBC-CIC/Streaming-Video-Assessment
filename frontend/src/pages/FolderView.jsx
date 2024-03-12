@@ -72,7 +72,7 @@ function FolderView({ home = false }) {
       onclick: () => {
         document.getElementById("create-group-modal").showModal();
       },
-      modal: <GroupDialog isEdit={false} />,
+      modal: <GroupDialog isEdit={false} parentId={folderId} />,
     },
     {
       icon: <UploadIcon width={20} height={20} />,

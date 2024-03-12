@@ -63,7 +63,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/confirm-sign-up",
-    element:<ConfirmSignUpView/>
+    element: <ConfirmSignUpView />,
   },
   {
     path: "/forgot-password",

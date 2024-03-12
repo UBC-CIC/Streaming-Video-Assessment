@@ -56,6 +56,7 @@ function FolderPath({ folderPath = [] }) {
       <ul>
         {folderPath.map((path, index) => (
           <Crumb
+            key={index}
             path={path}
             index={index}
             lastPath={index !== folderPath.length - 1}
