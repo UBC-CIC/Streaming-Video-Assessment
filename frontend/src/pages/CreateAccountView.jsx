@@ -32,7 +32,11 @@ function CreateAccountView() {
   const passwordsMatch = password === confirmPassword;
 
   return (
-    <div className="flex flex-col justify-center items-center max-md:px-5">
+    <div className="flex flex-col justify-center items-center max-md:px-5"
+    style={{
+      height: "90vh",
+      // marginTop: "10%"
+    }}>
       <div className="flex w-[344px] max-w-full flex-col items-stretch mt-52 mb-36 max-md:my-10">
         <div className="justify-center text-center text-indigo-500 text-2xl font-black tracking-wider self-stretch">
           CREATE ACCOUNT
@@ -52,6 +56,7 @@ function CreateAccountView() {
         />
         <input
           className="input-field mt-9 max-md:pr-5"
+          style={{border:"2px solid #000", padding: "17.5px 60px 17.5px 17px"}}
           name="password"
           placeholder="Password"
           type="password"
@@ -59,6 +64,7 @@ function CreateAccountView() {
         />
         <input
           className="input-field mt-9 max-md:pr-5"
+          style={{border:"2px solid #000", padding: "17.5px 60px 17.5px 17px"}}
           name="confirm-password"
           placeholder="Confirm Password"
           type="password"
@@ -69,7 +75,7 @@ function CreateAccountView() {
             CREATE ACCOUNT
           </button>
           <button className="back-to-login-button" onClick={onBackToLoginClick}>
-            BACK TO LOGIN
+            BACK
           </button>
         </div>
       </div>

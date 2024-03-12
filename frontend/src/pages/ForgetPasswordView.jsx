@@ -17,7 +17,11 @@ function ForgotPasswordView() {
   };
 
   return (
-    <div className="flex flex-col justify-center items-center max-md:px-5">
+    <div className="flex flex-col justify-center items-center max-md:px-5"
+    style={{
+      height: "90vh",
+      // marginTop: "10%"
+    }}>
       <div className="flex w-[346px] max-w-full flex-col items-stretch mt-72 mb-52 max-md:my-10">
         <div className="justify-center text-indigo-500 text-center text-4xl font-black tracking-widest">
           PASSWORD RESET
@@ -28,18 +32,19 @@ function ForgotPasswordView() {
           placeholder="Email"
           onInput={(e) => setEmail(e.target.value)}
         />
-        <button
-          className="forgot-button max-md:mt-10"
-          onClick={onResetPasswordClick}
-        >
-          RESET PASSWORD
-        </button>
-        <button
-          className="back-to-login-button mt-14 max-md:mt-10"
-          onClick={onBackToLoginClick}
-        >
-          BACK TO LOGIN
-        </button>
+        <div className="flex items-stretch justify-between gap-5 mt-12 max-md:mt-10">
+          <button
+            className="forgot-button max-md:mt-10"
+            onClick={onResetPasswordClick}
+          >
+            RESET PASSWORD
+          </button>
+          <button
+            className="back-to-login-button max-md:mt-10"
+            onClick={onBackToLoginClick} >
+            BACK
+          </button>
+        </div>
       </div>
     </div>
   );
