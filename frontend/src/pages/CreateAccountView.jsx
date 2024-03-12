@@ -30,6 +30,8 @@ function CreateAccountView() {
   };
 
   const passwordsMatch = password === confirmPassword;
+  const passwordRules = password.length > 5;
+  const passwordExists = password.length > 0;
 
   return (
     <div className="flex flex-col justify-center items-center max-md:px-5"
@@ -70,8 +72,11 @@ function CreateAccountView() {
           type="password"
           onInput={(e) => setConfirmPassword(e.target.value)}
         />
+        {passwordRules == false && passwordExists && 
+        <div className="justify-center text-center text-red-500 tracking-wider self-stretch"
+        style={{padding: "20px 0px 0px 0px"}}>Password must be 6 characters or longer</div>}
         <div className="flex items-stretch justify-between gap-5 mt-12 max-md:mt-10">
-          <button className={passwordsMatch && password.length > 0 ? "create-button" : "create-button-disabled"} onClick={onCreateAccountClick} disabled={!passwordsMatch}>
+          <button className={passwordsMatch && passwordRules ? "create-button" : "create-button-disabled"} onClick={onCreateAccountClick} disabled={!passwordsMatch}>
             CREATE ACCOUNT
           </button>
           <button className="back-to-login-button" onClick={onBackToLoginClick}>
