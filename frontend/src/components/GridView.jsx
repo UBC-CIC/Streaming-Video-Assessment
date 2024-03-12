@@ -4,7 +4,7 @@ import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 
 function GridView({ folderData }) {
-  const { files = [] } = folderData;
+  const { files = [], id } = folderData;
 
   const sortByDateModified = (a, b) => {
     const dateA = new Date(a.dateModified);
@@ -21,8 +21,8 @@ function GridView({ folderData }) {
   return (
     <div className="w-full self-start max-md:mt-10">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-6">
-        {sortedInputs.map((file) => (
-          <DndProvider backend={HTML5Backend}>
+        {sortedInputs.map((file, index) => (
+          <DndProvider backend={HTML5Backend} key={index}>
             <File key={file.id} file={file} />
           </DndProvider>
         ))}
