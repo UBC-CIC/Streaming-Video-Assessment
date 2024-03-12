@@ -20,6 +20,10 @@ const submissionRouter = require("./routers/submission");
 const app = express();
 app.use(bodyParser.json());
 app.use(awsServerlessExpressMiddleware.eventContext());
+app.use(function (req, res, next) {
+  req["userEmail"] = "hmitgang@student.ubc.ca";
+  next();
+});
 
 // Enable CORS for all methods
 app.use(function (req, res, next) {
