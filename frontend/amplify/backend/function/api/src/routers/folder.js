@@ -27,6 +27,28 @@ router.get("/:folderId", async (req, res) => {
   }
 });
 
+router.post("/move", async (req, res) => {
+  try {
+    // These sequelize models must have the "move" method
+    const file = {
+      folder,
+      assessment: sequelize.models.assessment,
+      group: sequelize.models.uploaderGroup,
+    }[req.body.file.type];
+
+    const newFolderId = req.body.newFolderId;
+
+    // TODO: insure ownership
+    const toMove = await file.findByPk(req.body.file.id);
+
+    const updatedFile = await toMove.move(newFolderId);
+    res.json({ success: "post call succeed!", data: updatedFile });
+  } catch (e) {
+    console.log("POST call failed: ", e);
+    res.status(500).json({ error: "POST call failed", error: e });
+  }
+});
+
 router.post("/", async (req, res) => {
   try {
     const folderObj = {

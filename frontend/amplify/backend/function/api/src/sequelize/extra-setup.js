@@ -94,9 +94,9 @@ function applyExtraSetup(sequelize) {
   };
 
   folder.prototype.move = async function (newParentId) {
-    const newParent = folder.findOneByPk(newParentId);
+    const newParent = await folder.findByPk(newParentId);
 
-    if (newParent.getOwner() !== this.getOwner()) {
+    if (newParent.ownerId !== this.ownerId) {
       throw new Error("You can only move folders to folders owned by you");
     }
 
@@ -106,13 +106,17 @@ function applyExtraSetup(sequelize) {
   assessment.prototype.move = async function (newFolderId) {
     if (this.folderId === newFolderId) return;
 
-    const folders = folder.find({
+    // TODO: check that newFolder isnt a distant parent of this.
+
+    const folders = await folder.findAll({
       where: { id: [this.folderId, newFolderId] },
     });
 
     if (folders.length < 2) {
       throw new Error("One or both of the folders does not exist");
     }
+
+    console.log(folders);
 
     if (folders[0].ownerId !== folders[1].ownerId) {
       throw new Error("You can only move assessments to folders owned by you");
@@ -170,7 +174,7 @@ function applyExtraSetup(sequelize) {
   uploaderGroup.prototype.move = async function (newFolderId) {
     if (this.folderId === newFolderId) return;
 
-    const folders = folder.find({
+    const folders = await folder.findAll({
       where: { id: [this.folderId, newFolderId] },
     });
 
