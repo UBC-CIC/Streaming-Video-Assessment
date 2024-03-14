@@ -1,4 +1,4 @@
-import { get, post } from "aws-amplify/api";
+import { get, post, put } from "aws-amplify/api";
 
 export const getFolderData = async (folderId) => {
   try {
@@ -43,7 +43,7 @@ export const createFolder = async (folderName, parentId, userId) => {
 
 export const moveFile = async (file, newFolder) => {
   try {
-    const restOperation = post({
+    const restOperation = put({
       apiName: "backend",
       path: "/api/folder/move",
       options: {
@@ -55,10 +55,10 @@ export const moveFile = async (file, newFolder) => {
     });
     const { body } = await restOperation.response;
     const response = await body.json();
-    console.log("POST call succeeded: ", response);
+    console.log("PUT call succeeded: ", response);
     return response.data;
   } catch (error) {
-    console.error("POST call failed: ", error);
+    console.error("PUT call failed: ", error);
   }
 
   return null;

@@ -52,7 +52,6 @@ function FolderView({ home = false }) {
     const fetchFolderData = async () => {
       const fetchedFolderData = await getFolderData(folderId);
       setFolderData(fetchedFolderData);
-      console.log(folderData);
     };
     fetchFolderData();
     document.title = folderData.name;
