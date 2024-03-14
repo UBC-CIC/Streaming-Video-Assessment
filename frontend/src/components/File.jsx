@@ -122,11 +122,7 @@ function File({ file, removeFile }) {
           >
             <BsThreeDots size={22} />
           </button>
-          <ul
-            // @aryang13, what is this?
-            // tabindex="0"
-            className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-40"
-          >
+          <ul className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-40">
             {/* <li onClick={moveHandler}>
               <a>Move</a>
             </li> */}
@@ -152,6 +148,7 @@ function File({ file, removeFile }) {
         <GroupDialog
           isEdit={true}
           groupId={file.id}
+          parentId={file.folderId}
           isOpen={isOpen}
           setIsOpen={setIsOpen}
         />
