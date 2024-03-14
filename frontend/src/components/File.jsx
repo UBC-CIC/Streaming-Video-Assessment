@@ -85,7 +85,10 @@ function File({ file, removeFile }) {
 
         if (!item || !dropResult) return;
 
-        if (item.type !== "folder" || dropResult.file.id !== item.file.id) {
+        if (
+          item.file.type !== "folder" ||
+          dropResult.file.id !== item.file.id
+        ) {
           moveFile(item.file, dropResult.file).then(() => {
             removeFile(item.file);
           });

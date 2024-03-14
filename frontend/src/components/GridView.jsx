@@ -21,7 +21,7 @@ function GridView({ folderData, removeFile, addFile }) {
   return (
     <div className="w-full self-start max-md:mt-10">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-6">
-        {sortedInputs.map((file) => (
+        {sortedInputs.map((file, index) => (
           <DndProvider backend={HTML5Backend} key={index}>
             <File
               key={file.type + file.id}
