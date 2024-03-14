@@ -1,13 +1,23 @@
 import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
 import { IoIosInformationCircleOutline } from "react-icons/io";
 import GroupList from "./GroupList";
-import { getGroupInfo } from "../../helpers/submissionCreatorApi";
+import {
+  getGroupInfo,
+  createNewGroup,
+} from "../../helpers/submissionCreatorApi";
 
-function GroupDialog({ isEdit, groupId = "", isOpen = false, setIsOpen }) {
+function GroupDialog({
+  isEdit,
+  groupId = null,
+  parentId = null,
+  isOpen = false,
+  setIsOpen = () => {},
+}) {
+  const navigate = useNavigate();
   const initialGroupListRef = useRef([]);
-  const [groupList, setGroupList] = useState([]); // [{name: "", email: ""}
-  const [groupInfo, setGroupInfo] = useState(null);
+  const [groupList, setGroupList] = useState([]); // [{name: "", email: ""}]
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [groupName, setGroupName] = useState("");
@@ -18,7 +28,7 @@ function GroupDialog({ isEdit, groupId = "", isOpen = false, setIsOpen }) {
     setGroupList(newGroupList);
   };
 
-  const createGroup = () => {
+  const createGroup = async () => {
     if (
       JSON.stringify(initialGroupListRef.current) === JSON.stringify(groupList)
     ) {
@@ -29,15 +39,19 @@ function GroupDialog({ isEdit, groupId = "", isOpen = false, setIsOpen }) {
     if (isEdit) {
       // TODO: call update API
     } else {
-      // TODO: call create API
+      const res = await createNewGroup(groupName, parentId, groupList);
+      if (res.success) {
+        alert("Group created successfully");
+      } else {
+        alert("Group creation failed");
+      }
     }
-    console.log("creating group");
-    console.log(groupName, groupList);
     setGroupList([]);
     setName("");
     setEmail("");
     setGroupName("");
     setIsOpen(false);
+    navigate(0);
   };
 
   useEffect(() => {
@@ -49,14 +63,12 @@ function GroupDialog({ isEdit, groupId = "", isOpen = false, setIsOpen }) {
         groupInfo = await getGroupInfo(groupId);
         fetchedGroupList = groupInfo.users;
         setGroupList(fetchedGroupList);
-        setGroupInfo(groupInfo);
         setGroupName(groupInfo.name);
       }
 
       // Update the mutable value in the useRef
       initialGroupListRef.current = fetchedGroupList;
     };
-
     // Call the async function
     fetchGroupList();
   }, [isOpen, groupId, isEdit]);
@@ -161,7 +173,8 @@ function GroupDialog({ isEdit, groupId = "", isOpen = false, setIsOpen }) {
 
 GroupDialog.propTypes = {
   isEdit: PropTypes.bool.isRequired,
-  groupId: PropTypes.string,
+  groupId: PropTypes.number,
+  parentId: PropTypes.number,
   isOpen: PropTypes.bool,
   setIsOpen: PropTypes.func,
 };

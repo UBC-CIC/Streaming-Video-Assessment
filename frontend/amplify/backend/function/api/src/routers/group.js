@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const sequelize = require("../sequelize");
-const { uploaderGroup } = sequelize.models;
+const { uploaderGroup, uploader } = sequelize.models;
 
 // Define your routes here
 router.get("/:groupId", async (req, res) => {
@@ -11,8 +11,28 @@ router.get("/:groupId", async (req, res) => {
   res.json({ success: "get call succeed!", data: group });
 });
 
-router.post("/", (req, res) => {
-  res.json({ success: "post call succeed!", url: req.url, body: req.body });
+router.post("/", async (req, res) => {
+  // Create a group
+  const newGroup = await uploaderGroup.create({
+    name: req.body.name,
+    folderId: req.body.folderId,
+  });
+
+  // Create and add users to the group
+  const promises = req.body.users.map(async (user) => {
+    return uploader.findOrCreate({
+      where: { email: user.email },
+      defaults: { name: user.name },
+    });
+  });
+
+  const users = await Promise.all(promises).then((users) => {
+    return users.map((user) => user[0]);
+  });
+
+  await newGroup.addUploaders(users);
+
+  res.json({ success: "post call succeed!", url: req.url, body: newGroup });
 });
 
 router.put("/:groupId", (req, res) => {

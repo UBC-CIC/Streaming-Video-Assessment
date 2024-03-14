@@ -123,25 +123,22 @@ function File({ file }) {
   const backgroundColor = selectBackgroundColor();
 
   return (
-    <div ref={drop} class="pt-3">
+    <div ref={drop} className="pt-3">
       <div
         ref={drag}
-        class="w-full rounded-3xl max-w-sm bg-gray-300 border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
+        className="w-full rounded-3xl max-w-sm bg-gray-300 border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
         style={{ backgroundColor, opacity }}
       >
-        <div class="dropdown dropdown-bottom dropdown-end flex justify-end px-2 pt-1">
+        <div className="dropdown dropdown-bottom dropdown-end flex justify-end px-2 pt-1">
           <button
             id="dropdownButton"
             data-dropdown-toggle="dropdown"
-            class="inline-block text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:ring-4 focus:outline-none focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-1.5"
+            className="inline-block text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:ring-4 focus:outline-none focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-1.5"
             type="button"
           >
             <BsThreeDots size={22} />
           </button>
-          <ul
-            tabindex="0"
-            class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-40"
-          >
+          <ul className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-40">
             <li onClick={moveHandler}>
               <a>Move</a>
             </li>
@@ -149,16 +146,16 @@ function File({ file }) {
               <a>Rename</a>
             </li>
             <li onClick={deleteHandler}>
-              <a class="text-rose-600">Delete</a>
+              <a className="text-rose-600">Delete</a>
             </li>
           </ul>
         </div>
         <div
-          class="flex flex-col items-center pb-5 cursor-pointer"
+          className="flex flex-col items-center pb-5 cursor-pointer"
           onClick={onClickHandler}
         >
           {icon}
-          <h5 class="mb-1 text-xl font-medium text-gray-900 dark:text-white truncate w-[95%] text-center">
+          <h5 className="mb-1 text-xl font-medium text-gray-900 dark:text-white truncate w-[95%] text-center">
             {file.name}
           </h5>
         </div>
@@ -167,6 +164,7 @@ function File({ file }) {
         <GroupDialog
           isEdit={true}
           groupId={file.id}
+          parentId={file.folderId}
           isOpen={isOpen}
           setIsOpen={setIsOpen}
         />
