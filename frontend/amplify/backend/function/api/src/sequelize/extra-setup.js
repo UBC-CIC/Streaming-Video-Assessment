@@ -93,6 +93,58 @@ function applyExtraSetup(sequelize) {
     return path;
   };
 
+  folder.prototype.move = async function (newParentId) {
+    const newParent = await folder.findByPk(newParentId);
+
+    if (newParent.ownerId !== this.ownerId) {
+      throw new Error("You can only move folders to folders owned by you");
+    }
+
+    return await this.update({ parentId: newParentId });
+  };
+
+  assessment.prototype.move = async function (newFolderId) {
+    if (this.folderId === newFolderId) return;
+
+    // TODO: check that newFolder isnt a distant parent of this.
+
+    const folders = await folder.findAll({
+      where: { id: [this.folderId, newFolderId] },
+    });
+
+    if (folders.length < 2) {
+      throw new Error("One or both of the folders does not exist");
+    }
+
+    console.log(folders);
+
+    if (folders[0].ownerId !== folders[1].ownerId) {
+      throw new Error("You can only move assessments to folders owned by you");
+    }
+
+    return this.update({ folderId: newFolderId });
+  };
+
+  uploaderGroup.prototype.move = async function (newFolderId) {
+    if (this.folderId === newFolderId) return;
+
+    const folders = await folder.findAll({
+      where: { id: [this.folderId, newFolderId] },
+    });
+
+    if (folders.length < 2) {
+      throw new Error("One or both of the folders does not exist");
+    }
+
+    if (folders[0].ownerId !== folders[1].ownerId) {
+      throw new Error(
+        "You can only move Uploader Groups to folders owned by you",
+      );
+    }
+
+    return this.update({ folderId: newFolderId });
+  };
+
   uploadRequest.prototype.getVideo = async function () {
     return await video.findOne({
       where: { uploaderId: this.uploaderId, assessmentId: this.assessmentId },

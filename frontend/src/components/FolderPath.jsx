@@ -6,27 +6,24 @@ function Crumb({ path, index, lastPath, allowedDropEffect = "any" }) {
   const navigate = useNavigate();
 
   const handlePathClick = (id) => {
-    if (id === 1) {
+    if (index === 0) {
       return navigate(`/home`);
     }
 
     return navigate(`/folder/${id}`);
   };
 
-  const [{ canDrop, isOver }, drop] = useDrop(
-    () => ({
-      accept: ["group", "folder", "assessment"],
-      drop: () => ({
-        name: path.name,
-        allowedDropEffect: "folderPath",
-      }),
-      collect: (monitor) => ({
-        isOver: monitor.isOver(),
-        canDrop: monitor.canDrop(),
-      }),
+  const [{ canDrop, isOver }, drop] = useDrop(() => ({
+    accept: ["group", "folder", "assessment"],
+    drop: () => ({
+      file: { ...path, type: "folder" },
+      allowedDropEffect: "folderPath",
     }),
-    ["folderPath"],
-  );
+    collect: (monitor) => ({
+      isOver: monitor.isOver(),
+      canDrop: monitor.canDrop(),
+    }),
+  }));
 
   const underline = canDrop && isOver ? "underline" : "";
 

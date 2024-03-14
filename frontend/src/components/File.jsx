@@ -7,8 +7,9 @@ import UploadIcon from "../assets/icons/UploadIcon";
 import GroupDialog from "./dialogs/GroupDialog";
 import { useDrag, useDrop } from "react-dnd";
 import { BsThreeDots } from "react-icons/bs";
+import { moveFile } from "../helpers/submissionCreatorApi";
 
-function File({ file }) {
+function File({ file, removeFile }) {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -32,7 +33,7 @@ function File({ file }) {
           navigate(`/folder/${file.id}`);
         };
       case "group":
-        return async () => {
+        return () => {
           setIsOpen(true);
           document.getElementById("edit-group-modal").showModal();
         };
@@ -47,13 +48,7 @@ function File({ file }) {
 
   const icon = getIcon();
   const onClickHandler = getOnClickFunction();
-  const moveHandler = () => {
-    const elem = document.activeElement;
-    if (elem) {
-      elem?.blur();
-    }
-    console.log("move");
-  };
+
   const renameHandler = () => {
     const elem = document.activeElement;
     if (elem) {
@@ -69,49 +64,41 @@ function File({ file }) {
     console.log("delete");
   };
 
-  const [{ canDrop, isOver }, drop] = useDrop(
-    () => ({
-      accept: file.type != "folder" ? [] : ["group", "folder", "assessment"],
-      drop: () => ({
-        name: file.name,
-        allowedDropEffect: "folder",
-      }),
-      collect: (monitor) => ({
-        isOver: monitor.isOver(),
-        canDrop: monitor.canDrop(),
-      }),
+  const [{ canDrop, isOver }, drop] = useDrop(() => ({
+    accept: file.type != "folder" ? [] : ["group", "folder", "assessment"],
+    drop: () => ({
+      file,
+      allowedDropEffect: "folder",
     }),
-    ["folder"],
-  );
+    collect: (monitor) => ({
+      isOver: monitor.isOver(),
+      canDrop: monitor.canDrop(),
+    }),
+  }));
 
   const [{ opacity }, drag] = useDrag(
     () => ({
       type: file.type,
-      item: { name: file.name },
+      item: { file },
       end(item, monitor) {
-        // TODO: add logic for moving files
         const dropResult = monitor.getDropResult();
-        if (item && dropResult) {
-          let alertMessage = "";
-          if (
-            dropResult.allowedDropEffect === "folder" &&
-            dropResult.name !== file.name
-          ) {
-            // const isCopyAction = dropResult.dropEffect === "copy";
-            // const actionName = isCopyAction ? "copied" : "moved";
-            // alertMessage = `You ${actionName} ${item.name} into ${dropResult.name}!`;
-            // alert(alertMessage);
-            console.log("dropped into folder");
-          } else if (dropResult.allowedDropEffect === "folderPath") {
-            console.log("dropped into folder path");
-          }
+
+        if (!item || !dropResult) return;
+
+        if (
+          item.file.type !== "folder" ||
+          dropResult.file.id !== item.file.id
+        ) {
+          moveFile(item.file, dropResult.file).then(() => {
+            removeFile(item.file);
+          });
         }
       },
       collect: (monitor) => ({
         opacity: monitor.isDragging() ? 0.4 : 1,
       }),
     }),
-    [file.name],
+    [file],
   );
 
   const isActive = canDrop && isOver;
@@ -139,9 +126,9 @@ function File({ file }) {
             <BsThreeDots size={22} />
           </button>
           <ul className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-40">
-            <li onClick={moveHandler}>
+            {/* <li onClick={moveHandler}>
               <a>Move</a>
-            </li>
+            </li> */}
             <li onClick={renameHandler}>
               <a>Rename</a>
             </li>

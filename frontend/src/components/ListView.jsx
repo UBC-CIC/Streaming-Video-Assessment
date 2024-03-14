@@ -1,7 +1,10 @@
 import PropTypes from "prop-types";
-import ListViewRow from "./ListViewRow";
+import ListViewFile from "./ListViewFile";
 
-function ListView({ folderData }) {
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
+
+function ListView({ folderData, removeFile }) {
   const { files } = folderData;
 
   const sortByDateModified = (a, b) => {
@@ -29,11 +32,16 @@ function ListView({ folderData }) {
             <th className="p-2"></th>
           </tr>
         </thead>
-        <tbody>
-          {sortedInputs.map((row, index) => (
-            <ListViewRow key={index} index={index} row={row} />
-          ))}
-        </tbody>
+        {sortedInputs.map((file, index) => (
+          <DndProvider backend={HTML5Backend}>
+            <ListViewFile
+              key={index}
+              index={index}
+              file={file}
+              removeFile={removeFile}
+            />
+          </DndProvider>
+        ))}
       </table>
     </div>
   );
