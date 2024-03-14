@@ -16,13 +16,32 @@ const groupRouter = require("./routers/group");
 const assessmentRouter = require("./routers/assessment");
 const submissionRouter = require("./routers/submission");
 
+// user auth import
+const {CognitoJwtVerifier} = require('aws-jwt-verify');
+
+const verifier = CognitoJwtVerifier.create({
+  userPoolId: 'ca-central-1_RGMoyaPVY',
+  tokenUse: 'access',
+});
+
 // declare a new express app
 const app = express();
 app.use(bodyParser.json());
 app.use(awsServerlessExpressMiddleware.eventContext());
-app.use(function (req, res, next) {
-  req["userEmail"] = "hmitgang@student.ubc.ca";
-  next();
+app.use(async function (req, res, next){
+  console.log("headers: ", req.headers);
+  console.log("authorization header: ", req.headers.authorization);
+  try{const token = req.headers.authorization?.split(' ')[1];
+  if(!token) return res.status(401).json({message: "Unauthorized"});
+
+  const payload = await verifier.verify(token);
+  console.log('Token is valid. JWT payload: ', payload);
+
+  req["userEmail"] = payload.email;
+  next();} catch(err){
+    console.log(err);
+    res.status(401).json({message: "Unauthorized: Invalid token"});
+  }
 });
 
 // Enable CORS for all methods

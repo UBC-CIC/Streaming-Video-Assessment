@@ -1,24 +1,20 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import "./styles/Login.css";
-import { handleSignIn, handleSignOut, checkUserSignInStatus } from "../helpers/authenticationHandler";
+import { handleSignIn, handleSignOut, checkUserSignInStatus, getJwtToken } from "../helpers/authenticationHandler";
 
 function LoginView() {
   const location = useLocation();
   const [email, setEmail] = useState(location.state &&location.state.email ? location.state.email : "");
   const [password, setPassword] = useState(location.state&& location.state.password ? location.state.password : "");
   const navigate = useNavigate();
-  const [authenticating, isAuthenticating] = useState(false);
 
   const onLoginClick = async () => {
-    // TODO: Add login logic here
-    isAuthenticating(true);
     console.log("signing in");
     if (await checkUserSignInStatus()) {
       navigate("/home");
       return;
     }
-    // console.log(email, password);
     const { isSignedIn, nextStep } = await handleSignIn({
       email: email, password: password
     });
@@ -30,12 +26,24 @@ function LoginView() {
       return;
     }
     else if (!isSignedIn) {
-      isAuthenticating(false);
       alert("Invalid email or password");
       return;
     }
     if(nextStep.signInStep == "DONE"){
-      navigate("/home");
+      const token = await getJwtToken();
+      fetch("/auth",{
+        method:"POST",
+        headers:{
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({email:email}),
+      }).then(res=> res.json())
+      .then(data=>{
+        console.log(data);
+        // navigate("/home");
+      })
+      .catch(err=>console.log(err));
     } else{
       alert("Invalid email or password");
     }

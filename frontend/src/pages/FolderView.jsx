@@ -1,6 +1,7 @@
 import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
 import { GoPlus } from "react-icons/go";
+import { FaSignOutAlt } from "react-icons/fa";
 import { useLoaderData, useNavigate } from "react-router-dom";
 import FolderIcon from "../assets/icons/FolderIcon";
 import GroupIcon from "../assets/icons/GroupIcon";
@@ -16,6 +17,7 @@ import GroupDialog from "../components/dialogs/GroupDialog";
 import { getFolderData } from "../helpers/submissionCreatorApi";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
+import { handleSignOut } from "../helpers/authenticationHandler";
 
 function loader({ params }) {
   let folderId = null;
