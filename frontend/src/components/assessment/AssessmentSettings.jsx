@@ -69,6 +69,7 @@ function AssessmentSettings({
       <div className="flex flex-row text-xl w-full">
         Close Submission On:
         <div className="pl-5 flex items-center">
+          {/* TODO: test if there is timezone issues */}
           <input
             type="datetime-local"
             value={dueDate}

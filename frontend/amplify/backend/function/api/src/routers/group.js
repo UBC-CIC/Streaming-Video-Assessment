@@ -19,13 +19,18 @@ router.post("/", async (req, res) => {
   });
 
   // Create and add users to the group
-  for (let user of req.body.users) {
-    const [uploaderObj, _] = await uploader.findOrCreate({
+  const promises = req.body.users.map(async (user) => {
+    return uploader.findOrCreate({
       where: { email: user.email },
       defaults: { name: user.name },
     });
-    await newGroup.addUploader(uploaderObj);
-  }
+  });
+
+  const users = await Promise.all(promises).then((users) => {
+    return users.map((user) => user[0]);
+  });
+
+  await newGroup.addUploaders(users);
 
   res.json({ success: "post call succeed!", url: req.url, body: newGroup });
 });

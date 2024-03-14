@@ -90,7 +90,6 @@ function CreateAndEditSubmission({ edit = false }) {
       };
 
       const message = await createAssessment(data);
-      console.log(message);
       if (message.success) {
         alert("Assessment created successfully");
         navigate(`/submission/${message.body.id}`);
