@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import "./styles/Login.css";
-import { handleSignIn, handleSignOut, checkUserSignInStatus, getJwtToken } from "../helpers/authenticationHandler";
+import { handleSignIn, handleSignOut, checkUserSignInStatus, getJwtTokens } from "../helpers/authenticationHandler";
+import {testAuth } from "../helpers/authApi.js"
 
 function LoginView() {
   const location = useLocation();
@@ -10,9 +11,11 @@ function LoginView() {
   const navigate = useNavigate();
 
   const onLoginClick = async () => {
+    console.log("signing out");
+    await handleSignOut();
     console.log("signing in");
     if (await checkUserSignInStatus()) {
-      navigate("/home");
+      // navigate("/home");
       return;
     }
     const { isSignedIn, nextStep } = await handleSignIn({
@@ -30,20 +33,10 @@ function LoginView() {
       return;
     }
     if(nextStep.signInStep == "DONE"){
-      const token = await getJwtToken();
-      fetch("/auth",{
-        method:"POST",
-        headers:{
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({email:email}),
-      }).then(res=> res.json())
-      .then(data=>{
-        console.log(data);
-        // navigate("/home");
-      })
-      .catch(err=>console.log(err));
+      const {accessToken, idToken} = await getJwtTokens();
+      console.log("idToken: ", idToken);
+      console.log("accessToken: ", accessToken);
+      testAuth(idToken);
     } else{
       alert("Invalid email or password");
     }

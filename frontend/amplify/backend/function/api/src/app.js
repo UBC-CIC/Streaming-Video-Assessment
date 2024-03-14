@@ -28,21 +28,6 @@ const verifier = CognitoJwtVerifier.create({
 const app = express();
 app.use(bodyParser.json());
 app.use(awsServerlessExpressMiddleware.eventContext());
-app.use(async function (req, res, next){
-  console.log("headers: ", req.headers);
-  console.log("authorization header: ", req.headers.authorization);
-  try{const token = req.headers.authorization?.split(' ')[1];
-  if(!token) return res.status(401).json({message: "Unauthorized"});
-
-  const payload = await verifier.verify(token);
-  console.log('Token is valid. JWT payload: ', payload);
-
-  req["userEmail"] = payload.email;
-  next();} catch(err){
-    console.log(err);
-    res.status(401).json({message: "Unauthorized: Invalid token"});
-  }
-});
 
 // Enable CORS for all methods
 app.use(function (req, res, next) {
@@ -50,7 +35,23 @@ app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Headers", "*");
   next();
 });
+app.use(async function (req, res, next){
+  console.log("headers: ", req.headers);
+  console.log("authorization header: ", req.headers.authorization);
+  try {
+    const token = req.headers.authorization?.split(" ")[1];
+    if (!token) return res.status(401).json({ message: "Unauthorized" });
 
+    const payload = await verifier.verify(token);
+    console.log("Token is valid. JWT payload: ", payload);
+
+    req["userEmail"] = payload.email;
+    next();
+  } catch (err) {
+    console.log(err);
+    res.status(401).json({ message: "Unauthorized: Invalid token" });
+  }
+}); 
 app.use("/api/folder", folderRouter);
 app.use("/api/group", groupRouter);
 app.use("/api/assessment", assessmentRouter);

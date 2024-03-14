@@ -1,4 +1,4 @@
-import {signUp, signIn, autoSignIn ,signOut, getCurrentUser, confirmSignUp, currentSession} from 'aws-amplify/auth';
+import {signUp, signIn, autoSignIn ,signOut, getCurrentUser, confirmSignUp, fetchAuthSession} from 'aws-amplify/auth';
 
 export async function handleSignUp({email, password}){
     try{
@@ -89,11 +89,11 @@ export async function checkUserSignInStatus(){
     }
 }
 
-export async function getJwtToken(){
-    currentSession().then(res=>{
-        let accessToken = res.getAccessToken();
-        let jwtToken = accessToken.getJwtToken();
-        console.log(jwtToken);
-        return jwtToken;
-    })
+export async function getJwtTokens(){
+    try {
+        const { accessToken, idToken } = (await fetchAuthSession()).tokens ?? {};
+        return { accessToken, idToken };
+      } catch (err) {
+        console.log(err);
+      }
 }
