@@ -52,10 +52,23 @@ function FolderView({ home = false }) {
     const fetchFolderData = async () => {
       const fetchedFolderData = await getFolderData(folderId);
       setFolderData(fetchedFolderData);
+      console.log(folderData);
     };
     fetchFolderData();
     document.title = folderData.name;
   }, [folderData.name, folderId]);
+
+  const removeFile = (file) => {
+    const newContents = folderData.files.filter(
+      (f) => f.id !== file.id || f.type !== file.type,
+    );
+    setFolderData({ ...folderData, files: newContents });
+  };
+
+  const addFile = (file) => {
+    const newContents = folderData.files.push(file);
+    setFolderData({ ...folderData, files: newContents });
+  };
 
   const dropdownItems = [
     {
@@ -103,9 +116,18 @@ function FolderView({ home = false }) {
         </div>
       </div>
       {view === "grid" ? (
-        <GridView folderData={folderData} />
+        <GridView
+          folderData={folderData}
+          removeFile={removeFile}
+          addFile={addFile}
+        />
       ) : (
-        <ListView folderData={folderData} />
+        // TODO: add drag and drop functionality
+        <ListView
+          folderData={folderData}
+          removeFile={removeFile}
+          addFile={addFile}
+        />
       )}
     </div>
   );

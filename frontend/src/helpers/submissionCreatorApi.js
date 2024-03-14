@@ -41,6 +41,29 @@ export const createFolder = async (folderName, parentId, userId) => {
   return null;
 };
 
+export const moveFile = async (file, newFolder) => {
+  try {
+    const restOperation = post({
+      apiName: "backend",
+      path: "/api/folder/move",
+      options: {
+        body: {
+          file,
+          newFolderId: newFolder.id,
+        },
+      },
+    });
+    const { body } = await restOperation.response;
+    const response = await body.json();
+    console.log("POST call succeeded: ", response);
+    return response.data;
+  } catch (error) {
+    console.error("POST call failed: ", error);
+  }
+
+  return null;
+};
+
 export const getGroupInfo = async (groupId) => {
   try {
     const restOperation = get({
