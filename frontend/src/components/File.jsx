@@ -7,8 +7,9 @@ import UploadIcon from "../assets/icons/UploadIcon";
 import GroupDialog from "./dialogs/GroupDialog";
 import { useDrag, useDrop } from "react-dnd";
 import { BsThreeDots } from "react-icons/bs";
+import { moveFile } from "../helpers/submissionCreatorApi";
 
-function File({ file }) {
+function File({ file, removeFile }) {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -32,7 +33,7 @@ function File({ file }) {
           navigate(`/folder/${file.id}`);
         };
       case "group":
-        return async () => {
+        return () => {
           setIsOpen(true);
           document.getElementById("edit-group-modal").showModal();
         };
@@ -47,13 +48,7 @@ function File({ file }) {
 
   const icon = getIcon();
   const onClickHandler = getOnClickFunction();
-  const moveHandler = () => {
-    const elem = document.activeElement;
-    if (elem) {
-      elem?.blur();
-    }
-    console.log("move");
-  };
+
   const renameHandler = () => {
     const elem = document.activeElement;
     if (elem) {
@@ -69,49 +64,41 @@ function File({ file }) {
     console.log("delete");
   };
 
-  const [{ canDrop, isOver }, drop] = useDrop(
-    () => ({
-      accept: file.type != "folder" ? [] : ["group", "folder", "assessment"],
-      drop: () => ({
-        name: file.name,
-        allowedDropEffect: "folder",
-      }),
-      collect: (monitor) => ({
-        isOver: monitor.isOver(),
-        canDrop: monitor.canDrop(),
-      }),
+  const [{ canDrop, isOver }, drop] = useDrop(() => ({
+    accept: file.type != "folder" ? [] : ["group", "folder", "assessment"],
+    drop: () => ({
+      file,
+      allowedDropEffect: "folder",
     }),
-    ["folder"],
-  );
+    collect: (monitor) => ({
+      isOver: monitor.isOver(),
+      canDrop: monitor.canDrop(),
+    }),
+  }));
 
   const [{ opacity }, drag] = useDrag(
     () => ({
       type: file.type,
-      item: { name: file.name },
+      item: { file },
       end(item, monitor) {
-        // TODO: add logic for moving files
         const dropResult = monitor.getDropResult();
-        if (item && dropResult) {
-          let alertMessage = "";
-          if (
-            dropResult.allowedDropEffect === "folder" &&
-            dropResult.name !== file.name
-          ) {
-            // const isCopyAction = dropResult.dropEffect === "copy";
-            // const actionName = isCopyAction ? "copied" : "moved";
-            // alertMessage = `You ${actionName} ${item.name} into ${dropResult.name}!`;
-            // alert(alertMessage);
-            console.log("dropped into folder");
-          } else if (dropResult.allowedDropEffect === "folderPath") {
-            console.log("dropped into folder path");
-          }
+
+        if (!item || !dropResult) return;
+
+        if (
+          item.file.type !== "folder" ||
+          dropResult.file.id !== item.file.id
+        ) {
+          moveFile(item.file, dropResult.file).then(() => {
+            removeFile(item.file);
+          });
         }
       },
       collect: (monitor) => ({
         opacity: monitor.isDragging() ? 0.4 : 1,
       }),
     }),
-    [file.name],
+    [file],
   );
 
   const isActive = canDrop && isOver;
@@ -123,42 +110,39 @@ function File({ file }) {
   const backgroundColor = selectBackgroundColor();
 
   return (
-    <div ref={drop} class="pt-3">
+    <div ref={drop} className="pt-3">
       <div
         ref={drag}
-        class="w-full rounded-3xl max-w-sm bg-gray-300 border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
+        className="w-full rounded-3xl max-w-sm bg-gray-300 border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
         style={{ backgroundColor, opacity }}
       >
-        <div class="dropdown dropdown-bottom dropdown-end flex justify-end px-2 pt-1">
+        <div className="dropdown dropdown-bottom dropdown-end flex justify-end px-2 pt-1">
           <button
             id="dropdownButton"
             data-dropdown-toggle="dropdown"
-            class="inline-block text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:ring-4 focus:outline-none focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-1.5"
+            className="inline-block text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:ring-4 focus:outline-none focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-1.5"
             type="button"
           >
             <BsThreeDots size={22} />
           </button>
-          <ul
-            tabindex="0"
-            class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-40"
-          >
-            <li onClick={moveHandler}>
+          <ul className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-40">
+            {/* <li onClick={moveHandler}>
               <a>Move</a>
-            </li>
+            </li> */}
             <li onClick={renameHandler}>
               <a>Rename</a>
             </li>
             <li onClick={deleteHandler}>
-              <a class="text-rose-600">Delete</a>
+              <a className="text-rose-600">Delete</a>
             </li>
           </ul>
         </div>
         <div
-          class="flex flex-col items-center pb-5 cursor-pointer"
+          className="flex flex-col items-center pb-5 cursor-pointer"
           onClick={onClickHandler}
         >
           {icon}
-          <h5 class="mb-1 text-xl font-medium text-gray-900 dark:text-white truncate w-[95%] text-center">
+          <h5 className="mb-1 text-xl font-medium text-gray-900 dark:text-white truncate w-[95%] text-center">
             {file.name}
           </h5>
         </div>
@@ -167,6 +151,7 @@ function File({ file }) {
         <GroupDialog
           isEdit={true}
           groupId={file.id}
+          parentId={file.folderId}
           isOpen={isOpen}
           setIsOpen={setIsOpen}
         />

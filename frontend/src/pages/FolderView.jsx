@@ -57,6 +57,18 @@ function FolderView({ home = false }) {
     document.title = folderData.name;
   }, [folderData.name, folderId]);
 
+  const removeFile = (file) => {
+    const newContents = folderData.files.filter(
+      (f) => f.id !== file.id || f.type !== file.type,
+    );
+    setFolderData({ ...folderData, files: newContents });
+  };
+
+  const addFile = (file) => {
+    const newContents = folderData.files.push(file);
+    setFolderData({ ...folderData, files: newContents });
+  };
+
   const dropdownItems = [
     {
       icon: <FolderIcon width={20} height={20} />,
@@ -72,7 +84,7 @@ function FolderView({ home = false }) {
       onclick: () => {
         document.getElementById("create-group-modal").showModal();
       },
-      modal: <GroupDialog isEdit={false} />,
+      modal: <GroupDialog isEdit={false} parentId={folderId} />,
     },
     {
       icon: <UploadIcon width={20} height={20} />,
@@ -103,9 +115,18 @@ function FolderView({ home = false }) {
         </div>
       </div>
       {view === "grid" ? (
-        <GridView folderData={folderData} />
+        <GridView
+          folderData={folderData}
+          removeFile={removeFile}
+          addFile={addFile}
+        />
       ) : (
-        <ListView folderData={folderData} />
+        // TODO: add drag and drop functionality
+        <ListView
+          folderData={folderData}
+          removeFile={removeFile}
+          addFile={addFile}
+        />
       )}
     </div>
   );

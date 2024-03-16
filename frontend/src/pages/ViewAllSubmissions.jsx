@@ -74,7 +74,7 @@ function ViewAllSubmissions() {
               <button
                 className="btn bg-green-500 mb-2 btn-lg text-white hover:text-black"
                 onClick={() => {
-                  // TODO: add functionality to close submission
+                  // TODO: add functionality to open submission
                   console.log("Opening Submission");
                 }}
               >
