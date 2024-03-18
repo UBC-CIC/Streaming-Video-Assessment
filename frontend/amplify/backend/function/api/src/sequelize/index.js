@@ -5,14 +5,20 @@ const { applyExtraSetup } = require("./extra-setup");
 // But for this example, we will just use a local SQLite database.
 // const sequelize = new Sequelize(process.env.DB_CONNECTION_URL);
 
-// TODO: do better for credentials
-const username = "admin";
-const password = "password123";
+let sequelize;
 
-const sequelize = new Sequelize("dropzone", username, password, {
-  host: "serverless-mysql-instance-1.ccsegbn7t5iu.ca-central-1.rds.amazonaws.com",
-  dialect: "mysql",
-});
+if (process.env.NODE_ENV === "test") {
+  sequelize = new Sequelize("sqlite::memory:");
+} else {
+  // TODO: do better for credentials
+  const username = "admin";
+  const password = "password123";
+
+  sequelize = new Sequelize("dropzone", username, password, {
+    host: "serverless-mysql-instance-1.ccsegbn7t5iu.ca-central-1.rds.amazonaws.com",
+    dialect: "mysql",
+  });
+}
 
 const modelDefiners = [
   require("./models/assessment.model"),
@@ -31,9 +37,6 @@ for (const modelDefiner of modelDefiners) {
 
 // We execute any extra setup after the models are defined, such as adding associations.
 applyExtraSetup(sequelize);
-
-// TODO: it would be nice to block on this
-sequelize.sync();
 
 // We export the sequelize connection instance to be used around our app.
 module.exports = sequelize;
