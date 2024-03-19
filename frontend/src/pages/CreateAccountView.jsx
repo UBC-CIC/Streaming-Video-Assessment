@@ -29,7 +29,7 @@ function CreateAccountView() {
   };
 
   const passwordsMatch = password === confirmPassword;
-  const passwordRules = password.length > 5;
+  const passwordRules = (password.length >= 8) && (password.length <= 128);
   const passwordExists = password.length > 0;
 
   const confirmButtonColor = ((passwordsMatch && passwordRules) ? "bg-[#6a7dc2]" : "bg-[#b1b1b1]");
@@ -71,7 +71,7 @@ function CreateAccountView() {
         />
         {passwordRules == false && passwordExists && 
         <div className="justify-center text-center text-red-500 tracking-wider self-stretch"
-        style={{padding: "20px 0px 0px 0px"}}>Password must be 6 characters or longer</div>}
+        style={{padding: "20px 0px 0px 0px"}}>Password must be 8 characters or longer</div>}
         <div className="flex items-stretch justify-between gap-5 mt-12 max-md:mt-10">
           <button className={"text-white text-center tracking-[0.52px] whitespace-nowrap "+ confirmButtonColor +" justify-center px-[13px] py-[27px] rounded-md text-sm font-bold"} onClick={onCreateAccountClick}>
             CREATE ACCOUNT
