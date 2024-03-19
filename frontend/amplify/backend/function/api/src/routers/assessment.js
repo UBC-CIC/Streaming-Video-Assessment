@@ -85,7 +85,7 @@ router.put("/:assessmentId", async (req, res) => {
 
   await createUploadRequestsForAssessment(assessmentQuery, true, true);
 
-  await assessmentQuery.removeUploadersAndRequests(
+  await assessmentQuery.removeUploadersAndGroups(
     req.body.sharedUploaders,
     req.body.sharedGroups,
   );
