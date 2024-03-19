@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import "./styles/Login.css";
 import { handleSignIn, handleSignOut, checkUserSignInStatus, getJwtTokens } from "../helpers/authenticationHandler";
 import {testAuth } from "../helpers/authApi.js"
 
