@@ -36,7 +36,8 @@ function LoginView() {
       const {accessToken, idToken} = await getJwtTokens();
       console.log("idToken: ", idToken);
       console.log("accessToken: ", accessToken);
-      testAuth(idToken);
+      const res = await testAuth(idToken);
+      console.log("res: ", res);
     } else{
       alert("Invalid email or password");
     }

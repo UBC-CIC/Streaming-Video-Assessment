@@ -84,7 +84,6 @@ export async function checkUserSignInStatus(){
         console.log(user);
         return user;
     } catch (error){
-        console.error(error);
         return null;
     }
 }
