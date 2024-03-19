@@ -13,7 +13,7 @@ export async function handleSignUp({email, password}){
         if(error.name == "UsernameExistsException"){
             alert("A user already exists associated with that email.");
         }
-        else console.error('error signing up:', error);
+        else alert(error.message);
         return {isSignUpComplete: false, userId: null, nextStep: null};
     }
 }
