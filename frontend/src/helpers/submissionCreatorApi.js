@@ -137,3 +137,78 @@ export const createAssessment = async (assessmentData) => {
 
   return null;
 };
+
+export const getGroups = async (folderId) => {
+  try {
+    const path = folderId ? `/api/group?folderId=${folderId}` : "/api/group";
+    const restOperation = get({
+      apiName: "backend",
+      path: path,
+    });
+    const { body } = await restOperation.response;
+    const response = await body.json();
+    console.log("GET call succeeded: ", response);
+    return response.data;
+  } catch (error) {
+    console.error("GET call failed: ", error);
+  }
+};
+
+export const getSharedWithList = async (assessmentId) => {
+  try {
+    const restOperation = get({
+      apiName: "backend",
+      path: `/api/assessment/shared/${assessmentId}`,
+    });
+    const { body } = await restOperation.response;
+    const response = await body.json();
+    console.log("GET call succeeded: ", response);
+    return response.data;
+  } catch (error) {
+    console.error("GET call failed: ", error);
+  }
+};
+
+export const editAssessment = async (assessmentId, assessmentData) => {
+  try {
+    const restOperation = put({
+      apiName: "backend",
+      path: `/api/assessment/${assessmentId}`,
+      options: {
+        body: assessmentData,
+      },
+    });
+    const { body } = await restOperation.response;
+    const response = await body.json();
+    console.log("PUT call succeeded: ", response);
+    return response;
+  } catch (error) {
+    console.error("PUT call failed: ", error);
+  }
+
+  return null;
+};
+
+export const editGroup = async (groupId, groupName, parentId, groupUsers) => {
+  try {
+    const restOperation = put({
+      apiName: "backend",
+      path: `/api/group/${groupId}`,
+      options: {
+        body: {
+          name: groupName,
+          folderId: parentId,
+          users: groupUsers,
+        },
+      },
+    });
+    const { body } = await restOperation.response;
+    const response = await body.json();
+    console.log("PUT call succeeded: ", response);
+    return response;
+  } catch (error) {
+    console.error("PUT call failed: ", error);
+  }
+
+  return null;
+};

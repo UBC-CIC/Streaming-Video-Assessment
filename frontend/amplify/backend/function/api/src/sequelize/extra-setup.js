@@ -150,6 +150,66 @@ function applyExtraSetup(sequelize) {
       where: { uploaderId: this.uploaderId, assessmentId: this.assessmentId },
     });
   };
+
+  assessment.prototype.removeUploadersAndRequests = async function (
+    sharedUploaders,
+    sharedGroups,
+  ) {
+    const currentUploaders = await this.getUploaders();
+    const currentGroups = await this.getUploaderGroups({
+      include: [uploader],
+    });
+
+    const uploadersToRemove = currentUploaders.filter((uploader) => {
+      return !sharedUploaders.find(
+        (sharedUploader) => sharedUploader.email === uploader.email,
+      );
+    });
+
+    const removeGroups = currentGroups.filter((group) => {
+      return !sharedGroups.find((sharedGroup) => sharedGroup.id === group.id);
+    });
+
+    if (uploadersToRemove.length > 0) {
+      await this.removeUploaders(uploadersToRemove);
+
+      uploadersToRemove.forEach(async (uploaderToRemove) => {
+        const inGroup = currentGroups.find((group) => {
+          return group.uploaders.find(
+            (uploader) => uploader.email === uploaderToRemove.email,
+          );
+        });
+        if (!inGroup) {
+          await uploadRequest.destroy({
+            where: {
+              assessmentId: this.id,
+              uploaderId: uploaderToRemove.id,
+            },
+          });
+        }
+      });
+    }
+
+    if (removeGroups.length > 0) {
+      removeGroups.forEach(async (group) => {
+        const uploaders = group.uploaders.filter((uploader) => {
+          return !sharedUploaders.find(
+            (sharedUploader) => sharedUploader.email === uploader.email,
+          );
+        });
+        uploaders.forEach(async (uploaderToRemove) => {
+          await uploadRequest.destroy({
+            where: {
+              assessmentId: this.id,
+              uploaderId: uploaderToRemove.id,
+            },
+          });
+        });
+      });
+
+      await this.removeUploaderGroups(removeGroups);
+    }
+  };
 }
 
 module.exports = { applyExtraSetup };

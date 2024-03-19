@@ -6,7 +6,6 @@ const { folder } = sequelize.models;
 // Define your routes here
 router.get("/:folderId", async (req, res) => {
   try {
-    // TODO: Implement get, must get all children folders and files
     const query = await folder.findByPk(req.params.folderId);
     query.dataValues.path = await query.getFolderPath();
     query.dataValues.files = await query

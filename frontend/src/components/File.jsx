@@ -1,9 +1,7 @@
 import PropTypes from "prop-types";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import FolderIcon from "../assets/icons/FolderIcon";
-import GroupIcon from "../assets/icons/GroupIcon";
-import UploadIcon from "../assets/icons/UploadIcon";
+import { getIcon } from "../helpers/getIcon";
 import GroupDialog from "./dialogs/GroupDialog";
 import { useDrag, useDrop } from "react-dnd";
 import { BsThreeDots } from "react-icons/bs";
@@ -12,19 +10,6 @@ import { moveFile } from "../helpers/submissionCreatorApi";
 function File({ file, removeFile }) {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
-
-  const getIcon = () => {
-    switch (file.type) {
-      case "folder":
-        return <FolderIcon width={"141"} height={"131"} />;
-      case "group":
-        return <GroupIcon width={"130"} height={"131"} />;
-      case "assessment":
-        return <UploadIcon width={"130"} height={"131"} />;
-      default:
-        return <></>;
-    }
-  };
 
   const getOnClickFunction = () => {
     switch (file.type) {
@@ -46,7 +31,7 @@ function File({ file, removeFile }) {
     }
   };
 
-  const icon = getIcon();
+  const icon = getIcon(file);
   const onClickHandler = getOnClickFunction();
 
   const renameHandler = () => {
