@@ -58,7 +58,7 @@ app.use(async function (req, res, next){
     {
       algorithms: ["RS256"],
       token_use: "id",
-      issuer: `https://cognito-idp.${region}.amazonaws.coom/${userPoolId}`,
+      issuer: `https://cognito-idp.${region}.amazonaws.com/${userPoolId}`,
       audience: clientId,
     },
     function (err, decodedToken) {
