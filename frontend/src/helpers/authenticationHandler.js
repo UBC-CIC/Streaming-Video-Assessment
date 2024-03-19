@@ -38,7 +38,6 @@ export async function handleConfirmSignUp({email, confirmationCode}){
 }
 
 export async function handleSignIn({email, password}){
-    console.log({email, password});
     try{
         const {isSignedIn, nextStep} = await signIn({username: email, password});
         return {isSignedIn, nextStep}

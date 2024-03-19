@@ -24,7 +24,6 @@ export const testAuth = async (token)=>{
                     },
         },
     });
-    console.log("rest op headers: ",restOperation.options);
     const {body} = await restOperation.response;
     return body;
 }

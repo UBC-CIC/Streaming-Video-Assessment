@@ -11,36 +11,42 @@ function LoginView() {
   const navigate = useNavigate();
 
   const onLoginClick = async () => {
-    console.log("signing out");
+    // console.log("signing out");
     await handleSignOut();
-    console.log("signing in");
+    // console.log("signing in");
     if (await checkUserSignInStatus()) {
       // navigate("/home");
       return;
     }
-    const { isSignedIn, nextStep } = await handleSignIn({
-      email: email, password: password
-    });
-    if (nextStep.signInStep == "CONFIRM_SIGN_UP") {
-      navigate("/confirm-sign-up", {state:{email: email}});
-    }
-    if(nextStep.signInStep == "CREATE_ACCOUNT"){
-      alert("There is no user associated with that email. Please create an account.");
-      return;
-    }
-    else if (!isSignedIn) {
-      alert("Invalid email or password");
-      return;
-    }
-    if(nextStep.signInStep == "DONE"){
-      const {accessToken, idToken} = await getJwtTokens();
-      console.log("idToken: ", idToken);
-      console.log("accessToken: ", accessToken);
-      const res = await testAuth(idToken);
-      console.log("res: ", res);
-    } else{
-      alert("Invalid email or password");
-    }
+    try{
+      const { isSignedIn, nextStep } = await handleSignIn({
+        email: email, password: password
+      });
+      if (nextStep.signInStep == "CONFIRM_SIGN_UP") {
+        navigate("/confirm-sign-up", {state:{email: email}});
+      }
+      if(nextStep.signInStep == "CREATE_ACCOUNT"){
+        alert("There is no user associated with that email. Please create an account.");
+        return;
+      }
+      else if (!isSignedIn) {
+        alert("Invalid email or password");
+        return;
+      }
+      if(nextStep.signInStep == "DONE"){
+        const {idToken: idToken} = await getJwtTokens();
+        try{
+          const res = await testAuth(idToken);
+          navigate("/home");
+        }catch(err){
+          console.log(err);
+        }
+      } else{
+        alert("Invalid email or password");
+      }
+    } catch(err){
+      console.log(err);
+    }  
 
   };
   const onCreateAccountClick = () => {
