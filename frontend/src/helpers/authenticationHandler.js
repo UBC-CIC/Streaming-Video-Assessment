@@ -1,4 +1,4 @@
-import {signUp, signIn, autoSignIn ,signOut, getCurrentUser, confirmSignUp} from 'aws-amplify/auth';
+import {signUp, signIn, autoSignIn ,signOut, getCurrentUser, confirmSignUp, fetchAuthSession} from 'aws-amplify/auth';
 
 export async function handleSignUp({email, password}){
     try{
@@ -38,12 +38,11 @@ export async function handleConfirmSignUp({email, confirmationCode}){
 }
 
 export async function handleSignIn({email, password}){
-    console.log({email, password});
     try{
         const {isSignedIn, nextStep} = await signIn({username: email, password});
         return {isSignedIn, nextStep}
     } catch (error){
-        console.log('error signing in', error);
+        // console.log('error signing in', error);
         if(error.name == "UserNotFoundException"){
             return {isSignedIn: false, nextStep:{signInStep:"CREATE_ACCOUNT"}};
         } else if(error.name == "NotAuthorizedException"){
@@ -84,7 +83,15 @@ export async function checkUserSignInStatus(){
         console.log(user);
         return user;
     } catch (error){
-        console.error(error);
         return null;
     }
+}
+
+export async function getJwtTokens(){
+    try {
+        const { accessToken, idToken } = (await fetchAuthSession()).tokens ?? {};
+        return { accessToken, idToken };
+      } catch (err) {
+        console.log(err);
+      }
 }

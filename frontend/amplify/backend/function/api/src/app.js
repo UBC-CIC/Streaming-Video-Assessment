@@ -17,23 +17,63 @@ const assessmentRouter = require("./routers/assessment");
 const submissionRouter = require("./routers/submission");
 const sequelize = require("./sequelize");
 
+const region = "ca-central-1";
+const userPoolId = "ca-central-1_RGMoyaPVY";
+const clientId = "2q1vlf8f8vkl965un3pists4bo";
+
+const jwksUrl = `https://cognito-idp.${region}.amazonaws.com/${userPoolId}/.well-known/jwks.json`;
+var jwt = require('jsonwebtoken');
+var jwksClient = require('jwks-rsa');
+var client = jwksClient({
+  jwksUri: jwksUrl
+});
+function getKey(header, callback) {
+  client.getSigningKey(header.kid, function(err, key) {
+    var signingKey = key.publicKey || key.rsaPublicKey;
+    callback(null, signingKey);
+  });
+}
 // declare a new express app
 const app = express();
 app.use(bodyParser.json());
 app.use(awsServerlessExpressMiddleware.eventContext());
-app.use(function (req, res, next) {
-  req["userEmail"] = "hmitgang@student.ubc.ca";
-  next();
-});
 
 // Enable CORS for all methods
 app.use(function (req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "*");
-  res.header("Access-Control-Allow-Methods", "*");
+  // CORS will force the browser to send pre-flight every time
+  // pre-flight doesn't have authorization header so it'll get flagged without fail
+  if(req.method === "OPTIONS"){
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "*");
+    return res.status(200).send();
+  }
   next();
 });
-
+app.use(async function (req, res, next){
+  // console.log("method: ", req.method);
+  const claim = req.headers.authorization;
+  // console.log("claim: ", claim);
+  jwt.verify(
+    claim,
+    getKey,
+    {
+      algorithms: ["RS256"],
+      token_use: "id",
+      issuer: `https://cognito-idp.${region}.amazonaws.com/${userPoolId}`,
+      audience: clientId,
+    },
+    function (err, decodedToken) {
+      if (err) {
+        console.error(err);
+        return res.status(401).send("Unauthorized");
+      }
+      console.log("decodedToken: ", decodedToken);
+      req["userEmail"] = decodedToken.email;
+      // console.log("userEmail: ", req["userEmail"]);
+      next();
+    },
+  );
+});
 app.use("/api/folder", folderRouter);
 app.use("/api/group", groupRouter);
 app.use("/api/assessment", assessmentRouter);

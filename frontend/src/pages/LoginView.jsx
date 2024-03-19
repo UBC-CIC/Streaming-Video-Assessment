@@ -1,43 +1,51 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { handleSignIn, handleSignOut, checkUserSignInStatus } from "../helpers/authenticationHandler";
+import { handleSignIn, handleSignOut, checkUserSignInStatus, getJwtTokens } from "../helpers/authenticationHandler";
+import {testAuth } from "../helpers/authApi.js"
 
 function LoginView() {
   const location = useLocation();
   const [email, setEmail] = useState(location.state &&location.state.email ? location.state.email : "");
   const [password, setPassword] = useState(location.state&& location.state.password ? location.state.password : "");
   const navigate = useNavigate();
-  const [authenticating, isAuthenticating] = useState(false);
 
   const onLoginClick = async () => {
-    // TODO: Add login logic here
-    isAuthenticating(true);
-    console.log("signing in");
+    // console.log("signing out");
+    await handleSignOut();
+    // console.log("signing in");
     if (await checkUserSignInStatus()) {
-      navigate("/home");
+      // navigate("/home");
       return;
     }
-    // console.log(email, password);
-    const { isSignedIn, nextStep } = await handleSignIn({
-      email: email, password: password
-    });
-    if (nextStep.signInStep == "CONFIRM_SIGN_UP") {
-      navigate("/confirm-sign-up", {state:{email: email}});
-    }
-    if(nextStep.signInStep == "CREATE_ACCOUNT"){
-      alert("There is no user associated with that email. Please create an account.");
-      return;
-    }
-    else if (!isSignedIn) {
-      isAuthenticating(false);
-      alert("Invalid email or password");
-      return;
-    }
-    if(nextStep.signInStep == "DONE"){
-      navigate("/home");
-    } else{
-      alert("Invalid email or password");
-    }
+    try{
+      const { isSignedIn, nextStep } = await handleSignIn({
+        email: email, password: password
+      });
+      if (nextStep.signInStep == "CONFIRM_SIGN_UP") {
+        navigate("/confirm-sign-up", {state:{email: email}});
+      }
+      if(nextStep.signInStep == "CREATE_ACCOUNT"){
+        alert("There is no user associated with that email. Please create an account.");
+        return;
+      }
+      else if (!isSignedIn) {
+        alert("Invalid email or password");
+        return;
+      }
+      if(nextStep.signInStep == "DONE"){
+        const {idToken: idToken} = await getJwtTokens();
+        try{
+          const res = await testAuth(idToken);
+          navigate("/home");
+        }catch(err){
+          console.log(err);
+        }
+      } else{
+        alert("Invalid email or password");
+      }
+    } catch(err){
+      console.log(err);
+    }  
 
   };
   const onCreateAccountClick = () => {
