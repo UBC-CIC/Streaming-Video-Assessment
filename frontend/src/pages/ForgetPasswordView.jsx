@@ -22,7 +22,7 @@ function ForgotPasswordView() {
           PASSWORD RESET
         </div>
         <input
-          className="whitespace-nowra w-full justify-center pl-[17px] pr-[60px] py-[21px] border-2 border-solid border-black align-items: start font: 400 15px Roboto, sans-serif mt-9 max-md:pr-5"
+          className="whitespace-nowrap w-full justify-center pl-[17px] pr-[60px] py-[21px] border-2 border-solid border-black align-items: start font: 400 15px Roboto, sans-serif mt-9 max-md:pr-5"
           name="email"
           placeholder="Email"
           onInput={(e) => setEmail(e.target.value)}

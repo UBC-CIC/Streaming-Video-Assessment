@@ -41,20 +41,20 @@ function CreateAccountView() {
           CREATE ACCOUNT
         </div>
         <input
-          className="whitespace-nowra w-full justify-center pl-[17px] pr-[60px] py-[21px] border-2 border-solid border-black align-items: start font: 400 15px Roboto, sans-serif mt-9 max-md:pr-5"
+          className="whitespace-nowrap w-full justify-center pl-[17px] pr-[60px] py-[21px] border-2 border-solid border-black align-items: start font: 400 15px Roboto, sans-serif mt-9 max-md:pr-5"
           name="name"
           placeholder="Name"
           onInput={(e) => setName(e.target.value)}
         />
         <input
-          className="whitespace-nowra w-full justify-center pl-[17px] pr-[60px] py-[21px] border-2 border-solid border-black align-items: start font: 400 15px Roboto, sans-serif mt-9 max-md:pr-5"
+          className="whitespace-nowrap w-full justify-center pl-[17px] pr-[60px] py-[21px] border-2 border-solid border-black align-items: start font: 400 15px Roboto, sans-serif mt-9 max-md:pr-5"
           name="email"
           placeholder="Email"
           onInput={(e) => setEmail(e.target.value)}
           value={email}
         />
         <input
-          className="whitespace-nowra w-full justify-center pl-[17px] pr-[60px] py-[21px] border-2 border-solid border-black align-items: start font: 400 15px Roboto, sans-serif mt-9 max-md:pr-5"
+          className="whitespace-nowrap w-full justify-center pl-[17px] pr-[60px] py-[21px] border-2 border-solid border-black align-items: start font: 400 15px Roboto, sans-serif mt-9 max-md:pr-5"
           style={{border:"2px solid #000", padding: "17.5px 60px 17.5px 17px"}}
           name="password"
           placeholder="Password"
@@ -62,7 +62,7 @@ function CreateAccountView() {
           onInput={(e) => setPassword(e.target.value)}
         />
         <input
-          className="whitespace-nowra w-full justify-center pl-[17px] pr-[60px] py-[21px] border-2 border-solid border-black align-items: start font: 400 15px Roboto, sans-serif mt-9 max-md:pr-5"
+          className="whitespace-nowrap w-full justify-center pl-[17px] pr-[60px] py-[21px] border-2 border-solid border-black align-items: start font: 400 15px Roboto, sans-serif mt-9 max-md:pr-5"
           style={{border:"2px solid #000", padding: "17.5px 60px 17.5px 17px"}}
           name="confirm-password"
           placeholder="Confirm Password"
