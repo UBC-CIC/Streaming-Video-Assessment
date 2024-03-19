@@ -8,8 +8,24 @@ const {
 
 // Define your routes here
 router.get("/:assessmentId", async (req, res) => {
-  const query = await assessment.findByPk(req.params.assessmentId);
-  query.dataValues.submissions = await query.getSubmissions();
+  const query = await assessment.findByPk(parseInt(req.params.assessmentId));
+  const videos = await query.getVideos({
+    include: [uploader],
+    where: { submitted: true },
+  });
+
+  const videoDetailsPromises = videos.map(async (video) => {
+    const user = await video.getUploader();
+    return {
+      name: user.name,
+      email: user.email,
+      uploadedOn: video.updatedAt,
+      s3ref: video.s3Key,
+      submissionId: video.id,
+    };
+  });
+  query.dataValues.submissions = await Promise.all(videoDetailsPromises);
+
   res.json({ success: "get call succeed!", data: query });
 });
 
@@ -56,7 +72,11 @@ router.post("/", async (req, res) => {
 
   await createUploadRequestsForAssessment(newAssessment, true);
 
-  res.json({ success: "post call succeed!", url: req.url, body: req.body });
+  res.json({
+    success: "post call succeed!",
+    url: req.url,
+    body: newAssessment,
+  });
 });
 
 router.put("/:assessmentId", (req, res) => {

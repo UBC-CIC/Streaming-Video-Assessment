@@ -6,15 +6,14 @@
 const {
   createUploadRequestsForAssessment,
 } = require("../helpers/uploadRequests");
-const sequelize = require(".");
 
-const { user, folder, uploaderGroup, uploader, assessment, video } =
-  sequelize.models;
+module.exports = async function create(sequelize) {
+  const { user, folder, uploaderGroup, uploader, assessment, video } =
+    sequelize.models;
 
-async function create() {
   const user1 = await user.create(
     {
-      email: "hmitgang+5@student.ubc.ca",
+      email: "hmitgang@student.ubc.ca",
       isPlatformManager: true,
       isAssessmentCreator: true,
       folders: [
@@ -29,7 +28,6 @@ async function create() {
     },
   );
 
-  //   const user1 = await user.findByPk(1);
   const root = await user1.getRoot();
 
   const spanish1 = await folder.create({
@@ -97,6 +95,4 @@ async function create() {
     uploaderId: uploader1.id,
     assessmentId: spanish1test1.id,
   });
-}
-
-sequelize.sync().then(create);
+};
