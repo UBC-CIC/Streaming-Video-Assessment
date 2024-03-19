@@ -5,32 +5,17 @@ const { uploaderGroup, uploader, folder } = sequelize.models;
 
 router.get("/", async (req, res) => {
   let folderId = req.query["folderId"];
-  let query = null;
-  if (!folderId) {
-    query = await folder.findOne({
-      where: { parentId: null },
-      include: [
-        {
-          association: "owner",
-          where: {
-            email: req["userEmail"],
-          },
+  const query = await folder.findOne({
+    where: folderId ? { id: folderId } : { parentId: null },
+    include: [
+      {
+        association: "owner",
+        where: {
+          email: req["userEmail"],
         },
-      ],
-    });
-  } else {
-    query = await folder.findOne({
-      where: { id: folderId },
-      include: [
-        {
-          association: "owner",
-          where: {
-            email: req["userEmail"],
-          },
-        },
-      ],
-    });
-  }
+      },
+    ],
+  });
 
   if (!query) {
     res.status(404).json({ error: "Folder not found" });

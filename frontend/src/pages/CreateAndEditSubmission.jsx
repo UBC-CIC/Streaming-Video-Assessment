@@ -64,8 +64,9 @@ function CreateAndEditSubmission({ edit = false }) {
       });
       setAllowFaceBlur(submissionData.allowFaceBlur);
       setDueDate(submissionData.dueDate);
-      getSharedWithListAsync(submissionId);
-      setIsLoading(false);
+      getSharedWithListAsync(submissionId).then(() => {
+        setIsLoading(false);
+      });
     }
   }, [submissionData]); // Re-run effect when valueToCheck changes
 

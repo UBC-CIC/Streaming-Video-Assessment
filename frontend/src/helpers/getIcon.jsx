@@ -5,7 +5,7 @@ import UploadIcon from "../assets/icons/UploadIcon";
 export const getIcon = (file) => {
   switch (file.type) {
     case "folder":
-      return <FolderIcon width={"9rem"} height={"8rem"} />;
+      return <FolderIcon width={"8rem"} height={"8rem"} />;
     case "group":
       return <GroupIcon width={"8rem"} height={"8rem"} />;
     case "assessment":
