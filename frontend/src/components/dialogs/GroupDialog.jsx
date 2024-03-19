@@ -6,6 +6,7 @@ import GroupList from "./GroupList";
 import {
   getGroupInfo,
   createNewGroup,
+  editGroup,
 } from "../../helpers/submissionCreatorApi";
 
 function GroupDialog({
@@ -32,12 +33,16 @@ function GroupDialog({
     if (
       JSON.stringify(initialGroupListRef.current) === JSON.stringify(groupList)
     ) {
-      console.log("no change");
       setIsOpen(false);
       return;
     }
     if (isEdit) {
-      // TODO: call update API
+      const res = await editGroup(groupId, groupName, parentId, groupList);
+      if (res.success) {
+        alert("Group edited successfully");
+      } else {
+        alert("Group editing failed");
+      }
     } else {
       const res = await createNewGroup(groupName, parentId, groupList);
       if (res.success) {
@@ -141,9 +146,13 @@ function GroupDialog({
                 className="btn uppercase mt-4 text-white bg-indigo-500"
                 onClick={() => {
                   if (name === "" || email === "") return;
-                  setGroupList([...groupList, { name: name, email: email }]);
                   setName("");
                   setEmail("");
+                  const alreadyExists = groupList.find(
+                    (currentUser) => currentUser.email === email,
+                  );
+                  if (alreadyExists) return;
+                  setGroupList([...groupList, { name: name, email: email }]);
                 }}
               >
                 Add

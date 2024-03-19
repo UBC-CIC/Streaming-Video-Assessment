@@ -4,6 +4,7 @@ const sequelize = require("../sequelize");
 async function createUploadRequestsForAssessment(
   assessment,
   sendEmail = false,
+  updating = false,
 ) {
   const uploaderGroups = await assessment.getUploaderGroups({
     include: [sequelize.models.uploader],
@@ -22,10 +23,22 @@ async function createUploadRequestsForAssessment(
   );
 
   return await Promise.all(
-    uniqueUploaders.map((uploader) =>
-      createUploadRequestForUser(assessment, uploader, sendEmail),
-    ),
+    uniqueUploaders.map(async (uploader) => {
+      if (updating && (await sendUploadRequestEmail(assessment, uploader)))
+        return;
+      createUploadRequestForUser(assessment, uploader, sendEmail);
+    }),
   );
+}
+
+async function sendUploadRequestEmail(assessment, uploader) {
+  const hasRequest = await uploader.getUploadRequests({
+    where: {
+      assessmentId: assessment.id,
+    },
+  });
+
+  return hasRequest.length > 0;
 }
 
 async function createUploadRequestForUser(assessment, user, sendEmail = false) {
