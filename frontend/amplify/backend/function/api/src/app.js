@@ -15,6 +15,7 @@ const folderRouter = require("./routers/folder");
 const groupRouter = require("./routers/group");
 const assessmentRouter = require("./routers/assessment");
 const submissionRouter = require("./routers/submission");
+const sequelize = require("./sequelize");
 
 // declare a new express app
 const app = express();
@@ -42,8 +43,10 @@ app.get("/api/ping", function (req, res) {
   res.send("pong");
 });
 
-app.listen(3000, function () {
-  console.log("App started");
+sequelize.sync().then(() => {
+  app.listen(3000, function () {
+    console.log("App started");
+  });
 });
 
 // Export the app object. When executing the application local this does nothing. However,
