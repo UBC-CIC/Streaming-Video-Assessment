@@ -14,7 +14,10 @@ import SearchBar from "../components/SearchBar";
 import ToggleViewStyle from "../components/ToggleViewStyle";
 import CreateFolderDialog from "../components/dialogs/CreateFolderDialog";
 import GroupDialog from "../components/dialogs/GroupDialog";
-import { getFolderData } from "../helpers/submissionCreatorApi";
+import {
+  getFolderData,
+  getHomeFolderId,
+} from "../helpers/submissionCreatorApi";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { handleSignOut } from "../helpers/authenticationHandler";
@@ -23,41 +26,44 @@ function loader({ params }) {
   let folderId = null;
 
   if (params.folderId) {
-    folderId = params.folderId;
-  } else {
-    // TODO: show unknown page
+    folderId = parseInt(params.folderId);
   }
 
   return folderId;
 }
 
-const getHomeFolderId = () => {
-  // TODO: determine what the home folder id should be
-  return 1;
-};
-
 function FolderView({ home = false }) {
   const navigate = useNavigate();
 
-  const userId = "Bob"; // TODO: get userID somehow
+  const urlFolderId = useLoaderData();
 
-  let folderId = useLoaderData();
-  if (home) {
-    folderId = getHomeFolderId();
-  }
+  useEffect(() => {
+    if (urlFolderId == null || home) {
+      getHomeFolderId().then(setFolderId);
+    } else {
+      setFolderId(urlFolderId);
+    }
+  }, [urlFolderId]);
+
+  const [folderId, setFolderId] = useState();
 
   const [view, setView] = useState("grid"); // TODO: This should maybe be local storage
 
   const [folderData, setFolderData] = useState({});
 
   useEffect(() => {
+    if (folderId == null) return;
+
     const fetchFolderData = async () => {
       const fetchedFolderData = await getFolderData(folderId);
       setFolderData(fetchedFolderData);
     };
     fetchFolderData();
+  }, [folderId]);
+
+  useEffect(() => {
     document.title = folderData.name;
-  }, [folderData.name, folderId]);
+  }, [folderData.name]);
 
   const removeFile = (file) => {
     const newContents = folderData.files.filter(
