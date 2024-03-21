@@ -31,8 +31,7 @@ function CreateFolderDialog({ folderId }) {
             <button
               className="btn w-44 text-white bg-indigo-500 btn-lg"
               onClick={async () => {
-                // TODO: allow this a user handling not constant user
-                await createFolder(folderName, folderId, 1);
+                await createFolder(folderName, folderId);
                 setFolderName(null);
                 navigate(0);
               }}

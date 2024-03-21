@@ -1,9 +1,45 @@
 const express = require("express");
 const router = express.Router();
 const sequelize = require("../sequelize");
-const { folder } = sequelize.models;
+const { folder, user } = sequelize.models;
 
 // Define your routes here
+router.get("/home", async (req, res) => {
+  const query = await folder.findOne({
+    where: { parentId: null },
+    include: [
+      {
+        association: "owner",
+        where: {
+          email: req["userEmail"],
+        },
+      },
+    ],
+  });
+  if (!query) {
+    const user1 = await user.create(
+      {
+        email: req["userEmail"],
+        isPlatformManager: false,
+        isAssessmentCreator: true,
+        folders: [
+          // Create root folder along with user
+          {
+            name: "Home",
+          },
+        ],
+      },
+      {
+        include: [user.folders],
+      },
+    );
+    console.log({ user1 });
+
+    return res.json({ rootId: user1.folders[0].id });
+  }
+  return res.json({ rootId: query.id });
+});
+
 router.get("/:folderId", async (req, res) => {
   try {
     const query = await folder.findByPk(req.params.folderId);
@@ -41,10 +77,26 @@ router.put("/move", async (req, res) => {
 });
 
 router.post("/", async (req, res) => {
+  const parent = await folder.findByPk(req.body.parentId, {
+    include: [
+      {
+        association: "owner",
+      },
+    ],
+  });
+
+  if (!parent) {
+    return res.status(404).json({ error: "Folder not found" });
+  }
+
+  if (parent.owner.email !== req["userEmail"]) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+
   try {
     const folderObj = {
       name: req.body.name,
-      ownerId: req.body.ownerId,
+      ownerId: parent.owner.id,
       parentId: req.body.parentId,
     };
     const newFolder = await folder.create(folderObj);

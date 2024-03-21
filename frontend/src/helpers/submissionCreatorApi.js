@@ -1,5 +1,20 @@
 import { get, post, put } from "aws-amplify/api";
 
+export const getHomeFolderId = async () => {
+  try {
+    const restOperation = get({
+      apiName: "backend",
+      path: "/api/folder/home",
+    });
+    const { body } = await restOperation.response;
+    const response = await body.json();
+    console.log("GET call succeeded: ", response);
+    return response.rootId;
+  } catch (error) {
+    console.error("GET call failed: ", error);
+  }
+};
+
 export const getFolderData = async (folderId) => {
   try {
     const restOperation = get({
@@ -17,7 +32,7 @@ export const getFolderData = async (folderId) => {
   return null;
 };
 
-export const createFolder = async (folderName, parentId, userId) => {
+export const createFolder = async (folderName, parentId) => {
   try {
     const restOperation = post({
       apiName: "backend",
@@ -26,7 +41,6 @@ export const createFolder = async (folderName, parentId, userId) => {
         body: {
           name: folderName,
           parentId: parentId,
-          ownerId: userId,
         },
       },
     });
