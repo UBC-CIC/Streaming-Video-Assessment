@@ -15,6 +15,7 @@ import SubmitView, { loader as SubmitViewLoader } from "./pages/SubmitView";
 import ViewAllSubmissions from "./pages/ViewAllSubmissions";
 import ViewSubmission from "./pages/ViewSubmission";
 import ConfirmSignUpView from "./pages/ConfirmSignUpView";
+import Logout from "./pages/Logout";
 
 const router = createBrowserRouter([
   {
@@ -61,6 +62,15 @@ const router = createBrowserRouter([
     element: (
       <PrivateRoute>
         <ViewAllSubmissions />
+      </PrivateRoute>
+    ),
+    loader: ViewAllSubmissions.loader,
+  },
+  {
+    path: "/logout",
+    element: (
+      <PrivateRoute>
+        <Logout />
       </PrivateRoute>
     ),
     loader: ViewAllSubmissions.loader,

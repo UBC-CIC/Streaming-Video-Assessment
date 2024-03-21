@@ -51,7 +51,7 @@ export async function handleSignIn({ email, password }) {
     });
     return { isSignedIn, nextStep };
   } catch (error) {
-    // console.log('error signing in', error);
+    console.log("error signing in", error);
     if (error.name == "UserNotFoundException") {
       return { isSignedIn: false, nextStep: { signInStep: "CREATE_ACCOUNT" } };
     } else if (error.name == "NotAuthorizedException") {
@@ -108,9 +108,8 @@ export async function getJwtTokens() {
 export async function isUserSignedIn() {
   try {
     const user = await getCurrentUser();
-    return user.isValid() ? true : false;
+    return user ? true : false;
   } catch (error) {
-    console.error(error);
     return false;
   }
 }
