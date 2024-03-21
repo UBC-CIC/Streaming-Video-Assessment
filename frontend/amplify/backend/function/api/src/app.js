@@ -7,6 +7,7 @@ See the License for the specific language governing permissions and limitations 
 */
 
 const express = require("express");
+const cors = require("cors");
 const bodyParser = require("body-parser");
 const awsServerlessExpressMiddleware = require("aws-serverless-express/middleware");
 
@@ -35,18 +36,15 @@ function getKey(header, callback) {
 }
 // declare a new express app
 const app = express();
+app.use(cors());
 app.use(bodyParser.json());
 app.use(awsServerlessExpressMiddleware.eventContext());
 
 // Enable CORS for all methods
 app.use(function (req, res, next) {
-  // CORS will force the browser to send pre-flight every time
-  // pre-flight doesn't have authorization header so it'll get flagged without fail
-  if (req.method === "OPTIONS") {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "*");
-    return res.status(200).send();
-  }
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "*");
+  res.header("Access-Control-Allow-Methods", "*");
   next();
 });
 app.use(async function (req, res, next) {
