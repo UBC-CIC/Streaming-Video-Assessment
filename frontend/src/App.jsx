@@ -24,30 +24,54 @@ const router = createBrowserRouter([
   },
   {
     path: "/home",
-    element: PrivateRoute(<FolderView home={true} />),
+    element: (
+      <PrivateRoute>
+        <FolderView home={true} />
+      </PrivateRoute>
+    ),
   },
   {
     path: "/folder/:folderId",
-    element: PrivateRoute(<FolderView />),
+    element: (
+      <PrivateRoute>
+        <FolderView />
+      </PrivateRoute>
+    ),
     loader: FolderView.loader,
   },
   {
     path: "/submission",
-    element: PrivateRoute(<CreateAndEditSubmission />),
+    element: (
+      <PrivateRoute>
+        <CreateAndEditSubmission />
+      </PrivateRoute>
+    ),
   },
   {
     path: "/submission/:submissionId/edit",
-    element: PrivateRoute(<CreateAndEditSubmission edit={true} />),
+    element: (
+      <PrivateRoute>
+        <CreateAndEditSubmission edit={true} />
+      </PrivateRoute>
+    ),
     loader: CreateAndEditSubmission.loader,
   },
   {
     path: "/submission/:submissionId",
-    element: PrivateRoute(<ViewAllSubmissions />),
+    element: (
+      <PrivateRoute>
+        <ViewAllSubmissions />
+      </PrivateRoute>
+    ),
     loader: ViewAllSubmissions.loader,
   },
   {
     path: "/submission/:submissionId/view",
-    element: PrivateRoute(<ViewSubmission />),
+    element: (
+      <PrivateRoute>
+        <ViewSubmission />
+      </PrivateRoute>
+    ),
   },
   {
     path: "/submit/:submissionId",
