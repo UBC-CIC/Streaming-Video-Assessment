@@ -22,13 +22,13 @@ const userPoolId = "ca-central-1_RGMoyaPVY";
 const clientId = "2q1vlf8f8vkl965un3pists4bo";
 
 const jwksUrl = `https://cognito-idp.${region}.amazonaws.com/${userPoolId}/.well-known/jwks.json`;
-var jwt = require('jsonwebtoken');
-var jwksClient = require('jwks-rsa');
+var jwt = require("jsonwebtoken");
+var jwksClient = require("jwks-rsa");
 var client = jwksClient({
-  jwksUri: jwksUrl
+  jwksUri: jwksUrl,
 });
 function getKey(header, callback) {
-  client.getSigningKey(header.kid, function(err, key) {
+  client.getSigningKey(header.kid, function (err, key) {
     var signingKey = key.publicKey || key.rsaPublicKey;
     callback(null, signingKey);
   });
@@ -42,14 +42,14 @@ app.use(awsServerlessExpressMiddleware.eventContext());
 app.use(function (req, res, next) {
   // CORS will force the browser to send pre-flight every time
   // pre-flight doesn't have authorization header so it'll get flagged without fail
-  if(req.method === "OPTIONS"){
+  if (req.method === "OPTIONS") {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "*");
     return res.status(200).send();
   }
   next();
 });
-app.use(async function (req, res, next){
+app.use(async function (req, res, next) {
   // console.log("method: ", req.method);
   const claim = req.headers.authorization;
   // console.log("claim: ", claim);

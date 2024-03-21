@@ -29,13 +29,39 @@ async function createUploadRequestsForAssessment(
   );
 }
 
+async function createUploadRequestsForNewUploaders(
+  assessment,
+  newUploaders,
+  newGroups,
+  doSendEmail = true,
+) {
+  const uploaders = [...newUploaders];
+
+  uploaders.push(
+    ...newGroups.map((uploaderGroup) => uploaderGroup.uploaders).flat(),
+  );
+
+  // remove duplicates by id
+  const uniqueUploaders = uploaders.filter(
+    (uploader, index, self) =>
+      index === self.findIndex((t) => t.id === uploader.id),
+  );
+
+  console.log("uniqueUploaders", uniqueUploaders);
+
+  return await Promise.all(
+    uniqueUploaders.map(async (uploader) => {
+      createUploadRequestForUser(assessment, uploader, doSendEmail);
+    }),
+  );
+}
+
 async function createUploadRequestForUser(
   assessment,
   user,
   doSendEmail = true,
 ) {
-  // TODO: add email sending
-  const uploadRequest = await sequelize.models.uploadRequest.create({
+  const [uploadRequest, _] = await sequelize.models.uploadRequest.findOrCreate({
     uploaderId: user.id,
     assessmentId: assessment.id,
   });
@@ -63,6 +89,7 @@ async function getUploadRequest(pk, assessmentId) {
 
 module.exports = {
   createUploadRequestsForAssessment,
+  createUploadRequestsForNewUploaders,
   createUploadRequestForUser,
   getUploadRequest,
 };

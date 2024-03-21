@@ -1,14 +1,29 @@
 import { useEffect, useState } from "react";
 import ReactPropTypes from "prop-types";
-import { useLocation, useNavigate } from "react-router-dom";
-import { createAssessment } from "../helpers/submissionCreatorApi";
+import { useLocation, useNavigate, useLoaderData } from "react-router-dom";
+import {
+  createAssessment,
+  getSharedWithList,
+  editAssessment,
+} from "../helpers/submissionCreatorApi";
 import AssessmentInputFields from "../components/assessment/AssessmentInputFields";
 import AssessmentSettings from "../components/assessment/AssessmentSettings";
 import AssessmentSharing from "../components/assessment/AssessmentSharing";
 
-// TODO: add error handling for all input types
+function loader({ params }) {
+  let submissionId = null;
+
+  if (params.submissionId) {
+    submissionId = params.submissionId;
+  } else {
+    // TODO: show unknown page
+  }
+
+  return submissionId;
+}
 
 function CreateAndEditSubmission({ edit = false }) {
+  const submissionId = useLoaderData();
   const { submissionData, folderId } = useLocation().state || {};
   const navigate = useNavigate();
   const [name, setName] = useState("");
@@ -16,16 +31,23 @@ function CreateAndEditSubmission({ edit = false }) {
   const [timeLimit, setTimeLimit] = useState({ hours: 0, minutes: 0 });
   const [allowFaceBlur, setAllowFaceBlur] = useState(false);
   const [dueDate, setDueDate] = useState(null);
-  // TODO: figure out how to get this list and how to deal with individuals and groups
   const [sharedWithList, setSharedWithList] = useState([]);
-  const [uploaders, setUploaders] = useState([]);
-  const [groups, setGroups] = useState([]);
   const [email, setEmail] = useState("");
   const [usersName, setUsersName] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [addedToSharedList, setAddedToSharedList] = useState([]);
+  const [removedFromSharedList, setRemovedFromSharedList] = useState([]);
+
+  const getSharedWithListAsync = async (submissionId) => {
+    const res = await getSharedWithList(submissionId);
+    const newSharedWithList = res.sharedUploaders.concat(res.sharedGroups);
+    setSharedWithList(newSharedWithList);
+  };
 
   useEffect(() => {
     // Check the checkbox if its value matches the value to check against
     if (edit) {
+      setIsLoading(true);
       setName(submissionData.name);
       setDescription(submissionData.description);
       const hours = Math.floor(submissionData.timeLimitSeconds / 3600);
@@ -37,69 +59,81 @@ function CreateAndEditSubmission({ edit = false }) {
       });
       setAllowFaceBlur(submissionData.allowFaceBlur);
       setDueDate(submissionData.dueDate);
-      if (submissionData.submissions) {
-        setSharedWithList(
-          submissionData.submissions.map((submission) => ({
-            name: submission.name,
-            email: submission.email,
-          })),
-        );
-      } else {
-        setSharedWithList([]);
-      }
+      getSharedWithListAsync(submissionId).then(() => {
+        setIsLoading(false);
+      });
     }
   }, [submissionData]); // Re-run effect when valueToCheck changes
 
-  const removeSharedWithUser = (index) => {
-    // TODO: need to figure otu handling of group and individuals here
-    const newSharedWithList = [...sharedWithList]; // Create a copy of the original array
-    newSharedWithList.splice(index, 1);
-    setSharedWithList(newSharedWithList);
-  };
-
-  const addToSharedList = () => {
-    const newSharedWithList = [...sharedWithList];
-    const newUploaders = [...uploaders];
-    newSharedWithList.push({
-      name: usersName,
-      email: email,
-      type: "individual",
-    });
-    setSharedWithList(newSharedWithList);
-    newUploaders.push({ name: usersName, email: email });
-    setUploaders(newUploaders);
-    setUsersName("");
-    setEmail("");
-  };
-
   const assessmentHandler = async () => {
+    setIsLoading(true);
+    const data = {
+      folderId: folderId,
+      name: name,
+      description: description,
+      timeLimitSeconds: timeLimit.hours * 3600 + timeLimit.minutes * 60,
+      faceBlurAllowed: allowFaceBlur,
+      dueDate: dueDate,
+    };
     if (edit) {
-      // TODO: add functionality to edit assessment
-      console.log("handling editing of assessment");
+      const newSharedUploaders = [];
+      const removeSharedUploaders = [];
+      const newSharedGroups = [];
+      const removeSharedGroups = [];
+      addedToSharedList.forEach((item) => {
+        if (item.email === undefined) {
+          newSharedGroups.push(item);
+        } else {
+          newSharedUploaders.push(item);
+        }
+      });
+      removedFromSharedList.forEach((item) => {
+        if (item.email === undefined) {
+          removeSharedGroups.push(item);
+        } else {
+          removeSharedUploaders.push(item);
+        }
+      });
+      data.newSharedUploaders = newSharedUploaders;
+      data.newSharedGroups = newSharedGroups;
+      data.removeSharedUploaders = removeSharedUploaders;
+      data.removeSharedGroups = removeSharedGroups;
+      const response = await editAssessment(submissionId, data);
+      setIsLoading(false);
+      if (response.success) {
+        alert("Assessment edits successfully");
+        navigate(`/submission/${response.body.id}`);
+      } else {
+        alert("Assessment editing failed");
+      }
     } else {
-      // need folderId, name, description, timeLimit, allowFaceBlur, dueDate, sharedUploaders, sharedGroups
-      const data = {
-        folderId: folderId,
-        name: name,
-        description: description,
-        timeLimitSeconds: timeLimit.hours * 3600 + timeLimit.minutes * 60,
-        faceBlurAllowed: allowFaceBlur,
-        dueDate: dueDate,
-        sharedUploaders: uploaders,
-        sharedGroups: groups,
-      };
-
-      const message = await createAssessment(data);
-      if (message.success) {
+      const uploaders = [];
+      const groups = [];
+      sharedWithList.forEach((item) => {
+        if (item.email === undefined) {
+          groups.push(item);
+        } else {
+          uploaders.push(item);
+        }
+      });
+      data.sharedUploaders = uploaders;
+      data.sharedGroups = groups;
+      const response = await createAssessment(data);
+      setIsLoading(false);
+      if (response.success) {
         alert("Assessment created successfully");
-        navigate(`/submission/${message.body.id}`);
+        navigate(`/submission/${response.body.id}`);
       } else {
         alert("Assessment creation failed");
       }
     }
   };
 
-  return (
+  return isLoading ? (
+    <div className="flex justify-center h-full w-full fixed">
+      <span className="loading loading-spinner loading-lg"></span>
+    </div>
+  ) : (
     <div className="flex flex-col m-10">
       <div className="flex flex-col w-full md:flex-row">
         <div className="md:w-[70%]">
@@ -121,13 +155,17 @@ function CreateAndEditSubmission({ edit = false }) {
         <div className="divider md:divider-horizontal"></div>
         <div className="flex flex-col justify-between items-center md:w-[30%] mt-[0.5rem]">
           <AssessmentSharing
-            sharedWithList={sharedWithList}
-            removeSharedWithUser={removeSharedWithUser}
             usersName={usersName}
-            setUsersName={usersName}
+            setUsersName={setUsersName}
             email={email}
             setEmail={setEmail}
-            addToSharedList={addToSharedList}
+            sharedWithList={sharedWithList}
+            setSharedWithList={setSharedWithList}
+            edit={edit}
+            addedToSharedList={addedToSharedList}
+            setAddedToSharedList={setAddedToSharedList}
+            removedFromSharedList={removedFromSharedList}
+            setRemovedFromSharedList={setRemovedFromSharedList}
           />
         </div>
       </div>
@@ -146,5 +184,7 @@ function CreateAndEditSubmission({ edit = false }) {
 CreateAndEditSubmission.propTypes = {
   edit: ReactPropTypes.bool,
 };
+
+CreateAndEditSubmission.loader = loader;
 
 export default CreateAndEditSubmission;

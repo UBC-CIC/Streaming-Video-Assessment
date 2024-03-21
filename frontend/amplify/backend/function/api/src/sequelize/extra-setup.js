@@ -57,7 +57,7 @@ function applyExtraSetup(sequelize) {
   };
 
   folder.prototype.getContents = async function () {
-    return await Promise.allSettled([
+    return await Promise.all([
       this.getUploaderGroups().then((groups) =>
         groups.map((g) => ({ ...g.dataValues, type: "group" })),
       ),
@@ -149,6 +149,27 @@ function applyExtraSetup(sequelize) {
     return await video.findOne({
       where: { uploaderId: this.uploaderId, assessmentId: this.assessmentId },
     });
+  };
+
+  assessment.prototype.removeUploadersAndGroups = async function (
+    removeUploaders,
+    removeGroups,
+  ) {
+    const currentUploaders = await this.getUploaders();
+    const currentGroups = await this.getUploaderGroups();
+
+    const uploadersToRemove = currentUploaders.filter((uploader) => {
+      return removeUploaders.find(
+        (sharedUploader) => sharedUploader.email === uploader.email,
+      );
+    });
+
+    const groupsToRemove = currentGroups.filter((group) => {
+      return removeGroups.find((sharedGroup) => sharedGroup.id === group.id);
+    });
+
+    await this.removeUploaders(uploadersToRemove);
+    await this.removeUploaderGroups(groupsToRemove);
   };
 }
 

@@ -1,9 +1,10 @@
 const express = require("express");
 const router = express.Router();
 const sequelize = require("../sequelize");
-const { assessment, uploader } = sequelize.models;
+const { assessment, uploader, uploaderGroup } = sequelize.models;
 const {
   createUploadRequestsForAssessment,
+  createUploadRequestsForNewUploaders,
 } = require("../helpers/uploadRequests");
 
 // Define your routes here
@@ -29,21 +30,19 @@ router.get("/:assessmentId", async (req, res) => {
   res.json({ success: "get call succeed!", data: query });
 });
 
-router.post("/", async (req, res) => {
-  /**
-   * 
-   * {
-      folderId: 1,
-      name: 'Test',
-      description: 'Tes',
-      timeLimitSeconds: 3660,
-      faceBlurAllowed: true,
-      dueDate: '2024-02-08T11:49',
-      sharedUploaders: [],
-      sharedGroups: []
-    }
-   */
+router.get("/shared/:assessmentId", async (req, res) => {
+  const query = await assessment.findByPk(parseInt(req.params.assessmentId));
 
+  const sharedUploaders = await query.getUploaders();
+  const sharedGroups = await query.getUploaderGroups();
+
+  res.json({
+    success: "get call succeed!",
+    data: { sharedGroups, sharedUploaders },
+  });
+});
+
+router.post("/", async (req, res) => {
   // create assessment
   const newAssessment = await assessment.create({
     name: req.body.name,
@@ -54,38 +53,79 @@ router.post("/", async (req, res) => {
     folderId: req.body.folderId,
   });
 
-  // add uploader and groups to assessment
-  for (let sharedUploader of req.body.sharedUploaders) {
-    const [user, _] = await uploader.findOrCreate({
-      where: { email: sharedUploader.email },
-      defaults: {
-        name: sharedUploader.name,
-      },
-    });
+  await linkUploaderAndGroups(
+    newAssessment,
+    req.body.sharedUploaders,
+    req.body.sharedGroups,
+  );
 
-    newAssessment.addUploader(user);
-  }
-
-  req.body.sharedGroups.forEach((group) => {
-    newAssessment.addUploaderGroup(group);
-  });
-
-  await createUploadRequestsForAssessment(newAssessment, true);
+  await createUploadRequestsForAssessment(newAssessment);
 
   res.json({
     success: "post call succeed!",
-    url: req.url,
     body: newAssessment,
   });
 });
 
-router.put("/:assessmentId", (req, res) => {
-  res.json({ success: "put call succeed!", url: req.url, body: req.body });
+router.put("/:assessmentId", async (req, res) => {
+  const assessmentQuery = await assessment.findByPk(req.params.assessmentId);
+
+  assessmentQuery.update({
+    name: req.body.name,
+    description: req.body.description,
+    timeLimitSeconds: req.body.timeLimitSeconds,
+    faceBlurAllowed: req.body.faceBlurAllowed,
+    dueDate: req.body.dueDate,
+  });
+
+  const { newUploaders, newGroups } = await linkUploaderAndGroups(
+    assessmentQuery,
+    req.body.newSharedUploaders,
+    req.body.newSharedGroups,
+  );
+
+  await createUploadRequestsForNewUploaders(
+    assessmentQuery,
+    newUploaders,
+    newGroups,
+  );
+
+  await assessmentQuery.removeUploadersAndGroups(
+    req.body.removeSharedUploaders,
+    req.body.removeSharedGroups,
+  );
+
+  res.json({ success: "put call succeed!", body: assessmentQuery });
 });
 
 router.delete("/:assessmentId", (req, res) => {
   res.json({ success: "delete call succeed!", url: req.url });
 });
+
+async function linkUploaderAndGroups(assessmentQuery, uploaders, groups) {
+  newUploaders = uploaders.map((uploaderObj) => {
+    return uploader.findOrCreate({
+      where: { email: uploaderObj.email },
+      defaults: { name: uploaderObj.name },
+    });
+  });
+
+  newUploaders = await Promise.all(newUploaders).then((uploaders) => {
+    return uploaders.map((uploader) => uploader[0]);
+  });
+
+  await assessmentQuery.addUploaders(newUploaders);
+
+  newGroups = groups.map((groupObj) => {
+    return uploaderGroup.findByPk(groupObj.id, { include: [uploader] });
+  });
+
+  newGroups = await Promise.all(newGroups);
+
+  await assessmentQuery.addUploaderGroups(newGroups);
+
+  return { newUploaders, newGroups };
+}
 
 // Export the router
 module.exports = router;

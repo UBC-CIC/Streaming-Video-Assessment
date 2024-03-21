@@ -2,17 +2,29 @@ import PropTypes from "prop-types";
 
 function GroupList({ groupList, removeUserFromGroupList }) {
   return (
-    <div className="flex flex-col items-center mt-5 overflow-y-auto h-[35%]">
+    <div className="flex flex-col items-center mt-2 overflow-y-auto h-[35%]">
       {groupList.map((group, index) => (
         <div
           key={index}
-          className="flex items-center justify-center w-full pb-4"
+          className="container flex items-center justify-between border-b border-gray-300 py-2 px-4 w-[50%]"
         >
-          <div className="font-bold">{group.name}</div>
-          <div className="divider divider-horizontal divider-neutral"></div>
-          <div className="font-bold pr-5">{group.email}</div>
+          <div className="flex flex-col w-[85%]">
+            <span
+              className="font-bold overflow-hidden whitespace-nowrap overflow-ellipsis"
+              title={group.name}
+            >
+              {group.name}
+            </span>
+
+            <span
+              className="font-bold overflow-hidden whitespace-nowrap overflow-ellipsis"
+              title={group.email}
+            >
+              {group.email}
+            </span>
+          </div>
           <div
-            className="btn btn-sm"
+            className="btn btn-sm flex-grow-0 flex-shrink hover:bg-red-600"
             onClick={() => {
               removeUserFromGroupList(index);
             }}

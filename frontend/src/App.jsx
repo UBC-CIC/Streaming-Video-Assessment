@@ -38,6 +38,7 @@ const router = createBrowserRouter([
   {
     path: "/submission/:submissionId/edit",
     element: PrivateRoute(<CreateAndEditSubmission edit={true} />),
+    loader: CreateAndEditSubmission.loader,
   },
   {
     path: "/submission/:submissionId",
