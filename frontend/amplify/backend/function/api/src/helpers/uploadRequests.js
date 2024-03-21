@@ -62,8 +62,7 @@ async function createUploadRequestForUser(
   doSendEmail = true,
 ) {
   const [uploadRequest, _] = await sequelize.models.uploadRequest.findOrCreate({
-    uploaderId: user.id,
-    assessmentId: assessment.id,
+    where: { uploaderId: user.id, assessmentId: assessment.id },
   });
 
   if (doSendEmail) sendUploadRequestEmail(user, assessment, uploadRequest);
