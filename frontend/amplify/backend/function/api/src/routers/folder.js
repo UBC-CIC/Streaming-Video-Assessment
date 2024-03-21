@@ -8,17 +8,9 @@ router.get("/:folderId", async (req, res) => {
   try {
     const query = await folder.findByPk(req.params.folderId);
     query.dataValues.path = await query.getFolderPath();
-    query.dataValues.files = await query
-      .getContents()
-      .then((results) => {
-        const contents = results.map((result) => {
-          if (result.status === "fulfilled") {
-            return result.value;
-          }
-        });
-        return contents;
-      })
-      .then((mappedContents) => mappedContents.flat());
+    query.dataValues.files = await query.getContents().then((results) => {
+      return results.flat();
+    });
     res.json({ success: "get call succeed!", data: query });
   } catch (error) {
     console.log("GET call failed: ", error);

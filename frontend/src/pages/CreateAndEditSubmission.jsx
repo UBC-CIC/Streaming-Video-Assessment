@@ -31,21 +31,16 @@ function CreateAndEditSubmission({ edit = false }) {
   const [timeLimit, setTimeLimit] = useState({ hours: 0, minutes: 0 });
   const [allowFaceBlur, setAllowFaceBlur] = useState(false);
   const [dueDate, setDueDate] = useState(null);
-  const [sharedWithList, setSharedWithList] = useState({
-    users: [],
-    groups: [],
-    ordered: [],
-  });
+  const [sharedWithList, setSharedWithList] = useState([]);
   const [email, setEmail] = useState("");
   const [usersName, setUsersName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [addedToSharedList, setAddedToSharedList] = useState([]);
+  const [removedFromSharedList, setRemovedFromSharedList] = useState([]);
 
   const getSharedWithListAsync = async (submissionId) => {
     const res = await getSharedWithList(submissionId);
-    const newSharedWithList = {};
-    newSharedWithList.users = res.sharedUploaders;
-    newSharedWithList.groups = res.sharedGroups;
-    newSharedWithList.ordered = res.sharedUploaders.concat(res.sharedGroups);
+    const newSharedWithList = res.sharedUploaders.concat(res.sharedGroups);
     setSharedWithList(newSharedWithList);
   };
 
@@ -79,10 +74,30 @@ function CreateAndEditSubmission({ edit = false }) {
       timeLimitSeconds: timeLimit.hours * 3600 + timeLimit.minutes * 60,
       faceBlurAllowed: allowFaceBlur,
       dueDate: dueDate,
-      sharedUploaders: sharedWithList.users,
-      sharedGroups: sharedWithList.groups,
     };
     if (edit) {
+      const newSharedUploaders = [];
+      const removeSharedUploaders = [];
+      const newSharedGroups = [];
+      const removeSharedGroups = [];
+      addedToSharedList.forEach((item) => {
+        if (item.email === undefined) {
+          newSharedGroups.push(item);
+        } else {
+          newSharedUploaders.push(item);
+        }
+      });
+      removedFromSharedList.forEach((item) => {
+        if (item.email === undefined) {
+          removeSharedGroups.push(item);
+        } else {
+          removeSharedUploaders.push(item);
+        }
+      });
+      data.newSharedUploaders = newSharedUploaders;
+      data.newSharedGroups = newSharedGroups;
+      data.removeSharedUploaders = removeSharedUploaders;
+      data.removeSharedGroups = removeSharedGroups;
       const response = await editAssessment(submissionId, data);
       setIsLoading(false);
       if (response.success) {
@@ -92,6 +107,17 @@ function CreateAndEditSubmission({ edit = false }) {
         alert("Assessment editing failed");
       }
     } else {
+      const uploaders = [];
+      const groups = [];
+      sharedWithList.forEach((item) => {
+        if (item.email === undefined) {
+          groups.push(item);
+        } else {
+          uploaders.push(item);
+        }
+      });
+      data.sharedUploaders = uploaders;
+      data.sharedGroups = groups;
       const response = await createAssessment(data);
       setIsLoading(false);
       if (response.success) {
@@ -135,6 +161,11 @@ function CreateAndEditSubmission({ edit = false }) {
             setEmail={setEmail}
             sharedWithList={sharedWithList}
             setSharedWithList={setSharedWithList}
+            edit={edit}
+            addedToSharedList={addedToSharedList}
+            setAddedToSharedList={setAddedToSharedList}
+            removedFromSharedList={removedFromSharedList}
+            setRemovedFromSharedList={setRemovedFromSharedList}
           />
         </div>
       </div>

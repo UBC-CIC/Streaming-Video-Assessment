@@ -4,6 +4,7 @@ const sequelize = require("../sequelize");
 const { assessment, uploader, uploaderGroup } = sequelize.models;
 const {
   createUploadRequestsForAssessment,
+  createUploadRequestsForNewUploaders,
 } = require("../helpers/uploadRequests");
 
 // Define your routes here
@@ -58,7 +59,7 @@ router.post("/", async (req, res) => {
     req.body.sharedGroups,
   );
 
-  await createUploadRequestsForAssessment(newAssessment, true);
+  await createUploadRequestsForAssessment(newAssessment);
 
   res.json({
     success: "post call succeed!",
@@ -77,17 +78,21 @@ router.put("/:assessmentId", async (req, res) => {
     dueDate: req.body.dueDate,
   });
 
-  await linkUploaderAndGroups(
+  const { newUploaders, newGroups } = await linkUploaderAndGroups(
     assessmentQuery,
-    req.body.sharedUploaders,
-    req.body.sharedGroups,
+    req.body.newSharedUploaders,
+    req.body.newSharedGroups,
   );
 
-  await createUploadRequestsForAssessment(assessmentQuery, true, true);
+  await createUploadRequestsForNewUploaders(
+    assessmentQuery,
+    newUploaders,
+    newGroups,
+  );
 
   await assessmentQuery.removeUploadersAndGroups(
-    req.body.sharedUploaders,
-    req.body.sharedGroups,
+    req.body.removeSharedUploaders,
+    req.body.removeSharedGroups,
   );
 
   res.json({ success: "put call succeed!", body: assessmentQuery });
@@ -112,12 +117,14 @@ async function linkUploaderAndGroups(assessmentQuery, uploaders, groups) {
   await assessmentQuery.addUploaders(newUploaders);
 
   newGroups = groups.map((groupObj) => {
-    return uploaderGroup.findByPk(groupObj.id);
+    return uploaderGroup.findByPk(groupObj.id, { include: [uploader] });
   });
 
   newGroups = await Promise.all(newGroups);
 
   await assessmentQuery.addUploaderGroups(newGroups);
+
+  return { newUploaders, newGroups };
 }
 
 // Export the router

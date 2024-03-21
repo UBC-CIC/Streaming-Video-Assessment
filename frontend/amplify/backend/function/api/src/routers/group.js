@@ -25,14 +25,8 @@ router.get("/", async (req, res) => {
   const content = await query
     .getContents()
     .then((results) => {
-      const contents = results.map((result) => {
-        if (result.status === "fulfilled") {
-          return result.value;
-        }
-      });
-      return contents;
+      return results.flat();
     })
-    .then((mappedContents) => mappedContents.flat())
     .then((contents) =>
       contents.filter((content) => content.type != "assessment"),
     );
