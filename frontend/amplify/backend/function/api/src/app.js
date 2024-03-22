@@ -48,8 +48,8 @@ app.use(function (req, res, next) {
   next();
 });
 
-// TODO: this function shouldn't use callbacks. It should also not protect all routes...
-app.use(async function (req, res, next) {
+// TODO: this function shouldn't use callbacks.
+async function requireSignIn(req, res, next) {
   // console.log("method: ", req.method);
   const claim = req.headers.authorization;
   // console.log("claim: ", claim);
@@ -73,10 +73,11 @@ app.use(async function (req, res, next) {
       next();
     },
   );
-});
-app.use("/api/folder", folderRouter);
-app.use("/api/group", groupRouter);
-app.use("/api/assessment", assessmentRouter);
+}
+
+app.use("/api/folder", requireSignIn, folderRouter);
+app.use("/api/group", requireSignIn, groupRouter);
+app.use("/api/assessment", requireSignIn, assessmentRouter);
 app.use("/api/submission", submissionRouter);
 
 app.get("/api/ping", function (req, res) {
