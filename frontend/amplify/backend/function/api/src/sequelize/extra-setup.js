@@ -93,6 +93,19 @@ function applyExtraSetup(sequelize) {
     return path;
   };
 
+  folder.isOwnedBy = async function (folderId, email) {
+    const f = await this.findByPk(folderId, {
+      include: [
+        {
+          association: "owner",
+          where: { email },
+        },
+      ],
+    });
+
+    return !!f;
+  };
+
   folder.prototype.move = async function (newParentId) {
     const newParent = await folder.findByPk(newParentId);
 

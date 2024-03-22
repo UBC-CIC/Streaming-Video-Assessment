@@ -2,7 +2,7 @@ const sequelize = require("./index");
 
 const { user, assessment, folder, uploaderGroup } = sequelize.models;
 
-const createDummyData = require("./create-dummy-data");
+const { createDummyData, createUser } = require("./create-dummy-data");
 
 describe("Sequelize", () => {
   beforeAll(async () => {
@@ -20,47 +20,39 @@ describe("Sequelize", () => {
     expect(models).toHaveProperty("video");
   });
 
-  it("should be able to get root folder", async () => {
-    const user1 = await user.create(
-      {
-        email: `test+${Math.random()}@test.ca`,
-        isPlatformManager: true,
-        isAssessmentCreator: true,
-        folders: [
-          // Create root folder along with user
-          {
-            name: "Home",
-          },
-        ],
-      },
-      {
-        include: [user.folders],
-      },
-    );
+  describe("Folder", () => {
+    beforeAll(async () => {
+      const user1 = await createUser(sequelize, "testFolder@test.ca");
+    });
 
-    const root = await user1.getRoot();
+    it("should be able to get root folder", async () => {
+      const user1 = await createUser(
+        sequelize,
+        `test+${Math.random()}@test.ca`,
+      );
+      const root = await user1.getRoot();
+      expect(await user1.getFolders()).toContainEqual(root);
+    });
 
-    expect(await user1.getFolders()).toContainEqual(root);
+    it("isOwnedBy", async () => {
+      const user1 = await user.findOne({
+        where: { email: "testFolder@test.ca" },
+      });
+      const root = await user1.getRoot();
+
+      const user2 = await createUser(sequelize, "notmine@test.ca");
+      const notMineRoot = await user2.getRoot();
+
+      expect(await folder.isOwnedBy(root.id, "testFolder@test.ca")).toBe(true);
+      expect(await folder.isOwnedBy(notMineRoot.id, "testFolder@test.ca")).toBe(
+        false,
+      );
+    });
   });
 
   describe("Assessments", () => {
     beforeAll(async () => {
-      const user1 = await user.create(
-        {
-          email: `testAssessments@test.ca`,
-          isPlatformManager: true,
-          isAssessmentCreator: true,
-          folders: [
-            // Create root folder along with user
-            {
-              name: "Home",
-            },
-          ],
-        },
-        {
-          include: [user.folders],
-        },
-      );
+      const user1 = await createUser(sequelize, `testAssessments@test.ca`);
     });
 
     it("getOwner should return the owner of the assessment", async () => {
@@ -85,22 +77,7 @@ describe("Sequelize", () => {
 
   describe("UploaderGroups", () => {
     beforeAll(async () => {
-      const user1 = await user.create(
-        {
-          email: `testUploaderGroup@test.ca`,
-          isPlatformManager: true,
-          isAssessmentCreator: true,
-          folders: [
-            // Create root folder along with user
-            {
-              name: "Home",
-            },
-          ],
-        },
-        {
-          include: [user.folders],
-        },
-      );
+      const user1 = await createUser(sequelize, `testUploaderGroup@test.ca`);
     });
 
     it("getOwner should return the owner of the UploaderGroup", async () => {
