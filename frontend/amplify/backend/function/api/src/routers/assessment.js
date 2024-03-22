@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const sequelize = require("../sequelize");
-const { assessment, uploader, uploaderGroup } = sequelize.models;
+const { assessment, uploader, uploaderGroup, folder } = sequelize.models;
 const {
   createUploadRequestsForAssessment,
   createUploadRequestsForNewUploaders,
@@ -10,6 +10,11 @@ const {
 // Define your routes here
 router.get("/:assessmentId", async (req, res) => {
   const query = await assessment.findByPk(parseInt(req.params.assessmentId));
+
+  if (!query || (await query.getOwner()).email !== req["userEmail"]) {
+    return res.status(403).json({ error: "Forbidden" });
+  }
+
   const videos = await query.getVideos({
     include: [uploader],
     where: { submitted: true },
@@ -33,6 +38,10 @@ router.get("/:assessmentId", async (req, res) => {
 router.get("/shared/:assessmentId", async (req, res) => {
   const query = await assessment.findByPk(parseInt(req.params.assessmentId));
 
+  if (!query || (await query.getOwner()).email !== req["userEmail"]) {
+    return res.status(403).json({ error: "Forbidden" });
+  }
+
   const sharedUploaders = await query.getUploaders();
   const sharedGroups = await query.getUploaderGroups();
 
@@ -43,21 +52,34 @@ router.get("/shared/:assessmentId", async (req, res) => {
 });
 
 router.post("/", async (req, res) => {
+  const {
+    folderId,
+    name,
+    description,
+    timeLimitSeconds,
+    faceBlurAllowed,
+    dueDate,
+    sharedUploaders,
+    sharedGroups,
+  } = req.body;
+
+  if (!(await folder.isOwnedBy(parseInt(folderId), req["userEmail"]))) {
+    return res.status(403).json({ error: "Forbidden" });
+  }
+
+  // TODO: make sure these fields are not blank
   // create assessment
   const newAssessment = await assessment.create({
-    name: req.body.name,
-    description: req.body.description,
-    timeLimitSeconds: req.body.timeLimitSeconds,
-    faceBlurAllowed: req.body.faceBlurAllowed,
-    dueDate: req.body.dueDate,
-    folderId: req.body.folderId,
+    name,
+    description,
+    timeLimitSeconds,
+    faceBlurAllowed,
+    dueDate,
+    folderId,
   });
 
-  await linkUploaderAndGroups(
-    newAssessment,
-    req.body.sharedUploaders,
-    req.body.sharedGroups,
-  );
+  // TODO: make sure sharedUploaders and sharedGroups are in the correct format
+  await linkUploaderAndGroups(newAssessment, sharedUploaders, sharedGroups);
 
   await createUploadRequestsForAssessment(newAssessment);
 
@@ -68,7 +90,15 @@ router.post("/", async (req, res) => {
 });
 
 router.put("/:assessmentId", async (req, res) => {
+  // TODO: validate inputs
   const assessmentQuery = await assessment.findByPk(req.params.assessmentId);
+
+  if (
+    !assessmentQuery ||
+    (await assessmentQuery.getOwner()).email !== req["userEmail"]
+  ) {
+    return res.status(403).json({ error: "Forbidden" });
+  }
 
   assessmentQuery.update({
     name: req.body.name,
@@ -99,11 +129,13 @@ router.put("/:assessmentId", async (req, res) => {
 });
 
 router.delete("/:assessmentId", (req, res) => {
+  // @aryang13 TODO: implement this and protect this endpoint
   res.json({ success: "delete call succeed!", url: req.url });
 });
 
+// @aryang13 TODO: move this to a helper file
 async function linkUploaderAndGroups(assessmentQuery, uploaders, groups) {
-  newUploaders = uploaders.map((uploaderObj) => {
+  let newUploaders = uploaders.map((uploaderObj) => {
     return uploader.findOrCreate({
       where: { email: uploaderObj.email },
       defaults: { name: uploaderObj.name },
@@ -116,7 +148,7 @@ async function linkUploaderAndGroups(assessmentQuery, uploaders, groups) {
 
   await assessmentQuery.addUploaders(newUploaders);
 
-  newGroups = groups.map((groupObj) => {
+  let newGroups = groups.map((groupObj) => {
     return uploaderGroup.findByPk(groupObj.id, { include: [uploader] });
   });
 
