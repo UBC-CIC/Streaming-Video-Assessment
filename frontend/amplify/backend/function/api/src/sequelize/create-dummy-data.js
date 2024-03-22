@@ -7,7 +7,7 @@ const {
   createUploadRequestsForAssessment,
 } = require("../helpers/uploadRequests");
 
-module.exports = async function create(sequelize) {
+module.exports.createDummyData = async function (sequelize) {
   const { user, folder, uploaderGroup, uploader, assessment, video } =
     sequelize.models;
 
@@ -95,4 +95,25 @@ module.exports = async function create(sequelize) {
     uploaderId: uploader1.id,
     assessmentId: spanish1test1.id,
   });
+};
+
+module.exports.createUser = async function (sequelize, email) {
+  const { user } = sequelize.models;
+
+  return await user.create(
+    {
+      email,
+      isPlatformManager: true,
+      isAssessmentCreator: true,
+      folders: [
+        // Create root folder along with user
+        {
+          name: "Home",
+        },
+      ],
+    },
+    {
+      include: [user.folders],
+    },
+  );
 };

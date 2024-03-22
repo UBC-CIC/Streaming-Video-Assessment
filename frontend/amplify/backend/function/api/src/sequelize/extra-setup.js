@@ -93,6 +93,19 @@ function applyExtraSetup(sequelize) {
     return path;
   };
 
+  folder.isOwnedBy = async function (folderId, email) {
+    const f = await this.findByPk(folderId, {
+      include: [
+        {
+          association: "owner",
+          where: { email },
+        },
+      ],
+    });
+
+    return !!f;
+  };
+
   folder.prototype.move = async function (newParentId) {
     const newParent = await folder.findByPk(newParentId);
 
@@ -170,6 +183,28 @@ function applyExtraSetup(sequelize) {
 
     await this.removeUploaders(uploadersToRemove);
     await this.removeUploaderGroups(groupsToRemove);
+  };
+
+  assessment.prototype.getOwner = async function () {
+    const folder = await this.getFolder({
+      include: [
+        {
+          association: "owner",
+        },
+      ],
+    });
+    return folder.owner;
+  };
+
+  uploaderGroup.prototype.getOwner = async function () {
+    const folder = await this.getFolder({
+      include: [
+        {
+          association: "owner",
+        },
+      ],
+    });
+    return folder.owner;
   };
 }
 
