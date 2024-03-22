@@ -3,7 +3,6 @@ const router = express.Router();
 const sequelize = require("../sequelize");
 const { folder, user } = sequelize.models;
 
-// Define your routes here
 router.get("/home", async (req, res) => {
   const query = await folder.findOne({
     where: { parentId: null },
@@ -33,7 +32,6 @@ router.get("/home", async (req, res) => {
         include: [user.folders],
       },
     );
-    console.log({ user1 });
 
     return res.json({ rootId: user1.folders[0].id });
   }
@@ -42,7 +40,18 @@ router.get("/home", async (req, res) => {
 
 router.get("/:folderId", async (req, res) => {
   try {
-    const query = await folder.findByPk(req.params.folderId);
+    const query = await folder.findByPk(req.params.folderId, {
+      include: [
+        {
+          association: "owner",
+        },
+      ],
+    });
+
+    if (!query || query.owner.email !== req["userEmail"]) {
+      return res.status(403).json({ error: "Forbidden" });
+    }
+
     query.dataValues.path = await query.getFolderPath();
     query.dataValues.files = await query.getContents().then((results) => {
       return results.flat();
@@ -68,6 +77,14 @@ router.put("/move", async (req, res) => {
     // TODO: ensure ownership
     const toMove = await file.findByPk(req.body.file.id);
 
+    if (
+      !toMove ||
+      (await toMove.getOwner()).email !== req["userEmail"] ||
+      !(await folder.isOwnedBy(parseInt(newFolderId), req["userEmail"]))
+    ) {
+      return res.status(403).json({ error: "Forbidden" });
+    }
+
     const updatedFile = await toMove.move(newFolderId);
     res.json({ success: "put call succeed!", data: updatedFile });
   } catch (e) {
@@ -85,12 +102,8 @@ router.post("/", async (req, res) => {
     ],
   });
 
-  if (!parent) {
-    return res.status(404).json({ error: "Folder not found" });
-  }
-
-  if (parent.owner.email !== req["userEmail"]) {
-    return res.status(401).json({ error: "Unauthorized" });
+  if (!parent || parent.owner.email !== req["userEmail"]) {
+    return res.status(403).json({ error: "Forbidden" });
   }
 
   try {
@@ -111,6 +124,14 @@ router.patch("/:folderId", async (req, res) => {
   try {
     const updatedFolder = await folder.update(req.body, {
       where: { id: req.params.folderId },
+      include: [
+        {
+          association: "owner",
+          where: {
+            email: req["userEmail"], // This should ensure ownership
+          },
+        },
+      ],
     });
     res.json({ success: "patch call succeed!", data: updatedFolder });
   } catch (e) {
@@ -120,7 +141,7 @@ router.patch("/:folderId", async (req, res) => {
 });
 
 router.delete("/:folderId", (req, res) => {
-  // TODO: Implement delete, must delete all children folders and files
+  // TODO: Implement delete, must delete all children folders and files, and ensure ownership
   res.json({ success: "delete call succeed!", url: req.url });
 });
 

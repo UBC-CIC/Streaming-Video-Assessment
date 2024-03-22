@@ -47,6 +47,8 @@ app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Methods", "*");
   next();
 });
+
+// TODO: this function shouldn't use callbacks. It should also not protect all routes...
 app.use(async function (req, res, next) {
   // console.log("method: ", req.method);
   const claim = req.headers.authorization;
@@ -63,9 +65,9 @@ app.use(async function (req, res, next) {
     function (err, decodedToken) {
       if (err) {
         console.error(err);
-        return res.status(401).send("Unauthorized");
+        return res.status(401).json({ error: "Unauthorized" });
       }
-      console.log("decodedToken: ", decodedToken);
+      // console.log("decodedToken: ", decodedToken);
       req["userEmail"] = decodedToken.email;
       // console.log("userEmail: ", req["userEmail"]);
       next();
