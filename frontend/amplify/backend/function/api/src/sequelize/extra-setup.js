@@ -171,6 +171,28 @@ function applyExtraSetup(sequelize) {
     await this.removeUploaders(uploadersToRemove);
     await this.removeUploaderGroups(groupsToRemove);
   };
+
+  assessment.prototype.getOwner = async function () {
+    const folder = await this.getFolder({
+      include: [
+        {
+          association: "owner",
+        },
+      ],
+    });
+    return folder.owner;
+  };
+
+  uploaderGroup.prototype.getOwner = async function () {
+    const folder = await this.getFolder({
+      include: [
+        {
+          association: "owner",
+        },
+      ],
+    });
+    return folder.owner;
+  };
 }
 
 module.exports = { applyExtraSetup };
