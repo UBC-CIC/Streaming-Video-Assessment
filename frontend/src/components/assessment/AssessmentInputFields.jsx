@@ -1,4 +1,10 @@
-function AssessmentInputFields({ name, description, setName, setDescription }) {
+function AssessmentInputFields({
+  name,
+  description,
+  setName,
+  setDescription,
+  titleError,
+}) {
   return (
     <>
       <div className="pb-1">
@@ -11,6 +17,7 @@ function AssessmentInputFields({ name, description, setName, setDescription }) {
         />
       </div>
       <div className="bg-black h-0.5" />
+      {titleError && <div className="text-red-600 pl-5">*{titleError}*</div>}
       <textarea
         className="textarea textarea-bordered w-full mt-5 textarea-lg h-[20rem]"
         placeholder="Description"

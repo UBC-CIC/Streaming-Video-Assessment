@@ -1,3 +1,5 @@
+import { formatTimeForInput } from "../../helpers/dateHandler";
+
 function AssessmentSettings({
   timeLimit,
   setTimeLimit,
@@ -5,6 +7,8 @@ function AssessmentSettings({
   setAllowFaceBlur,
   dueDate,
   setDueDate,
+  timeLimitError,
+  dueDateError,
 }) {
   return (
     <>
@@ -12,7 +16,9 @@ function AssessmentSettings({
         <div className="text-4xl">Settings</div>
       </div>
       <div className="bg-black h-0.5" />
-      <div className="flex flex-row mt-8 text-xl pb-5">
+      <div
+        className={`flex flex-row mt-8 text-xl ${timeLimitError ? "" : "pb-5"}`}
+      >
         Time Limit:
         <div className="flex flex-row pl-5 w-[30%]">
           <label htmlFor="hours" className="pr-2">
@@ -51,6 +57,9 @@ function AssessmentSettings({
           />
         </div>
       </div>
+      {timeLimitError && (
+        <div className="text-red-600 pb-5">*{timeLimitError}*</div>
+      )}
       <div className="flex flex-row text-xl w-full pb-5">
         Allow Face Blur:
         <div className="pl-5 flex items-center">
@@ -72,11 +81,12 @@ function AssessmentSettings({
           {/* TODO: test if there is timezone issues */}
           <input
             type="datetime-local"
-            value={dueDate}
+            value={dueDate ? formatTimeForInput(new Date(dueDate)) : ""}
             onChange={(e) => setDueDate(e.target.value)}
           />
         </div>
       </div>
+      {dueDateError && <div className="text-red-600">*{dueDateError}*</div>}
     </>
   );
 }
