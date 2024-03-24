@@ -100,30 +100,26 @@ router.put("/:assessmentId", async (req, res) => {
     return res.status(403).json({ error: "Forbidden" });
   }
 
-  assessmentQuery.update({
-    name: req.body.name,
-    description: req.body.description,
-    timeLimitSeconds: req.body.timeLimitSeconds,
-    faceBlurAllowed: req.body.faceBlurAllowed,
-    dueDate: req.body.dueDate,
-  });
+  assessmentQuery.update(req.body.data);
 
-  const { newUploaders, newGroups } = await linkUploaderAndGroups(
-    assessmentQuery,
-    req.body.newSharedUploaders,
-    req.body.newSharedGroups,
-  );
+  if (req.body.isFullEdit) {
+    const { newUploaders, newGroups } = await linkUploaderAndGroups(
+      assessmentQuery,
+      req.body.newSharedUploaders,
+      req.body.newSharedGroups,
+    );
 
-  await createUploadRequestsForNewUploaders(
-    assessmentQuery,
-    newUploaders,
-    newGroups,
-  );
+    await createUploadRequestsForNewUploaders(
+      assessmentQuery,
+      newUploaders,
+      newGroups,
+    );
 
-  await assessmentQuery.removeUploadersAndGroups(
-    req.body.removeSharedUploaders,
-    req.body.removeSharedGroups,
-  );
+    await assessmentQuery.removeUploadersAndGroups(
+      req.body.removeSharedUploaders,
+      req.body.removeSharedGroups,
+    );
+  }
 
   res.json({ success: "put call succeed!", body: assessmentQuery });
 });
