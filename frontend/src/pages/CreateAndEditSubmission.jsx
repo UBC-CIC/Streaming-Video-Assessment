@@ -116,6 +116,9 @@ function CreateAndEditSubmission({ edit = false }) {
       dueDate: dueDate,
     };
     if (edit) {
+      body = {};
+      body.data = data;
+      body.isFullEdit = true;
       const newSharedUploaders = [];
       const removeSharedUploaders = [];
       const newSharedGroups = [];
@@ -134,11 +137,11 @@ function CreateAndEditSubmission({ edit = false }) {
           removeSharedUploaders.push(item);
         }
       });
-      data.newSharedUploaders = newSharedUploaders;
-      data.newSharedGroups = newSharedGroups;
-      data.removeSharedUploaders = removeSharedUploaders;
-      data.removeSharedGroups = removeSharedGroups;
-      const response = await editAssessment(submissionId, data);
+      body.newSharedUploaders = newSharedUploaders;
+      body.newSharedGroups = newSharedGroups;
+      body.removeSharedUploaders = removeSharedUploaders;
+      body.removeSharedGroups = removeSharedGroups;
+      const response = await editAssessment(submissionId, body);
       setIsLoading(false);
       if (response.success) {
         alert("Assessment edits successfully");
