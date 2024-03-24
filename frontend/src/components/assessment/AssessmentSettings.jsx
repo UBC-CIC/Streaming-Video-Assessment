@@ -1,4 +1,5 @@
 import { formatTimeForInput } from "../../helpers/dateHandler";
+import { IoWarningOutline } from "react-icons/io5";
 
 function AssessmentSettings({
   timeLimit,
@@ -58,7 +59,10 @@ function AssessmentSettings({
         </div>
       </div>
       {timeLimitError && (
-        <div className="text-red-600 pb-5">*{timeLimitError}*</div>
+        <div className="text-red-600 flex flex-row items-center">
+          <IoWarningOutline />
+          {timeLimitError}
+        </div>
       )}
       <div className="flex flex-row text-xl w-full pb-5">
         Allow Face Blur:
@@ -86,7 +90,12 @@ function AssessmentSettings({
           />
         </div>
       </div>
-      {dueDateError && <div className="text-red-600">*{dueDateError}*</div>}
+      {dueDateError && (
+        <div className="text-red-600 flex flex-row items-center">
+          <IoWarningOutline />
+          {dueDateError}
+        </div>
+      )}
     </>
   );
 }
