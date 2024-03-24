@@ -6,6 +6,7 @@ import { formatDateTime } from "../helpers/dateHandler";
 import AssessmentClosedDialog from "../components/AssessmentClosedDialog";
 import AssessmentOpenDialog from "../components/AssessmentOpenDialog";
 import { editAssessment } from "../helpers/submissionCreatorApi";
+import FolderPath from "../components/assessment/FolderPath";
 
 function loader({ params }) {
   let submissionId = null;
@@ -134,6 +135,14 @@ function ViewAllSubmissions() {
     setIsLoading(false);
   };
 
+  const folderOnClickHandler = (folderId, index) => {
+    if (index === 0) {
+      return navigate(`/home`);
+    }
+
+    return navigate(`/folder/${folderId}`);
+  };
+
   return isLoading ? (
     <div className="flex justify-center h-full w-full fixed">
       <span className="loading loading-spinner loading-lg"></span>
@@ -141,7 +150,14 @@ function ViewAllSubmissions() {
   ) : (
     <div className="flex flex-col w-full md:flex-row h-[100vh]">
       <div className="pr-5 pl-5 md:w-[75%]">
-        <div className="flex flex-col justify-between mt-5 pb-6 md:flex-row">
+        <div className="mt-4 mb-2">
+          <FolderPath
+            folderPath={submissionData.folderPath}
+            onClickHandler={folderOnClickHandler}
+            setIsLastPath={false}
+          />
+        </div>
+        <div className="flex flex-col justify-between pb-6 md:flex-row">
           <div className="flex flex-col text-black pb-2 md:pb-0">
             <div className="text-4xl">{submissionData.name}</div>
             <div className="bg-black h-0.5" />
@@ -185,7 +201,7 @@ function ViewAllSubmissions() {
         </div>
       </div>
       <div className="divider md:divider-horizontal"></div>
-      <div className="pr-5 pl-5 flex flex-col justify-between mt-5 items-center md:w-[25%]">
+      <div className="pr-5 pl-5 flex flex-col justify-between mt-14 items-center md:w-[25%]">
         <div className="w-full">
           <div className="text-4xl">Submissions</div>
           <div className="bg-black h-0.5" />
