@@ -9,7 +9,9 @@ const {
 
 // Define your routes here
 router.get("/:assessmentId", async (req, res) => {
-  const query = await assessment.findByPk(parseInt(req.params.assessmentId));
+  const query = await assessment.findByPk(parseInt(req.params.assessmentId), {
+    include: [folder],
+  });
 
   if (!query || (await query.getOwner()).email !== req["userEmail"]) {
     return res.status(403).json({ error: "Forbidden" });
@@ -31,6 +33,8 @@ router.get("/:assessmentId", async (req, res) => {
     };
   });
   query.dataValues.submissions = await Promise.all(videoDetailsPromises);
+
+  query.dataValues.folderPath = await query.folder.getFolderPath();
 
   res.json({ success: "get call succeed!", data: query });
 });
