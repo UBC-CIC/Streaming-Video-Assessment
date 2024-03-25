@@ -1,6 +1,10 @@
-function AssessmentOpenDialog({ isPassDueDate }) {
+import { useState } from "react";
+
+function AssessmentOpenDialog({ dialogRef, onContinueHandler, isPassDueDate }) {
+  const [dueDate, setDueDate] = useState(null);
+
   return (
-    <dialog id="assessment-open-dialog" className="modal">
+    <dialog id="assessment-open-dialog" className="modal" ref={dialogRef}>
       <div className="modal-box">
         <h3 className="font-bold text-lg text-center mb-5">
           Reopening Assessment
@@ -12,7 +16,11 @@ function AssessmentOpenDialog({ isPassDueDate }) {
               till then:
             </p>
             <div className="justify-center flex pb-10">
-              <input id="open-due-date" type="datetime-local" />
+              <input
+                id="open-due-date"
+                type="datetime-local"
+                onChange={(e) => setDueDate(e.target.value)}
+              />
             </div>
           </>
         ) : (
@@ -26,9 +34,8 @@ function AssessmentOpenDialog({ isPassDueDate }) {
             <button
               className="btn bg-red-500 btn-md text-white hover:text-black pl-4 pr-4"
               onClick={() => {
-                if (isPassDueDate)
-                  document.getElementById("open-due-date").value = null;
-                document.getElementById("assessment-open-dialog").close();
+                if (isPassDueDate) setDueDate(null);
+                dialogRef.current.close();
               }}
             >
               Go Back
@@ -38,15 +45,13 @@ function AssessmentOpenDialog({ isPassDueDate }) {
             <button
               className="btn bg-indigo-500 btn-md text-white hover:text-black"
               id="open-assessment"
+              onClick={() => onContinueHandler(dueDate)}
             >
               Continue
             </button>
           </div>
         </div>
       </div>
-      <form method="dialog" className="modal-backdrop">
-        <button>close</button>
-      </form>
     </dialog>
   );
 }

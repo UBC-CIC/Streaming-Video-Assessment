@@ -45,7 +45,11 @@ export const formatDateTime = (dateObj) => {
   let period = "AM";
 
   // Adjusting hours for AM/PM format
-  if (hour >= 12) {
+  if (hour === 0) {
+    hour = 12;
+  } else if (hour == 12) {
+    period = "PM";
+  } else {
     hour -= 12;
     period = "PM";
   }

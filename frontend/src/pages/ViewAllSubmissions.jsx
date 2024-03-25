@@ -27,6 +27,7 @@ function ViewAllSubmissions() {
   const timeLimit = useRef({ hours: 0, minutes: 0 });
   const [isLoading, setIsLoading] = useState(true);
   const assessmentClosedDialogRef = useRef(null);
+  const assessmentOpenDialogRef = useRef(null);
   const [isPassDueDate, setIsPassDueDate] = useState(false);
 
   useEffect(() => {
@@ -82,48 +83,44 @@ function ViewAllSubmissions() {
     const passDueDate = new Date(submissionData.dueDate) < new Date();
     setIsPassDueDate(passDueDate);
 
-    document.getElementById("open-assessment").onclick = async () => {
-      document.getElementById("assessment-open-dialog").close();
+    assessmentOpenDialogRef.current.showModal();
+  };
 
-      const body = {
-        isFullEdit: false,
-      };
+  const onOpenDialogClickHandler = async (newDueDate) => {
+    assessmentOpenDialogRef.current.close();
 
-      if (!passDueDate) {
-        body.data = { closedEarly: false };
-      } else {
-        const newDueDate = document.getElementById("open-due-date").value;
-
-        if (newDueDate === "") return;
-
-        body.data = { dueDate: newDueDate, closedEarly: false };
-      }
-
-      setIsLoading(true);
-      const response = await editAssessment(submissionId, body);
-      if (response.success) {
-        const newSubmissionData = { ...submissionData };
-        newSubmissionData.closed = false;
-        newSubmissionData.dueDate = formatDateTime(
-          new Date(body.data.dueDate || dueDate.current),
-        );
-        dueDate.current = newSubmissionData.dueDate;
-        setSubmissionData(newSubmissionData);
-      } else {
-        alert("Could not open assessment");
-      }
-      setIsLoading(false);
+    const body = {
+      closedEarly: false,
     };
 
-    document.getElementById("assessment-open-dialog").showModal();
+    if (isPassDueDate) {
+      if (newDueDate === "") return;
+      body.dueDate = newDueDate;
+    }
+
+    setIsLoading(true);
+    const response = await editAssessment(submissionId, body);
+    if (response.success) {
+      const newSubmissionData = { ...submissionData };
+      newSubmissionData.closed = false;
+
+      const newDate = body.dueDate
+        ? formatDateTime(new Date(body.dueDate))
+        : dueDate.current;
+      dueDate.current = newDate;
+      newSubmissionData.dueDate = body.dueDate
+        ? body.dueDate
+        : submissionData.dueDate;
+      setSubmissionData(newSubmissionData);
+    } else {
+      alert("Could not open assessment");
+    }
+    setIsLoading(false);
   };
 
   const closeSubmissionOnClickHandler = async () => {
     const body = {
-      data: {
-        closedEarly: true,
-      },
-      isFullEdit: false,
+      closedEarly: true,
     };
     setIsLoading(true);
     const response = await editAssessment(submissionId, body);
@@ -235,7 +232,11 @@ function ViewAllSubmissions() {
         dialogRef={assessmentClosedDialogRef}
         onContinueHandler={navigateToEditing}
       />
-      <AssessmentOpenDialog isPassDueDate={isPassDueDate} />
+      <AssessmentOpenDialog
+        dialogRef={assessmentOpenDialogRef}
+        onContinueHandler={onOpenDialogClickHandler}
+        isPassDueDate={isPassDueDate}
+      />
     </div>
   );
 }
