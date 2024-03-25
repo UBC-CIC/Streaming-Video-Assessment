@@ -13,9 +13,7 @@ function AssessmentClosedDialog({ dialogRef, onContinueHandler }) {
           <div className="mr-2">
             <button
               className="btn bg-red-500 btn-md text-white hover:text-black pl-4 pr-4"
-              onClick={() =>
-                document.getElementById("assessment-closed-dialog").close()
-              }
+              onClick={() => dialogRef.current.close()}
             >
               Go Back
             </button>
