@@ -4,6 +4,8 @@ import { useLoaderData, useNavigate } from "react-router-dom";
 import { getSubmissionData } from "../helpers/submissionCreatorApi";
 import { formatDateTime } from "../helpers/dateHandler";
 import AssessmentClosedDialog from "../components/AssessmentClosedDialog";
+import AssessmentOpenDialog from "../components/AssessmentOpenDialog";
+import { editAssessment } from "../helpers/submissionCreatorApi";
 
 function loader({ params }) {
   let submissionId = null;
@@ -25,6 +27,8 @@ function ViewAllSubmissions() {
   const timeLimit = useRef({ hours: 0, minutes: 0 });
   const [isLoading, setIsLoading] = useState(true);
   const assessmentClosedDialogRef = useRef(null);
+  const assessmentOpenDialogRef = useRef(null);
+  const [isPassDueDate, setIsPassDueDate] = useState(false);
 
   useEffect(() => {
     const fetchSubmissionData = async () => {
@@ -35,21 +39,99 @@ function ViewAllSubmissions() {
     };
 
     fetchSubmissionData();
-    dueDate.current = formatDateTime(new Date(submissionData.dueDate));
-    const hours = Math.floor(submissionData.timeLimitSeconds / 3600);
-    const remainingSeconds = submissionData.timeLimitSeconds % 3600;
-    const minutes = Math.floor(remainingSeconds / 60);
-    timeLimit.current = {
-      hours: hours,
-      minutes: minutes,
-    };
+  }, [submissionId]);
+
+  useEffect(() => {
+    if (submissionData.dueDate) {
+      dueDate.current = formatDateTime(new Date(submissionData.dueDate));
+    }
+
+    if (submissionData.timeLimitSeconds) {
+      const hours = Math.floor(submissionData.timeLimitSeconds / 3600);
+      const remainingSeconds = submissionData.timeLimitSeconds % 3600;
+      const minutes = Math.floor(remainingSeconds / 60);
+      timeLimit.current = {
+        hours: hours,
+        minutes: minutes,
+      };
+    }
+
     document.title = submissionData.name;
-  }, [submissionData.dueDate, submissionData.name, submissionId]);
+  }, [
+    submissionData.dueDate,
+    submissionData.timeLimitSeconds,
+    submissionData.name,
+  ]);
 
   const navigateToEditing = () => {
     navigate(`/submission/${submissionId}/edit`, {
       state: { submissionData },
     });
+  };
+
+  const editAssesmentOnClickHandler = () => {
+    if (submissionData.closed) {
+      assessmentClosedDialogRef.current.showModal();
+      return;
+    }
+
+    navigateToEditing();
+  };
+
+  const openSubmissionOnClickHandler = () => {
+    // check current due date
+    const passDueDate = new Date(submissionData.dueDate) < new Date();
+    setIsPassDueDate(passDueDate);
+
+    assessmentOpenDialogRef.current.showModal();
+  };
+
+  const onOpenDialogClickHandler = async (newDueDate) => {
+    assessmentOpenDialogRef.current.close();
+
+    const body = {
+      closedEarly: false,
+    };
+
+    if (isPassDueDate) {
+      if (newDueDate === "") return;
+      body.dueDate = newDueDate;
+    }
+
+    setIsLoading(true);
+    const response = await editAssessment(submissionId, body);
+    if (response.success) {
+      const newSubmissionData = { ...submissionData };
+      newSubmissionData.closed = false;
+
+      const newDate = body.dueDate
+        ? formatDateTime(new Date(body.dueDate))
+        : dueDate.current;
+      dueDate.current = newDate;
+      newSubmissionData.dueDate = body.dueDate
+        ? body.dueDate
+        : submissionData.dueDate;
+      setSubmissionData(newSubmissionData);
+    } else {
+      alert("Could not open assessment");
+    }
+    setIsLoading(false);
+  };
+
+  const closeSubmissionOnClickHandler = async () => {
+    const body = {
+      closedEarly: true,
+    };
+    setIsLoading(true);
+    const response = await editAssessment(submissionId, body);
+    if (response.success) {
+      const newSubmissionData = { ...submissionData };
+      newSubmissionData.closed = true;
+      setSubmissionData(newSubmissionData);
+    } else {
+      alert("Could not close assessment");
+    }
+    setIsLoading(false);
   };
 
   return isLoading ? (
@@ -78,34 +160,21 @@ function ViewAllSubmissions() {
             {!submissionData.closed ? (
               <button
                 className="btn bg-red-600 mb-2 btn-lg text-white hover:text-black"
-                onClick={() => {
-                  // TODO: add functionality to close submission
-                  console.log("Closing Submission");
-                }}
+                onClick={closeSubmissionOnClickHandler}
               >
                 Close Submission
               </button>
             ) : (
               <button
                 className="btn bg-green-500 mb-2 btn-lg text-white hover:text-black"
-                onClick={() => {
-                  // TODO: add functionality to open submission
-                  console.log("Opening Submission");
-                }}
+                onClick={openSubmissionOnClickHandler}
               >
                 Open Submission
               </button>
             )}
             <button
               className="btn bg-indigo-500 btn-lg text-white hover:text-black"
-              onClick={() => {
-                if (submissionData.closed) {
-                  assessmentClosedDialogRef.current.showModal();
-                  return;
-                }
-
-                navigateToEditing();
-              }}
+              onClick={editAssesmentOnClickHandler}
             >
               Edit
             </button>
@@ -162,6 +231,11 @@ function ViewAllSubmissions() {
       <AssessmentClosedDialog
         dialogRef={assessmentClosedDialogRef}
         onContinueHandler={navigateToEditing}
+      />
+      <AssessmentOpenDialog
+        dialogRef={assessmentOpenDialogRef}
+        onContinueHandler={onOpenDialogClickHandler}
+        isPassDueDate={isPassDueDate}
       />
     </div>
   );

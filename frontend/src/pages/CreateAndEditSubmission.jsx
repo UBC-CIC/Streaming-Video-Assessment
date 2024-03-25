@@ -137,6 +137,11 @@ function CreateAndEditSubmission({ edit = false }) {
       data.newSharedGroups = newSharedGroups;
       data.removeSharedUploaders = removeSharedUploaders;
       data.removeSharedGroups = removeSharedGroups;
+      data.hasUploaderChanges =
+        newSharedUploaders.length > 0 ||
+        removeSharedUploaders.length > 0 ||
+        newSharedGroups.length > 0 ||
+        removeSharedGroups.length > 0;
       const response = await editAssessment(submissionId, data);
       setIsLoading(false);
       if (response.success) {

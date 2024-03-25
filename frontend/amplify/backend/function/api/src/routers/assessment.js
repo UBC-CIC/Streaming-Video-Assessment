@@ -100,30 +100,45 @@ router.put("/:assessmentId", async (req, res) => {
     return res.status(403).json({ error: "Forbidden" });
   }
 
-  assessmentQuery.update({
-    name: req.body.name,
-    description: req.body.description,
-    timeLimitSeconds: req.body.timeLimitSeconds,
-    faceBlurAllowed: req.body.faceBlurAllowed,
-    dueDate: req.body.dueDate,
-  });
+  // Define the allowed fields
+  const allowedFields = [
+    "name",
+    "description",
+    "timeLimitSeconds",
+    "faceBlurAllowed",
+    "dueDate",
+    "faceBlurAllowed",
+    "closedEarly",
+  ];
 
-  const { newUploaders, newGroups } = await linkUploaderAndGroups(
-    assessmentQuery,
-    req.body.newSharedUploaders,
-    req.body.newSharedGroups,
-  );
+  // Filter `req.body` to only contain allowed fields
+  const filteredBody = Object.keys(req.body)
+    .filter((key) => allowedFields.includes(key))
+    .reduce((obj, key) => {
+      obj[key] = req.body[key];
+      return obj;
+    }, {});
 
-  await createUploadRequestsForNewUploaders(
-    assessmentQuery,
-    newUploaders,
-    newGroups,
-  );
+  assessmentQuery.update(filteredBody);
 
-  await assessmentQuery.removeUploadersAndGroups(
-    req.body.removeSharedUploaders,
-    req.body.removeSharedGroups,
-  );
+  if (req.body.hasUploaderChanges) {
+    const { newUploaders, newGroups } = await linkUploaderAndGroups(
+      assessmentQuery,
+      req.body.newSharedUploaders,
+      req.body.newSharedGroups,
+    );
+
+    await createUploadRequestsForNewUploaders(
+      assessmentQuery,
+      newUploaders,
+      newGroups,
+    );
+
+    await assessmentQuery.removeUploadersAndGroups(
+      req.body.removeSharedUploaders,
+      req.body.removeSharedGroups,
+    );
+  }
 
   res.json({ success: "put call succeed!", body: assessmentQuery });
 });

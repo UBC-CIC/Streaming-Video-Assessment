@@ -7,7 +7,7 @@ function AssessmentClosedDialog({ dialogRef, onContinueHandler }) {
         </h3>
         <p className="mb-10">
           In order to make changes to the assessment, you will need to reopen
-          the assessment or update the due date while editing.
+          the assessment or update the due date while editing if it has passed.
         </p>
         <div className="flex flex-row justify-end">
           <div className="mr-2">
