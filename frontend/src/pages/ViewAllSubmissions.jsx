@@ -3,6 +3,7 @@ import { BsDownload } from "react-icons/bs";
 import { useLoaderData, useNavigate } from "react-router-dom";
 import { getSubmissionData } from "../helpers/submissionCreatorApi";
 import { formatDateTime } from "../helpers/dateHandler";
+import AssessmentClosedDialog from "../components/AssessmentClosedDialog";
 
 function loader({ params }) {
   let submissionId = null;
@@ -22,11 +23,15 @@ function ViewAllSubmissions() {
   const [submissionData, setSubmissionData] = useState({});
   const dueDate = useRef(null);
   const timeLimit = useRef({ hours: 0, minutes: 0 });
+  const [isLoading, setIsLoading] = useState(true);
+  const assessmentClosedDialogRef = useRef(null);
 
   useEffect(() => {
     const fetchSubmissionData = async () => {
+      setIsLoading(true);
       const fetchedSubmissionData = await getSubmissionData(submissionId);
       setSubmissionData(fetchedSubmissionData);
+      setIsLoading(false);
     };
 
     fetchSubmissionData();
@@ -41,7 +46,17 @@ function ViewAllSubmissions() {
     document.title = submissionData.name;
   }, [submissionData.dueDate, submissionData.name, submissionId]);
 
-  return (
+  const navigateToEditing = () => {
+    navigate(`/submission/${submissionId}/edit`, {
+      state: { submissionData },
+    });
+  };
+
+  return isLoading ? (
+    <div className="flex justify-center h-full w-full fixed">
+      <span className="loading loading-spinner loading-lg"></span>
+    </div>
+  ) : (
     <div className="flex flex-col w-full md:flex-row h-[100vh]">
       <div className="pr-5 pl-5 md:w-[75%]">
         <div className="flex flex-col justify-between mt-5 pb-6 md:flex-row">
@@ -84,9 +99,12 @@ function ViewAllSubmissions() {
             <button
               className="btn bg-indigo-500 btn-lg text-white hover:text-black"
               onClick={() => {
-                navigate(`/submission/${submissionId}/edit`, {
-                  state: { submissionData },
-                });
+                if (submissionData.closed) {
+                  assessmentClosedDialogRef.current.showModal();
+                  return;
+                }
+
+                navigateToEditing();
               }}
             >
               Edit
@@ -141,6 +159,10 @@ function ViewAllSubmissions() {
           </div>
         </div>
       </div>
+      <AssessmentClosedDialog
+        dialogRef={assessmentClosedDialogRef}
+        onContinueHandler={navigateToEditing}
+      />
     </div>
   );
 }

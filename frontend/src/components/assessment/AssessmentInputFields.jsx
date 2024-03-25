@@ -1,4 +1,12 @@
-function AssessmentInputFields({ name, description, setName, setDescription }) {
+import { IoWarningOutline } from "react-icons/io5";
+
+function AssessmentInputFields({
+  name,
+  description,
+  setName,
+  setDescription,
+  titleError,
+}) {
   return (
     <>
       <div className="pb-1">
@@ -11,6 +19,12 @@ function AssessmentInputFields({ name, description, setName, setDescription }) {
         />
       </div>
       <div className="bg-black h-0.5" />
+      {titleError && (
+        <div className="text-red-600 flex flex-row items-center">
+          <IoWarningOutline />
+          {titleError}
+        </div>
+      )}
       <textarea
         className="textarea textarea-bordered w-full mt-5 textarea-lg h-[20rem]"
         placeholder="Description"
