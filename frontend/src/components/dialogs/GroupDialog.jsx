@@ -8,6 +8,8 @@ import {
   createNewGroup,
   editGroup,
 } from "../../helpers/submissionCreatorApi";
+import InputError from "../InputError";
+import { validateEmail } from "../../helpers/inputValidation";
 
 function GroupDialog({
   isEdit,
@@ -16,12 +18,14 @@ function GroupDialog({
   isOpen = false,
   setIsOpen = () => {},
 }) {
-  const navigate = useNavigate();
   const initialGroupListRef = useRef([]);
   const [groupList, setGroupList] = useState([]); // [{name: "", email: ""}]
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [groupName, setGroupName] = useState("");
+  const [groupNameError, setGroupNameError] = useState(false);
+  const [nameError, setNameError] = useState(false);
+  const [emailError, setEmailError] = useState(null);
 
   const removeUserFromGroupList = (index) => {
     const newGroupList = [...groupList]; // Create a copy of the original array
@@ -30,12 +34,20 @@ function GroupDialog({
   };
 
   const createGroup = async () => {
+    setGroupNameError(false);
+
     if (
       JSON.stringify(initialGroupListRef.current) === JSON.stringify(groupList)
     ) {
       setIsOpen(false);
       return;
     }
+
+    if (groupName === "") {
+      setGroupNameError(true);
+      return;
+    }
+
     if (isEdit) {
       const res = await editGroup(groupId, groupName, parentId, groupList);
       if (res.success) {
@@ -56,7 +68,43 @@ function GroupDialog({
     setEmail("");
     setGroupName("");
     setIsOpen(false);
-    navigate(0);
+    document.getElementById("edit-group-modal").close();
+  };
+
+  const addUserToGroupList = () => {
+    let error = false;
+
+    if (name === "") {
+      error = true;
+      setNameError(true);
+    } else {
+      setNameError(false);
+    }
+
+    if (email === "") {
+      error = true;
+      setEmailError("Email cannot be empty");
+    } else if (!validateEmail(email)) {
+      error = true;
+      setEmailError("Invalid email format");
+    } else {
+      setEmailError(null);
+    }
+
+    if (error) return;
+
+    const alreadyExists = groupList.find(
+      (currentUser) => currentUser.email === email,
+    );
+
+    if (alreadyExists) {
+      setEmailError("User already added");
+      return;
+    }
+
+    setName("");
+    setEmail("");
+    setGroupList([...groupList, { name: name, email: email }]);
   };
 
   useEffect(() => {
@@ -93,6 +141,9 @@ function GroupDialog({
               setName("");
               setEmail("");
               setGroupName("");
+              setGroupNameError(false);
+              setNameError(false);
+              setEmailError(null);
               setIsOpen(false);
             }}
           >
@@ -118,42 +169,38 @@ function GroupDialog({
               type="text"
               placeholder="Group Name"
               value={groupName}
-              className="input input-bordered w-full max-w-sm border-black"
+              className={`input input-bordered w-full max-w-sm border-black ${groupNameError ? "border-red-500" : ""}`}
               onChange={(e) => {
                 setGroupName(e.target.value);
               }}
             />
+            {groupNameError && (
+              <InputError error={"Group name cannot be empty"} />
+            )}
             <div className="flex justify-center mt-10 flex-col items-center w-full">
               <input
                 type="text"
                 placeholder="Name"
                 value={name}
-                className="input input-bordered w-full max-w-sm border-black"
+                className={`input input-bordered w-full max-w-sm border-black ${nameError ? "border-red-500" : ""}`}
                 onChange={(e) => {
                   setName(e.target.value);
                 }}
               />
+              {nameError && <InputError error={"Name cannot be empty"} />}
               <input
                 type="text"
                 placeholder="Email"
                 value={email}
-                className="input input-bordered w-full max-w-sm border-black mt-4"
+                className={`input input-bordered w-full max-w-sm border-black mt-4 ${emailError ? "border-red-500" : ""}`}
                 onChange={(e) => {
                   setEmail(e.target.value);
                 }}
               />
+              {emailError && <InputError error={emailError} />}
               <button
                 className="btn uppercase mt-4 text-white bg-indigo-500"
-                onClick={() => {
-                  if (name === "" || email === "") return;
-                  setName("");
-                  setEmail("");
-                  const alreadyExists = groupList.find(
-                    (currentUser) => currentUser.email === email,
-                  );
-                  if (alreadyExists) return;
-                  setGroupList([...groupList, { name: name, email: email }]);
-                }}
+                onClick={addUserToGroupList}
               >
                 Add
               </button>
@@ -165,15 +212,12 @@ function GroupDialog({
           removeUserFromGroupList={removeUserFromGroupList}
         />
         <div className="modal-action justify-end">
-          <form method="dialog">
-            {/* if there is a button in form, it will close the modal */}
-            <button
-              className="btn uppercase text-white bg-indigo-500"
-              onClick={createGroup}
-            >
-              {isEdit ? "Save" : "Create"}
-            </button>
-          </form>
+          <button
+            className="btn uppercase text-white bg-indigo-500"
+            onClick={createGroup}
+          >
+            {isEdit ? "Save" : "Create"}
+          </button>
         </div>
       </div>
     </dialog>

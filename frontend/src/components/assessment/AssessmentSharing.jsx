@@ -1,4 +1,7 @@
+import { useState } from "react";
 import GroupViewModal from "./GroupViewModal/GroupViewModal";
+import InputError from "../InputError";
+import { validateEmail } from "../../helpers/inputValidation";
 
 function AssessmentSharing({
   usersName,
@@ -13,6 +16,9 @@ function AssessmentSharing({
   removedFromSharedList,
   setRemovedFromSharedList,
 }) {
+  const [nameError, setNameError] = useState(false);
+  const [emailError, setEmailError] = useState(null);
+
   const removeSharedWithUser = (index) => {
     const newSharedWithList = [...sharedWithList];
     const removedValues = newSharedWithList.splice(index, 1);
@@ -45,6 +51,27 @@ function AssessmentSharing({
   };
 
   const addToSharedList = (type, group) => {
+    let error = false;
+    if (usersName === "") {
+      setNameError(true);
+      error = true;
+    } else {
+      setNameError(false);
+    }
+
+    if (email === "") {
+      error = true;
+      setEmailError("Email cannot be empty");
+    } else if (!validateEmail(email)) {
+      console.log("email", email);
+      error = true;
+      setEmailError("Invalid email format");
+    } else {
+      setEmailError(null);
+    }
+
+    if (error) return;
+
     const newSharedWithList = [...sharedWithList];
     const alreadyExists = sharedWithList.find((currentGroup) => {
       if (type === "group") {
@@ -54,7 +81,12 @@ function AssessmentSharing({
       }
     });
 
-    if (alreadyExists) return;
+    if (alreadyExists) {
+      setEmailError("User already added");
+      return;
+    }
+
+    setEmailError(null);
 
     if (type === "group") {
       newSharedWithList.push({
@@ -102,20 +134,26 @@ function AssessmentSharing({
       <div className="text-4xl text-center pb-1">Sharing</div>
       <div className="bg-black h-0.5" />
       <div className="grid grid-rows-2 gap-2 grid-flow-col w-full mt-4">
-        <input
-          type="text"
-          placeholder="Name"
-          className="input input-bordered w-full max-w-md border-black"
-          value={usersName}
-          onChange={(e) => setUsersName(e.target.value)}
-        />
-        <input
-          type="text"
-          placeholder="Email"
-          className="input input-bordered w-full max-w-md border-black"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
+        <div>
+          <input
+            type="text"
+            placeholder="Name"
+            className={`input input-bordered w-full max-w-md border-black ${nameError ? "border-red-500" : ""}`}
+            value={usersName}
+            onChange={(e) => setUsersName(e.target.value)}
+          />
+          {nameError && <InputError error={"Name cannot be empty"} />}
+        </div>
+        <div>
+          <input
+            type="text"
+            placeholder="Email"
+            className={`input input-bordered w-full max-w-md border-black ${emailError ? "border-red-500" : ""}`}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          {emailError && <InputError error={emailError} />}
+        </div>
         <div></div>
         <button className="btn btn-sm self-end" onClick={addToSharedList}>
           Add
@@ -127,9 +165,9 @@ function AssessmentSharing({
         {sharedWithList.map((sharedWith, index) => (
           <div className="pb-2" key={index}>
             {sharedWith.email === undefined ? (
-              <div class="p-2 rounded-md border-2 flex items-center">
-                <div class="flex-1">
-                  <p class="text-gray-700">
+              <div className="p-2 rounded-md border-2 flex items-center">
+                <div className="flex-1">
+                  <p className="text-gray-700">
                     <b>Group: </b>
                     {sharedWith.name}
                   </p>
@@ -144,13 +182,13 @@ function AssessmentSharing({
                 </div>
               </div>
             ) : (
-              <div class="p-2 rounded-md flex border-2 items-center">
-                <div class="flex-1 w-[85%]">
-                  <p class="text-gray-700 overflow-hidden whitespace-nowrap overflow-ellipsis">
+              <div className="p-2 rounded-md flex border-2 items-center">
+                <div className="flex-1 w-[85%]">
+                  <p className="text-gray-700 overflow-hidden whitespace-nowrap overflow-ellipsis">
                     <b>Name: </b>
                     {sharedWith.name}
                   </p>
-                  <p class="text-gray-700 overflow-hidden whitespace-nowrap overflow-ellipsis">
+                  <p className="text-gray-700 overflow-hidden whitespace-nowrap overflow-ellipsis">
                     <b>Email: </b>
                     {sharedWith.email}
                   </p>
