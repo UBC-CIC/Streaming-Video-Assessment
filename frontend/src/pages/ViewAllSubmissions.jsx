@@ -24,6 +24,7 @@ function ViewAllSubmissions() {
   const dueDate = useRef(null);
   const timeLimit = useRef({ hours: 0, minutes: 0 });
   const [isLoading, setIsLoading] = useState(true);
+  const assessmentClosedDialogRef = useRef(null);
 
   useEffect(() => {
     const fetchSubmissionData = async () => {
@@ -44,6 +45,12 @@ function ViewAllSubmissions() {
     };
     document.title = submissionData.name;
   }, [submissionData.dueDate, submissionData.name, submissionId]);
+
+  const navigateToEditing = () => {
+    navigate(`/submission/${submissionId}/edit`, {
+      state: { submissionData },
+    });
+  };
 
   return isLoading ? (
     <div className="flex justify-center h-full w-full fixed">
@@ -92,20 +99,8 @@ function ViewAllSubmissions() {
             <button
               className="btn bg-indigo-500 btn-lg text-white hover:text-black"
               onClick={() => {
-                const navigateToEditing = () => {
-                  navigate(`/submission/${submissionId}/edit`, {
-                    state: { submissionData },
-                  });
-                };
-
                 if (submissionData.closed) {
-                  // TODO: show alert dialog and inform them to change due date in order to make changes take affect
-                  document
-                    .getElementById("assessment-closed-dialog")
-                    .showModal();
-
-                  document.getElementById("edit-assessment").onclick =
-                    navigateToEditing;
+                  assessmentClosedDialogRef.current.showModal();
                   return;
                 }
 
@@ -164,7 +159,10 @@ function ViewAllSubmissions() {
           </div>
         </div>
       </div>
-      <AssessmentClosedDialog />
+      <AssessmentClosedDialog
+        dialogRef={assessmentClosedDialogRef}
+        onContinueHandler={navigateToEditing}
+      />
     </div>
   );
 }

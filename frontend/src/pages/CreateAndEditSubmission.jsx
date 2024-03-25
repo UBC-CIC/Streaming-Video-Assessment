@@ -92,7 +92,6 @@ function CreateAndEditSubmission({ edit = false }) {
     }
 
     if (hasInvalidInputs) {
-      alert("Invalid inputs, Please fix before proceeding");
       return true;
     }
 

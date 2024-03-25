@@ -1,6 +1,6 @@
-function AssessmentClosedDialog() {
+function AssessmentClosedDialog({ dialogRef, onContinueHandler }) {
   return (
-    <dialog id="assessment-closed-dialog" className="modal">
+    <dialog id="assessment-closed-dialog" className="modal" ref={dialogRef}>
       <div className="modal-box">
         <h3 className="font-bold text-lg text-center mb-5">
           Assessment Closed!
@@ -24,15 +24,13 @@ function AssessmentClosedDialog() {
             <button
               className="btn bg-indigo-500 btn-md text-white hover:text-black"
               id="edit-assessment"
+              onClick={onContinueHandler}
             >
               Continue
             </button>
           </div>
         </div>
       </div>
-      <form method="dialog" className="modal-backdrop">
-        <button>close</button>
-      </form>
     </dialog>
   );
 }
