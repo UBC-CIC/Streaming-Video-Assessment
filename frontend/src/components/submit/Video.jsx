@@ -11,6 +11,7 @@ const Video = ({
   const requestRef = useRef();
   const detectionBufferRef = useRef([]);
   const blurfaceRef = useRef(blurface);
+  const [hasWarmedUp, setHasWarmedUp] = useState(false);
 
   useEffect(() => {
     blurfaceRef.current = blurface;
@@ -23,6 +24,8 @@ const Video = ({
 
     //
     const drawFrame = async () => {
+      if (!hasWarmedUp && videoRef.current)
+        detectFaces(videoRef.current).then(() => setHasWarmedUp(true));
       let detections =
         blurfaceRef.current && videoRef.current
           ? await detectFaces(videoRef.current)
