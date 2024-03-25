@@ -1,5 +1,5 @@
 import { formatTimeForInput } from "../../helpers/dateHandler";
-import { IoWarningOutline } from "react-icons/io5";
+import InputError from "../InputError";
 
 function AssessmentSettings({
   timeLimit,
@@ -18,10 +18,10 @@ function AssessmentSettings({
       </div>
       <div className="bg-black h-0.5" />
       <div
-        className={`flex flex-row mt-8 text-xl ${timeLimitError ? "" : "pb-5"}`}
+        className={`flex flex-row mt-8 text-xl items-center ${timeLimitError ? "" : "pb-5"}`}
       >
         Time Limit:
-        <div className="flex flex-row pl-5 w-[30%]">
+        <div className="flex flex-row pl-5 w-[30%] items-center">
           <label htmlFor="hours" className="pr-2">
             Hours:
           </label>
@@ -32,14 +32,14 @@ function AssessmentSettings({
             min="0"
             max="99"
             placeholder="Hours"
-            className="w-full"
+            className={`w-full ${timeLimitError ? "border-red-500" : ""}`}
             value={timeLimit.hours}
             onChange={(e) =>
               setTimeLimit({ ...timeLimit, hours: e.target.value })
             }
           />
         </div>
-        <div className="flex flex-row pl-5 w-[30%]">
+        <div className="flex flex-row pl-5 w-[30%] items-center">
           <label htmlFor="minutes" className="pr-2">
             Minutes:
           </label>
@@ -50,7 +50,7 @@ function AssessmentSettings({
             min="0"
             max="59"
             placeholder="Minutes"
-            className="w-full"
+            className={`w-full ${timeLimitError ? "border-red-500" : ""}`}
             value={timeLimit.minutes}
             onChange={(e) =>
               setTimeLimit({ ...timeLimit, minutes: e.target.value })
@@ -58,13 +58,8 @@ function AssessmentSettings({
           />
         </div>
       </div>
-      {timeLimitError && (
-        <div className="text-red-600 flex flex-row items-center">
-          <IoWarningOutline />
-          {timeLimitError}
-        </div>
-      )}
-      <div className="flex flex-row text-xl w-full pb-5">
+      {timeLimitError && <InputError error={timeLimitError} />}
+      <div className="flex flex-row text-xl w-full pb-5 items-center">
         Allow Face Blur:
         <div className="pl-5 flex items-center">
           <label className="relative inline-flex items-center cursor-pointer">
@@ -79,23 +74,19 @@ function AssessmentSettings({
           </label>
         </div>
       </div>
-      <div className="flex flex-row text-xl w-full">
+      <div className="flex flex-row text-xl w-full items-center">
         Close Submission On:
         <div className="pl-5 flex items-center">
           {/* TODO: test if there is timezone issues */}
           <input
+            className={`w-full ${dueDateError ? "border-red-500" : ""}`}
             type="datetime-local"
             value={dueDate ? formatTimeForInput(new Date(dueDate)) : ""}
             onChange={(e) => setDueDate(e.target.value)}
           />
         </div>
       </div>
-      {dueDateError && (
-        <div className="text-red-600 flex flex-row items-center">
-          <IoWarningOutline />
-          {dueDateError}
-        </div>
-      )}
+      {dueDateError && <InputError error={dueDateError} />}
     </>
   );
 }

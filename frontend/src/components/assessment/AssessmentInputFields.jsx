@@ -1,4 +1,4 @@
-import { IoWarningOutline } from "react-icons/io5";
+import InputError from "../InputError";
 
 function AssessmentInputFields({
   name,
@@ -13,18 +13,13 @@ function AssessmentInputFields({
         <input
           type="text"
           placeholder="Submission Name"
-          className="input w-full text-4xl"
+          className={`input w-full text-4xl ${titleError ? "border-red-500" : ""}`}
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
       </div>
       <div className="bg-black h-0.5" />
-      {titleError && (
-        <div className="text-red-600 flex flex-row items-center">
-          <IoWarningOutline />
-          {titleError}
-        </div>
-      )}
+      {titleError && <InputError error={titleError} />}
       <textarea
         className="textarea textarea-bordered w-full mt-5 textarea-lg h-[20rem]"
         placeholder="Description"
