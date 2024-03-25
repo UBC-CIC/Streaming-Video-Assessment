@@ -1,9 +1,10 @@
-import { getUrl } from "aws-amplify/storage";
-import { useState } from "react";
+import { getUrl } from "aws-amplify/storage"; // @aryang13 TODO: get rid of this when possible
+import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { BsDownload } from "react-icons/bs";
 import { formatDateTime } from "../helpers/dateHandler";
 import { useNavigate } from "react-router-dom";
+import { getAssessmentSubmissionInfo } from "../helpers/submissionCreatorApi";
 
 function SubmissionDropdown({ submissions, submissionIndex }) {
   console.log(submissions, submissionIndex);
@@ -25,16 +26,20 @@ function SubmissionDropdown({ submissions, submissionIndex }) {
 
 function ViewSubmission() {
   const navigate = useNavigate();
+  // @aryang13 TODO: this link should be /submission/:assessmentId/view/:submissionId
   const { submissionData, submissions, submissionIndex } = useLocation().state;
   const [videoURL, setVideoURL] = useState(null);
   const currentSubmission = submissions[submissionIndex];
 
-  useState(() => {
+  useEffect(() => {
     const getVideoURL = async () => {
-      // TODO: move this to the backend and retrive the s3url from there based on submission id
       const getUrlResult = await getUrl({
         key: currentSubmission.s3ref.substr("public/".length),
       });
+
+      // // @aryang13 TODO: this should be the actual assessmentId
+      // const assessmentId = 34;
+      // const getUrlResult = await getAssessmentSubmissionInfo(assessmentId, currentSubmission.submissionId);
       console.log(getUrlResult);
       setVideoURL(getUrlResult.url);
     };

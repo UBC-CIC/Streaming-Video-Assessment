@@ -226,3 +226,21 @@ export const editGroup = async (groupId, groupName, parentId, groupUsers) => {
 
   return null;
 };
+
+export const getAssessmentSubmissionInfo = async (
+  assessmentId,
+  submissionId,
+) => {
+  try {
+    const restOperation = get({
+      apiName: "backend",
+      path: `/api/assessment/${assessmentId}/video/${submissionId}`,
+    });
+    const { body } = await restOperation.response;
+    const response = await body.json();
+    console.log("GET call succeeded: ", response);
+    return response.data;
+  } catch (error) {
+    console.error("GET call failed: ", error);
+  }
+};

@@ -1,11 +1,13 @@
 const express = require("express");
 const router = express.Router();
 const sequelize = require("../sequelize");
-const { assessment, uploader, uploaderGroup, folder } = sequelize.models;
+const { assessment, uploader, uploaderGroup, folder, video } = sequelize.models;
 const {
   createUploadRequestsForAssessment,
   createUploadRequestsForNewUploaders,
 } = require("../helpers/uploadRequests");
+
+const { getUrlForKey } = require("../helpers/s3");
 
 // Define your routes here
 router.get("/:assessmentId", async (req, res) => {
@@ -33,6 +35,41 @@ router.get("/:assessmentId", async (req, res) => {
   query.dataValues.submissions = await Promise.all(videoDetailsPromises);
 
   res.json({ success: "get call succeed!", data: query });
+});
+
+router.get("/:assessmentId/video/:submissionId", async (req, res) => {
+  const query = await video.findByPk(parseInt(req.params.submissionId), {
+    include: [
+      uploader,
+      {
+        model: assessment,
+        where: { id: parseInt(req.params.assessmentId) },
+      },
+    ],
+  });
+
+  if (
+    !query ||
+    !(await folder.isOwnedBy(query.assessment.folderId, req["userEmail"]))
+  ) {
+    return res.status(403).json({ error: "Forbidden" });
+  }
+
+  if (!query.submitted) {
+    return res.status(404).json({ error: "Not Found" });
+  }
+
+  const videoUrl = await getUrlForKey(query.s3Key);
+
+  return res.json({
+    success: "get call succeed!",
+    data: {
+      name: query.uploader.name,
+      email: query.uploader.email,
+      uploadedOn: query.updatedAt,
+      videoUrl,
+    },
+  });
 });
 
 router.get("/shared/:assessmentId", async (req, res) => {
