@@ -191,10 +191,12 @@ const SubmitRecord = ({
       </div>
 
       <div className="grid grid-cols-1 m-5 mt-2 md:grid-cols-3">
-        {/* TODO: set max height on video to not push controls off the page */}
-        <div className="w-full border order-1 md:col-span-2">
+        <div className="w-full order-1 md:col-span-2">
           {hasRecorded && !recording ? (
-            <HasRecordedVideo uploadedVideoUrl={uploadedVideoUrl} />
+            <HasRecordedVideo
+              uploadedVideoUrl={uploadedVideoUrl}
+              className="w-full flex align-center justify-center"
+            />
           ) : (
             <Video
               blurface={blurface}
@@ -204,6 +206,7 @@ const SubmitRecord = ({
               mediaRecorderRef={mediaRecorderRef}
               canvasRef={canvasRef}
               audioStreamTrackRef={audioStreamTrackRef}
+              className="w-full flex align-center justify-center"
             />
           )}
         </div>

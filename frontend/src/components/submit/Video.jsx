@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from "react";
 
 const Video = ({
-  class: cls,
+  className,
   blurface,
   detectFaces,
   canvasRef,
@@ -97,9 +97,9 @@ const Video = ({
   }, []);
 
   return (
-    <div className={cls}>
+    <div className={className}>
       <canvas
-        className="w-full"
+        className="max-w-full max-h-full"
         style={{ WebkitTransform: "scaleX(-1)", transform: "scaleX(-1)" }}
         ref={canvasRef}
       />
