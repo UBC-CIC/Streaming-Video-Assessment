@@ -3,7 +3,7 @@ import File from "./File";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 
-function GridView({ folderData, removeFile, addFile }) {
+function GridView({ folderData, removeFile, addFile, fetchFolderData }) {
   const { files = [] } = folderData;
 
   const sortByDateModified = (a, b) => {
@@ -27,6 +27,7 @@ function GridView({ folderData, removeFile, addFile }) {
               key={file.type + file.id}
               removeFile={removeFile}
               file={file}
+              fetchFolderData={fetchFolderData}
             />
           </DndProvider>
         ))}

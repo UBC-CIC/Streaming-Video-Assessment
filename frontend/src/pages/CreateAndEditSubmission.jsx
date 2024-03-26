@@ -9,6 +9,7 @@ import {
 import AssessmentInputFields from "../components/assessment/AssessmentInputFields";
 import AssessmentSettings from "../components/assessment/AssessmentSettings";
 import AssessmentSharing from "../components/assessment/AssessmentSharing";
+import { useToast } from "../components/Toast/ToastService";
 
 function loader({ params }) {
   let submissionId = null;
@@ -40,6 +41,7 @@ function CreateAndEditSubmission({ edit = false }) {
   const [titleError, setTitleError] = useState("");
   const [timeLimitError, setTimeLimitError] = useState("");
   const [dueDateError, setDueDateError] = useState("");
+  const toast = useToast();
 
   const getSharedWithListAsync = async (submissionId) => {
     const res = await getSharedWithList(submissionId);
@@ -145,10 +147,10 @@ function CreateAndEditSubmission({ edit = false }) {
       const response = await editAssessment(submissionId, data);
       setIsLoading(false);
       if (response.success) {
-        alert("Assessment edits successfully");
+        toast.success("Assessment edits successfully");
         navigate(`/submission/${response.body.id}`);
       } else {
-        alert("Assessment editing failed");
+        toast.error("Assessment editing failed");
       }
     } else {
       const uploaders = [];
@@ -165,10 +167,10 @@ function CreateAndEditSubmission({ edit = false }) {
       const response = await createAssessment(data);
       setIsLoading(false);
       if (response.success) {
-        alert("Assessment created successfully");
+        toast.success("Assessment created successfully");
         navigate(`/submission/${response.body.id}`);
       } else {
-        alert("Assessment creation failed");
+        toast.error("Assessment creation failed");
       }
     }
   };

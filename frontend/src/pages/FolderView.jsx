@@ -51,16 +51,21 @@ function FolderView({ home = false }) {
 
   const [folderData, setFolderData] = useState({});
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const createFolderModalRef = useRef(null);
   const createGroupModalRef = useRef(null);
+
+  const fetchFolderData = async () => {
+    setIsLoading(true);
+    const fetchedFolderData = await getFolderData(folderId);
+    setFolderData(fetchedFolderData);
+    setIsLoading(false);
+  };
 
   useEffect(() => {
     if (folderId == null) return;
 
-    const fetchFolderData = async () => {
-      const fetchedFolderData = await getFolderData(folderId);
-      setFolderData(fetchedFolderData);
-    };
     fetchFolderData();
   }, [folderId]);
 
@@ -105,6 +110,7 @@ function FolderView({ home = false }) {
           dialogRef={createGroupModalRef}
           isEdit={false}
           parentId={folderId}
+          fetchFolderData={fetchFolderData}
         />
       ),
     },
@@ -122,33 +128,42 @@ function FolderView({ home = false }) {
   return (
     <div className="flex flex-col pl-16 pr-20 py-12 max-md:px-5">
       <SearchBar />
-      <div className="self-center flex w-full items-center justify-between gap-5 mt-7 max-md:max-w-full max-md:flex-wrap">
-        <div className="justify-center text-black text-lg flex flex-row">
-          <DndProvider backend={HTML5Backend}>
-            <FolderPath folderPath={folderData.path} />
-          </DndProvider>
+      {isLoading ? (
+        <div className="flex justify-center h-full w-full fixed">
+          <span className="loading loading-spinner loading-lg"></span>
         </div>
-        <div className="self-stretch flex items-stretch justify-between gap-2.5">
-          <ToggleViewStyle view={view} setView={setView} />
-          <ButtonDropdown
-            buttonIcon={<GoPlus size={30} />}
-            dropdownItems={dropdownItems}
-          />
-        </div>
-      </div>
-      {view === "grid" ? (
-        <GridView
-          folderData={folderData}
-          removeFile={removeFile}
-          addFile={addFile}
-        />
       ) : (
-        // TODO: add drag and drop functionality
-        <ListView
-          folderData={folderData}
-          removeFile={removeFile}
-          addFile={addFile}
-        />
+        <>
+          <div className="self-center flex w-full items-center justify-between gap-5 mt-7 max-md:max-w-full max-md:flex-wrap">
+            <div className="justify-center text-black text-lg flex flex-row">
+              <DndProvider backend={HTML5Backend}>
+                <FolderPath folderPath={folderData.path} />
+              </DndProvider>
+            </div>
+            <div className="self-stretch flex items-stretch justify-between gap-2.5">
+              <ToggleViewStyle view={view} setView={setView} />
+              <ButtonDropdown
+                buttonIcon={<GoPlus size={30} />}
+                dropdownItems={dropdownItems}
+              />
+            </div>
+          </div>
+          {view === "grid" ? (
+            <GridView
+              folderData={folderData}
+              removeFile={removeFile}
+              addFile={addFile}
+              fetchFolderData={fetchFolderData}
+            />
+          ) : (
+            // TODO: add drag and drop functionality
+            <ListView
+              folderData={folderData}
+              removeFile={removeFile}
+              addFile={addFile}
+            />
+          )}
+        </>
       )}
     </div>
   );

@@ -7,6 +7,7 @@ import AssessmentClosedDialog from "../components/AssessmentClosedDialog";
 import AssessmentOpenDialog from "../components/AssessmentOpenDialog";
 import { editAssessment } from "../helpers/submissionCreatorApi";
 import FolderPath from "../components/assessment/FolderPath";
+import { useToast } from "../components/Toast/ToastService";
 
 function loader({ params }) {
   let submissionId = null;
@@ -30,6 +31,7 @@ function ViewAllSubmissions() {
   const assessmentClosedDialogRef = useRef(null);
   const assessmentOpenDialogRef = useRef(null);
   const [isPassDueDate, setIsPassDueDate] = useState(false);
+  const toast = useToast();
 
   useEffect(() => {
     const fetchSubmissionData = async () => {
@@ -114,7 +116,7 @@ function ViewAllSubmissions() {
         : submissionData.dueDate;
       setSubmissionData(newSubmissionData);
     } else {
-      alert("Could not open assessment");
+      toast.error("Could not open assessment");
     }
     setIsLoading(false);
   };
@@ -130,7 +132,7 @@ function ViewAllSubmissions() {
       newSubmissionData.closed = true;
       setSubmissionData(newSubmissionData);
     } else {
-      alert("Could not close assessment");
+      toast.error("Could not close assessment");
     }
     setIsLoading(false);
   };
