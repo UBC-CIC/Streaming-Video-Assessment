@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from "react";
 
 const Video = ({
-  class: cls,
+  className,
   blurface,
   detectFaces,
   canvasRef,
@@ -11,6 +11,7 @@ const Video = ({
   const requestRef = useRef();
   const detectionBufferRef = useRef([]);
   const blurfaceRef = useRef(blurface);
+  const [hasWarmedUp, setHasWarmedUp] = useState(false);
 
   useEffect(() => {
     blurfaceRef.current = blurface;
@@ -23,6 +24,8 @@ const Video = ({
 
     //
     const drawFrame = async () => {
+      if (!hasWarmedUp && videoRef.current)
+        detectFaces(videoRef.current).then(() => setHasWarmedUp(true));
       let detections =
         blurfaceRef.current && videoRef.current
           ? await detectFaces(videoRef.current)
@@ -97,9 +100,9 @@ const Video = ({
   }, []);
 
   return (
-    <div className={cls}>
+    <div className={className}>
       <canvas
-        className="w-full"
+        className="max-w-full max-h-full"
         style={{ WebkitTransform: "scaleX(-1)", transform: "scaleX(-1)" }}
         ref={canvasRef}
       />
