@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { GoPlus } from "react-icons/go";
 import { FaSignOutAlt } from "react-icons/fa";
 import { useLoaderData, useNavigate } from "react-router-dom";
@@ -51,6 +51,9 @@ function FolderView({ home = false }) {
 
   const [folderData, setFolderData] = useState({});
 
+  const createFolderModalRef = useRef(null);
+  const createGroupModalRef = useRef(null);
+
   useEffect(() => {
     if (folderId == null) return;
 
@@ -82,17 +85,28 @@ function FolderView({ home = false }) {
       icon: <FolderIcon width={20} height={20} />,
       text: "Create Folder",
       onclick: () => {
-        document.getElementById("folder-modal").showModal();
+        createFolderModalRef.current.showModal();
       },
-      modal: <CreateFolderDialog folderId={folderId} />,
+      modal: (
+        <CreateFolderDialog
+          dialogRef={createFolderModalRef}
+          folderId={folderId}
+        />
+      ),
     },
     {
       icon: <GroupIcon width={20} height={20} />,
       text: "Create Group",
       onclick: () => {
-        document.getElementById("create-group-modal").showModal();
+        createGroupModalRef.current.showModal();
       },
-      modal: <GroupDialog isEdit={false} parentId={folderId} />,
+      modal: (
+        <GroupDialog
+          dialogRef={createGroupModalRef}
+          isEdit={false}
+          parentId={folderId}
+        />
+      ),
     },
     {
       icon: <UploadIcon width={20} height={20} />,

@@ -1,3 +1,4 @@
+import { useRef } from "react";
 import PropTypes from "prop-types";
 import { GoPencil } from "react-icons/go";
 import { FaTrash } from "react-icons/fa";
@@ -12,6 +13,7 @@ import { moveFile } from "../helpers/submissionCreatorApi";
 
 function ListViewFile({ index, file, removeFile }) {
   const navigate = useNavigate();
+  const editGroupModalRef = useRef(null);
 
   const getIcon = (type) => {
     switch (type) {
@@ -35,7 +37,7 @@ function ListViewFile({ index, file, removeFile }) {
       case "group":
         return () => {
           setIsOpen(true);
-          document.getElementById("edit-group-modal").showModal();
+          editGroupModalRef.current.showModal();
         };
       case "assessment":
         return () => {

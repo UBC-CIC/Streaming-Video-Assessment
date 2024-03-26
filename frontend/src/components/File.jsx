@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getIcon } from "../helpers/getIcon";
 import GroupDialog from "./dialogs/GroupDialog";
@@ -10,6 +10,7 @@ import { moveFile } from "../helpers/submissionCreatorApi";
 function File({ file, removeFile }) {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
+  const editGroupModalRef = useRef(null);
 
   const getOnClickFunction = () => {
     switch (file.type) {
@@ -20,7 +21,8 @@ function File({ file, removeFile }) {
       case "group":
         return () => {
           setIsOpen(true);
-          document.getElementById("edit-group-modal").showModal();
+          console.log(editGroupModalRef);
+          editGroupModalRef.current.showModal();
         };
       case "assessment":
         return () => {
@@ -134,6 +136,7 @@ function File({ file, removeFile }) {
       </div>
       {file.type === "group" && (
         <GroupDialog
+          dialogRef={editGroupModalRef}
           isEdit={true}
           groupId={file.id}
           parentId={file.folderId}
