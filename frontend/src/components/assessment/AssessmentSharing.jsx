@@ -51,26 +51,27 @@ function AssessmentSharing({
   };
 
   const addToSharedList = (type, group) => {
-    let error = false;
-    if (usersName === "") {
-      setNameError(true);
-      error = true;
-    } else {
-      setNameError(false);
-    }
+    if (type !== "group") {
+      let error = false;
+      if (usersName === "") {
+        setNameError(true);
+        error = true;
+      } else {
+        setNameError(false);
+      }
 
-    if (email === "") {
-      error = true;
-      setEmailError("Email cannot be empty");
-    } else if (!validateEmail(email)) {
-      console.log("email", email);
-      error = true;
-      setEmailError("Invalid email format");
-    } else {
-      setEmailError(null);
-    }
+      if (email === "") {
+        error = true;
+        setEmailError("Email cannot be empty");
+      } else if (!validateEmail(email)) {
+        error = true;
+        setEmailError("Invalid email format");
+      } else {
+        setEmailError(null);
+      }
 
-    if (error) return;
+      if (error) return;
+    }
 
     const newSharedWithList = [...sharedWithList];
     const alreadyExists = sharedWithList.find((currentGroup) => {
