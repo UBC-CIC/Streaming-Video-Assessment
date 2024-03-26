@@ -21,7 +21,6 @@ function File({ file, removeFile }) {
       case "group":
         return () => {
           setIsOpen(true);
-          console.log(editGroupModalRef);
           editGroupModalRef.current.showModal();
         };
       case "assessment":
