@@ -40,7 +40,7 @@ router.get("/", async (req, res) => {
 router.get("/:groupId", async (req, res) => {
   const group = await uploaderGroup.findByPk(req.params.groupId);
 
-  if (!group || !(await group.getOwner()).email !== req["userEmail"]) {
+  if (!group || (await group.getOwner()).email !== req["userEmail"]) {
     return res.status(403).json({ error: "Forbidden" });
   }
 
@@ -82,7 +82,7 @@ router.put("/:groupId", async (req, res) => {
     include: [uploader],
   });
 
-  if (!group || !(await group.getOwner()).email !== req["userEmail"]) {
+  if (!group || (await group.getOwner()).email !== req["userEmail"]) {
     return res.status(403).json({ error: "Forbidden" });
   }
 

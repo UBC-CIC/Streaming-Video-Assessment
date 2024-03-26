@@ -8,6 +8,7 @@ import {
   isUserSignedIn,
 } from "../helpers/authenticationHandler";
 import { testAuth } from "../helpers/authApi.js";
+import { useToast } from "../components/Toast/ToastService";
 
 function LoginView() {
   const location = useLocation();
@@ -18,6 +19,7 @@ function LoginView() {
     location.state && location.state.password ? location.state.password : "",
   );
   const navigate = useNavigate();
+  const toast = useToast();
 
   useEffect(() => {
     (async () => {
@@ -42,13 +44,12 @@ function LoginView() {
         navigate("/confirm-sign-up", { state: { email: email } });
       }
       if (nextStep.signInStep == "CREATE_ACCOUNT") {
-        // TODO: this shouldn't be an alert, more of a toast or popup.
-        alert(
+        toast.error(
           "There is no user associated with that email. Please create an account.",
         );
         return;
       } else if (!isSignedIn) {
-        alert("Invalid email or password");
+        toast.error("Invalid email or password");
         return;
       }
       if (nextStep.signInStep == "DONE") {
@@ -60,7 +61,7 @@ function LoginView() {
           console.log(err);
         }
       } else {
-        alert("Invalid email or password");
+        toast.error("Invalid email or password");
       }
     } catch (err) {
       console.log(err);

@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import PropTypes from "prop-types";
 import { IoIosInformationCircleOutline } from "react-icons/io";
 import GroupList from "./GroupList";
@@ -10,6 +9,7 @@ import {
 } from "../../helpers/submissionCreatorApi";
 import InputError from "../InputError";
 import { validateEmail } from "../../helpers/inputValidation";
+import { useToast } from "../Toast/ToastService";
 
 function GroupDialog({
   dialogRef,
@@ -18,9 +18,10 @@ function GroupDialog({
   parentId = null,
   isOpen = false,
   setIsOpen = () => {},
+  fetchFolderData = () => {},
 }) {
-  const navigate = useNavigate();
   const initialGroupListRef = useRef([]);
+  const initialGroupNameRef = useRef("");
   const [groupList, setGroupList] = useState([]); // [{name: "", email: ""}]
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
@@ -28,6 +29,7 @@ function GroupDialog({
   const [groupNameError, setGroupNameError] = useState(false);
   const [nameError, setNameError] = useState(false);
   const [emailError, setEmailError] = useState(null);
+  const toast = useToast();
 
   const removeUserFromGroupList = (index) => {
     const newGroupList = [...groupList]; // Create a copy of the original array
@@ -39,9 +41,12 @@ function GroupDialog({
     setGroupNameError(false);
 
     if (
-      JSON.stringify(initialGroupListRef.current) === JSON.stringify(groupList)
+      JSON.stringify(initialGroupListRef.current) ===
+        JSON.stringify(groupList) &&
+      initialGroupNameRef.current === groupName
     ) {
       setIsOpen(false);
+      dialogRef.current.close();
       return;
     }
 
@@ -52,26 +57,27 @@ function GroupDialog({
 
     if (isEdit) {
       const res = await editGroup(groupId, groupName, parentId, groupList);
+      await fetchFolderData();
       if (res.success) {
-        alert("Group edited successfully");
+        toast.success("Group edited successfully");
       } else {
-        alert("Group editing failed");
+        toast.error("Group edit failed");
       }
     } else {
       const res = await createNewGroup(groupName, parentId, groupList);
+      await fetchFolderData();
       if (res.success) {
-        alert("Group created successfully");
+        toast.success("Group created successfully");
       } else {
-        alert("Group creation failed");
+        toast.error("Group creation failed");
       }
     }
-    dialogRef.current.close();
+
     setGroupList([]);
     setName("");
     setEmail("");
     setGroupName("");
     setIsOpen(false);
-    navigate(0);
   };
 
   const addUserToGroupList = () => {
@@ -124,6 +130,7 @@ function GroupDialog({
 
       // Update the mutable value in the useRef
       initialGroupListRef.current = fetchedGroupList;
+      initialGroupNameRef.current = groupInfo?.name;
     };
     // Call the async function
     fetchGroupList();

@@ -7,7 +7,7 @@ import { useDrag, useDrop } from "react-dnd";
 import { BsThreeDots } from "react-icons/bs";
 import { moveFile } from "../helpers/submissionCreatorApi";
 
-function File({ file, removeFile }) {
+function File({ file, removeFile, fetchFolderData }) {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
   const editGroupModalRef = useRef(null);
@@ -141,6 +141,7 @@ function File({ file, removeFile }) {
           parentId={file.folderId}
           isOpen={isOpen}
           setIsOpen={setIsOpen}
+          fetchFolderData={fetchFolderData}
         />
       )}
     </div>
