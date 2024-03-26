@@ -1,13 +1,13 @@
 import { getIcon } from "../../../helpers/getIcon";
 import FolderPath from "../FolderPath";
 
-function FileView({ file, index, fetchGroups, addToSharedList }) {
+function FileView({ dialogRef, file, index, fetchGroups, addToSharedList }) {
   const icon = getIcon(file);
 
   const onClickHandler = () => {
     if (file.type === "group") {
       addToSharedList("group", file);
-      document.getElementById("groupView").close();
+      dialogRef.current.close();
     } else {
       fetchGroups(file.id);
     }
@@ -29,7 +29,14 @@ function FileView({ file, index, fetchGroups, addToSharedList }) {
   );
 }
 
-function GroupView({ isLoading, files, path, fetchGroups, addToSharedList }) {
+function GroupView({
+  dialogRef,
+  isLoading,
+  files,
+  path,
+  fetchGroups,
+  addToSharedList,
+}) {
   return (
     <>
       {isLoading ? (
@@ -44,6 +51,7 @@ function GroupView({ isLoading, files, path, fetchGroups, addToSharedList }) {
             <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {files.map((file, index) => (
                 <FileView
+                  dialogRef={dialogRef}
                   key={index}
                   file={file}
                   index={index}
