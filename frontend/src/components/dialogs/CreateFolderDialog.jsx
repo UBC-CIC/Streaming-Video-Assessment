@@ -2,12 +2,12 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createFolder } from "../../helpers/submissionCreatorApi";
 
-function CreateFolderDialog({ folderId }) {
+function CreateFolderDialog({ dialogRef, folderId }) {
   const navigate = useNavigate();
   const [folderName, setFolderName] = useState("");
 
   return (
-    <dialog id="folder-modal" className="modal">
+    <dialog id="folder-modal" className="modal" ref={dialogRef}>
       <div className="modal-box">
         <form method="dialog">
           {/* if there is a button in form, it will close the modal */}
