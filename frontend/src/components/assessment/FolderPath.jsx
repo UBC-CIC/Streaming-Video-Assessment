@@ -1,5 +1,5 @@
-function Crumb({ path, index, lastPath, onClickHandler }) {
-  return lastPath ? (
+function Crumb({ path, index, lastCrumb, onClickHandler }) {
+  return lastCrumb ? (
     <li key={index}>
       <a
         onClick={() => {
@@ -14,7 +14,11 @@ function Crumb({ path, index, lastPath, onClickHandler }) {
   );
 }
 
-function FolderPath({ folderPath, onClickHandler, setIsLastPath = true }) {
+function FolderPath({
+  folderPath,
+  onClickHandler,
+  makeLastCrumbClickable = true,
+}) {
   return (
     <div className="text-md breadcrumbs">
       <ul>
@@ -23,7 +27,9 @@ function FolderPath({ folderPath, onClickHandler, setIsLastPath = true }) {
             key={index}
             path={path}
             index={index}
-            lastPath={index !== folderPath.length - 1 || !setIsLastPath}
+            lastCrumb={
+              index !== folderPath.length - 1 || !makeLastCrumbClickable
+            }
             onClickHandler={onClickHandler}
           />
         ))}

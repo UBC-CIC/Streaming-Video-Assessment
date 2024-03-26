@@ -154,7 +154,7 @@ function ViewAllSubmissions() {
           <FolderPath
             folderPath={submissionData.folderPath}
             onClickHandler={folderOnClickHandler}
-            setIsLastPath={false}
+            makeLastCrumbClickable={false}
           />
         </div>
         <div className="flex flex-col justify-between pb-6 md:flex-row">
