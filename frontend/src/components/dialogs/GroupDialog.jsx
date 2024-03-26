@@ -12,12 +12,14 @@ import InputError from "../InputError";
 import { validateEmail } from "../../helpers/inputValidation";
 
 function GroupDialog({
+  dialogRef,
   isEdit,
   groupId = null,
   parentId = null,
   isOpen = false,
   setIsOpen = () => {},
 }) {
+  const navigate = useNavigate();
   const initialGroupListRef = useRef([]);
   const [groupList, setGroupList] = useState([]); // [{name: "", email: ""}]
   const [email, setEmail] = useState("");
@@ -63,12 +65,13 @@ function GroupDialog({
         alert("Group creation failed");
       }
     }
+    dialogRef.current.close();
     setGroupList([]);
     setName("");
     setEmail("");
     setGroupName("");
     setIsOpen(false);
-    document.getElementById("edit-group-modal").close();
+    navigate(0);
   };
 
   const addUserToGroupList = () => {
@@ -130,6 +133,7 @@ function GroupDialog({
     <dialog
       id={isEdit ? "edit-group-modal" : "create-group-modal"}
       className="modal"
+      ref={dialogRef}
     >
       <div className="modal-box max-w-none w-[70%] max-h-none h-[80%] flex flex-col justify-between">
         <form method="dialog">
