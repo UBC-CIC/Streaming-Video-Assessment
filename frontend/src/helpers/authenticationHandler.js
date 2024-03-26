@@ -7,11 +7,8 @@ import {
   confirmSignUp,
   fetchAuthSession,
 } from "aws-amplify/auth";
-import { useToast } from "../components/Toast/ToastService";
 
 export async function handleSignUp({ email, password }) {
-  const toast = useToast();
-
   try {
     const { isSignUpComplete, userId, nextStep } = await signUp({
       username: email,
@@ -22,15 +19,13 @@ export async function handleSignUp({ email, password }) {
     return { isSignUpComplete, userId, nextStep };
   } catch (error) {
     if (error.name == "UsernameExistsException") {
-      toast.error("A user already exists associated with that email.");
-    } else toast.error(error.message);
+      alert("A user already exists associated with that email.");
+    } else alert(error.message);
     return { isSignUpComplete: false, userId: null, nextStep: null };
   }
 }
 
 export async function handleConfirmSignUp({ email, confirmationCode }) {
-  const toast = useToast();
-
   try {
     const { isSignUpComplete, nextStep } = await confirmSignUp({
       username: email,
@@ -40,9 +35,9 @@ export async function handleConfirmSignUp({ email, confirmationCode }) {
   } catch (error) {
     console.log("error confirming sign up", error);
     if (error.name == "EmptyConfirmSignUpCode") {
-      toast.error("Please enter a confirmation code.");
+      alert("Please enter a confirmation code.");
     } else if (error.name == "CodeMismatchException") {
-      toast.error("The confirmation code is incorrect.");
+      alert("The confirmation code is incorrect.");
     }
     return { isSignUpComplete: false, nextStep: null };
   }
@@ -60,7 +55,7 @@ export async function handleSignIn({ email, password }) {
     if (error.name == "UserNotFoundException") {
       return { isSignedIn: false, nextStep: { signInStep: "CREATE_ACCOUNT" } };
     } else if (error.name == "NotAuthorizedException") {
-      toast.error("Invalid email or password");
+      alert("Invalid email or password");
       return { isSignedIn: false, nextStep: null };
     }
   }
