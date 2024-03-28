@@ -7,6 +7,7 @@ import {
   createNewGroup,
   editGroup,
 } from "../../helpers/submissionCreatorApi";
+import { uploadersFromCSVFile } from "../../helpers/csvParse";
 import InputError from "../InputError";
 import { validateEmail } from "../../helpers/inputValidation";
 import { useToast } from "../Toast/ToastService";
@@ -29,7 +30,10 @@ function GroupDialog({
   const [groupNameError, setGroupNameError] = useState(false);
   const [nameError, setNameError] = useState(false);
   const [emailError, setEmailError] = useState(null);
+  const [csvError, setCsvError] = useState("");
+  const [csvProblemUsers, setCsvProblemUsers] = useState([]);
   const toast = useToast();
+  const fileInputRef = useRef(null);
 
   const removeUserFromGroupList = (index) => {
     const newGroupList = [...groupList]; // Create a copy of the original array
@@ -175,6 +179,7 @@ function GroupDialog({
               <IoIosInformationCircleOutline size={20} />
             </div>
           </div>
+
           <div className="flex justify-center mt-5 flex-col items-center">
             <input
               type="text"
@@ -188,7 +193,80 @@ function GroupDialog({
             {groupNameError && (
               <InputError error={"Group name cannot be empty"} />
             )}
-            <div className="flex justify-center mt-10 flex-col items-center w-full">
+          </div>
+
+          <div className="flex m-10">
+            <div className="flex justify-center flex-col items-center w-full">
+              <input
+                type="file"
+                accept=".csv"
+                className="file-input w-full max-w-xs file-input-bordered"
+                ref={fileInputRef}
+              />
+              {csvError && <InputError error={csvError} />}
+              <div>
+                <button
+                  className="btn uppercase mt-4 text-white bg-indigo-500"
+                  onClick={async () => {
+                    setCsvError("");
+                    setCsvProblemUsers([]);
+                    if (fileInputRef.current.files.length === 0) return;
+                    const f = fileInputRef.current.files[0];
+
+                    try {
+                      const uploadersToAdd = await uploadersFromCSVFile(f);
+
+                      setCsvProblemUsers(
+                        uploadersToAdd.filter(
+                          (user) => !validateEmail(user.email) || !user.name,
+                        ),
+                      );
+
+                      const addUploaders = uploadersToAdd.filter(
+                        (user) =>
+                          validateEmail(user.email) &&
+                          user.name &&
+                          !groupList.find(
+                            (currentUser) => currentUser.email === user.email,
+                          ),
+                      );
+
+                      fileInputRef.current.type = "text";
+                      fileInputRef.current.type = "file";
+                      setGroupList([...groupList, ...addUploaders]);
+                      console.log(addUploaders);
+                    } catch (e) {
+                      setCsvError(e.message);
+                    }
+                  }}
+                >
+                  Add Uploaders
+                </button>
+
+                <div
+                  className="tooltip tooltip-bottom tooltip-lg"
+                  data-tip={`Upload a CSV file with Name, Email columns to add multiple users to the group at once. Do *not* use headers.`}
+                >
+                  <IoIosInformationCircleOutline size={20} />
+                </div>
+              </div>
+              {csvProblemUsers.length > 0 && (
+                <div>
+                  The following users could not be added:
+                  <ul className="list-disc pl-5">
+                    {csvProblemUsers.map((user, index) => (
+                      <li key={index}>
+                        {user.name} - {user.email}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+
+            <div className="divider divider-horizontal">OR</div>
+
+            <div className="flex justify-center flex-col items-center w-full">
               <input
                 type="text"
                 placeholder="Name"
