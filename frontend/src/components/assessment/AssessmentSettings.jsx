@@ -1,5 +1,6 @@
 import { formatTimeForInput } from "../../helpers/dateHandler";
 import InputError from "../InputError";
+import { IoIosInformationCircleOutline } from "react-icons/io";
 
 function AssessmentSettings({
   timeLimit,
@@ -20,7 +21,7 @@ function AssessmentSettings({
       <div
         className={`flex flex-row mt-8 text-xl items-center ${timeLimitError ? "" : "pb-5"}`}
       >
-        Time Limit:
+        Max Submission Duration:
         <div className="flex flex-row pl-5 w-[30%] items-center">
           <label htmlFor="hours" className="pr-2">
             Hours:
@@ -60,7 +61,7 @@ function AssessmentSettings({
       </div>
       {timeLimitError && <InputError error={timeLimitError} />}
       <div className="flex flex-row text-xl w-full pb-5 items-center">
-        Allow Face Blur:
+        Allow Face Blurring:
         <div className="pl-5 flex items-center">
           <label className="relative inline-flex items-center cursor-pointer">
             <input
@@ -75,8 +76,9 @@ function AssessmentSettings({
         </div>
       </div>
       <div className="flex flex-row text-xl w-full items-center">
-        Close Submission On:
-        <div className="pl-5 flex items-center">
+        Close Submissions On:
+        <div className="pl-5 flex items-center tooltip tooltip-bottom tooltip-lg"
+             data-tip={`Make sure to set both the date and the time of submission`}>
           {/* TODO: test if there is timezone issues */}
           <input
             className={`w-full ${dueDateError ? "border-red-500" : ""}`}

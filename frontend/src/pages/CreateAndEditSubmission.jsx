@@ -39,6 +39,7 @@ function CreateAndEditSubmission({ edit = false }) {
   const [addedToSharedList, setAddedToSharedList] = useState([]);
   const [removedFromSharedList, setRemovedFromSharedList] = useState([]);
   const [titleError, setTitleError] = useState("");
+  const [descriptionError, setDescriptionError] = useState("");
   const [timeLimitError, setTimeLimitError] = useState("");
   const [dueDateError, setDueDateError] = useState("");
   const toast = useToast();
@@ -76,7 +77,12 @@ function CreateAndEditSubmission({ edit = false }) {
     let hasInvalidInputs = false;
 
     if (name === "") {
-      setTitleError("Name cannot be empty");
+      setTitleError("Submission name cannot be empty");
+      hasInvalidInputs = true;
+    }
+
+    if (description == "") {
+      setDescriptionError("Submission Description cannot be empty");
       hasInvalidInputs = true;
     }
 
@@ -102,6 +108,7 @@ function CreateAndEditSubmission({ edit = false }) {
 
   const assessmentHandler = async () => {
     setTitleError(null);
+    setDescriptionError(null)
     setTimeLimitError(null);
     setDueDateError(null);
     if (hasInvalidInputs()) return;
@@ -189,6 +196,7 @@ function CreateAndEditSubmission({ edit = false }) {
             setName={setName}
             setDescription={setDescription}
             titleError={titleError}
+            descriptionError={descriptionError}
           />
           <AssessmentSettings
             timeLimit={timeLimit}

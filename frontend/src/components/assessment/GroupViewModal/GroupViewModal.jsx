@@ -24,7 +24,7 @@ function GroupViewModal({ addToSharedList }) {
   return (
     <div className="flex justify-center pb-2">
       <button className="btn btn-wide" onClick={onViewModal}>
-        Select a Group
+        Share with a group
       </button>
       <dialog id="groupView" className="modal" ref={groupViewDialogRef}>
         <div className="modal-box max-w-none w-[70%] max-h-none h-[80%]">

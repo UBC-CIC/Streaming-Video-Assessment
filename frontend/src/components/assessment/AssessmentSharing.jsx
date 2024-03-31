@@ -134,7 +134,7 @@ function AssessmentSharing({
     <div className="w-full">
       <div className="text-4xl text-center pb-1">Sharing</div>
       <div className="bg-black h-0.5" />
-      <div className="grid grid-rows-2 gap-2 grid-flow-col w-full mt-4">
+      <div className="grid grid-rows-3 gap-2 grid-flow-col w-full mt-4">
         <div>
           <input
             type="text"
@@ -155,10 +155,11 @@ function AssessmentSharing({
           />
           {emailError && <InputError error={emailError} />}
         </div>
-        <div></div>
-        <button className="btn btn-sm self-end" onClick={addToSharedList}>
-          Add
-        </button>
+        <div className="flex justify-center pb-2">
+          <button className="btn btn-wide" onClick={addToSharedList}>
+            Share with a single user
+          </button>
+        </div>
       </div>
       <div className="divider">OR</div>
       <GroupViewModal addToSharedList={addToSharedList} />
