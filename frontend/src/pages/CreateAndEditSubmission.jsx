@@ -187,7 +187,7 @@ function CreateAndEditSubmission({ edit = false }) {
       <span className="loading loading-spinner loading-lg"></span>
     </div>
   ) : (
-    <div className="flex flex-col m-10">
+    <div className="flex flex-col mt-5 mr-10 ml-10">
       <div className="flex flex-col w-full md:flex-row">
         <div className="md:w-[70%]">
           <AssessmentInputFields
@@ -224,24 +224,24 @@ function CreateAndEditSubmission({ edit = false }) {
             removedFromSharedList={removedFromSharedList}
             setRemovedFromSharedList={setRemovedFromSharedList}
           />
-        </div>
-      </div>
-      <div className="flex flex-col self-center md:self-end mt-10 md:flex-row">
-        <div className="mr-2">
-          <button
-            className="btn bg-red-500 btn-lg text-white hover:text-black"
-            onClick={() => navigate(-1)}
-          >
-            Cancel
-          </button>
-        </div>
-        <div>
-          <button
-            className="btn bg-indigo-500 btn-lg text-white hover:text-black pr-8 pl-8"
-            onClick={assessmentHandler}
-          >
-            {edit ? "Save" : "Create"}
-          </button>
+          <div className="flex flex-col self-center md:self-end mt-10 md:flex-row">
+            <div className="mr-2">
+              <button
+                className="btn bg-red-500 btn-lg text-white hover:text-black"
+                onClick={() => navigate(-1)}
+              >
+                Cancel
+              </button>
+            </div>
+            <div>
+              <button
+                className="btn bg-indigo-500 btn-lg text-white hover:text-black pr-8 pl-8"
+                onClick={assessmentHandler}
+              >
+                {edit ? "Save" : "Create"}
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
