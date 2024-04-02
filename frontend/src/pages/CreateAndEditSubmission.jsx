@@ -76,12 +76,12 @@ function CreateAndEditSubmission({ edit = false }) {
   const hasInvalidInputs = () => {
     let hasInvalidInputs = false;
 
-    if (name === "") {
+    if (name.trim() === "") {
       setTitleError("Submission name cannot be empty");
       hasInvalidInputs = true;
     }
 
-    if (description == "") {
+    if (description.trim() == "") {
       setDescriptionError("Submission Description cannot be empty");
       hasInvalidInputs = true;
     }
