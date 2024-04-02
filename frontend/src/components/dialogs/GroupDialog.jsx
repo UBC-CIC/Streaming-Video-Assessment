@@ -196,7 +196,7 @@ function GroupDialog({
           <div className="flex mt-4">
             <div className="flex justify-center flex-col items-center w-full">
               <h4 className="justify-center text-indigo-500 text-center font-bold text-l uppercase self-center pr-2 mb-8">
-                Add users from CSV file:
+                Add users from CSV file
               </h4>
               <input
                 type="file"
@@ -269,7 +269,7 @@ function GroupDialog({
 
             <div className="flex justify-center flex-col items-center w-full">
               <h4 className="justify-center text-indigo-500 text-center font-bold text-l uppercase self-center mt-2 pr-2 mb-4">
-                Add a single user:
+                Add a single user
               </h4>
               <input
                 type="text"

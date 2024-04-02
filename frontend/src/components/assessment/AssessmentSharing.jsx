@@ -157,7 +157,7 @@ function AssessmentSharing({
         </div>
         <div className="flex justify-center pb-2">
           <button className="btn btn-wide" onClick={addToSharedList}>
-            Share with a single user
+            Share with a user
           </button>
         </div>
       </div>
