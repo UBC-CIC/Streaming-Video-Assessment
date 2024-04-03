@@ -23,6 +23,14 @@ router.get("/assessment-info/:assessmentId", async (req, res) => {
     return;
   }
 
+  if (uploadRequest.assessment.closed) {
+    return res.json({
+      id: assessmentId,
+      name: uploadRequest.assessment.name,
+      closed: true,
+    });
+  }
+
   const videoUpload = await uploadRequest.getVideo();
 
   const completedOn = videoUpload?.submitted ? videoUpload.updatedAt : null;
