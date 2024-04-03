@@ -96,6 +96,7 @@ function FolderView({ home = false }) {
         <CreateFolderDialog
           dialogRef={createFolderModalRef}
           folderId={folderId}
+          fetchFolderData={fetchFolderData}
         />
       ),
     },

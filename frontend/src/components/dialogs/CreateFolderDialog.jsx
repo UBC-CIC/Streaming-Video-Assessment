@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { createFolder } from "../../helpers/submissionCreatorApi";
+import { useToast } from "../Toast/ToastService";
 
-function CreateFolderDialog({ dialogRef, folderId }) {
-  const navigate = useNavigate();
+function CreateFolderDialog({ dialogRef, folderId, fetchFolderData }) {
   const [folderName, setFolderName] = useState("");
+  const toast = useToast();
 
   return (
     <dialog id="folder-modal" className="modal" ref={dialogRef}>
@@ -31,9 +31,14 @@ function CreateFolderDialog({ dialogRef, folderId }) {
             <button
               className="btn w-44 text-white bg-indigo-500 btn-lg"
               onClick={async () => {
-                await createFolder(folderName, folderId);
+                const res = await createFolder(folderName, folderId);
+                if (res.success) {
+                  toast.success("Folder created successfully");
+                } else {
+                  toast.error("Failed to create folder");
+                }
+                await fetchFolderData();
                 setFolderName(null);
-                navigate(0);
               }}
             >
               Create

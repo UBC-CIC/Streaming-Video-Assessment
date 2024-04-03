@@ -8,6 +8,7 @@ import {
   fetchAuthSession,
 } from "aws-amplify/auth";
 
+// TODO: remove alerts from this file and use toast message in components
 export async function handleSignUp({ email, password }) {
   try {
     const { isSignUpComplete, userId, nextStep } = await signUp({
