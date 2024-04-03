@@ -91,28 +91,14 @@ function FolderView({ home = false }) {
       text: "Create Folder",
       onclick: () => {
         createFolderModalRef.current.showModal();
-      },
-      modal: (
-        <CreateFolderDialog
-          dialogRef={createFolderModalRef}
-          folderId={folderId}
-        />
-      ),
+      }
     },
     {
       icon: <GroupIcon width={20} height={20} />,
       text: "Create Group",
       onclick: () => {
         createGroupModalRef.current.showModal();
-      },
-      modal: (
-        <GroupDialog
-          dialogRef={createGroupModalRef}
-          isEdit={false}
-          parentId={folderId}
-          fetchFolderData={fetchFolderData}
-        />
-      ),
+      }
     },
     {
       icon: <UploadIcon width={20} height={20} />,
@@ -147,6 +133,16 @@ function FolderView({ home = false }) {
                 dropdownItems={dropdownItems}
               />
             </div>
+            <GroupDialog
+              dialogRef={createGroupModalRef}
+              isEdit={false}
+              parentId={folderId}
+              fetchFolderData={fetchFolderData}
+            />
+            <CreateFolderDialog
+              dialogRef={createFolderModalRef}
+              folderId={folderId}
+            />
           </div>
           {view === "grid" ? (
             <GridView

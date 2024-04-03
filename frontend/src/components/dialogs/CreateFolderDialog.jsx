@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createFolder } from "../../helpers/submissionCreatorApi";
+import { IoIosInformationCircleOutline } from "react-icons/io";
 
 function CreateFolderDialog({ dialogRef, folderId }) {
   const navigate = useNavigate();
@@ -15,9 +16,16 @@ function CreateFolderDialog({ dialogRef, folderId }) {
             ✕
           </button>
         </form>
-        <h3 className="justify-center text-indigo-500 text-center font-bold text-xl uppercase self-center mt-2">
-          Create New Folder
-        </h3>
+        <div className="flex justify-center items-center mt-2">
+            <h3 className="justify-center text-indigo-500 text-center font-bold text-xl uppercase self-center mt-2 pr-2">
+              Create Folder
+            </h3>
+            <div
+              className="tooltip tooltip-bottom tooltip-lg"
+              data-tip={`Folders can be used to store assessments, groups, and other folders.`}>
+              <IoIosInformationCircleOutline size={20} />
+            </div>
+          </div>
         <div className="flex justify-center mt-5">
           <input
             type="text"

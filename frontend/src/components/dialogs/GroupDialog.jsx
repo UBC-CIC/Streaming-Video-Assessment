@@ -172,10 +172,8 @@ function GroupDialog({
             </h3>
             <div
               className="tooltip tooltip-bottom tooltip-lg"
-              data-tip={`Groups are a way to share folders with other users. 
-            You can create a group and add users to it. 
-            Then, you can share folders with the group and all users in the group will have access to the folder.`}
-            >
+              data-tip={`Groups are a way of saving a collection of users. 
+                         When creating a new assessment, you can select any group in the current folder and share the assessment with the entire group at once.`}>
               <IoIosInformationCircleOutline size={20} />
             </div>
           </div>
@@ -195,8 +193,11 @@ function GroupDialog({
             )}
           </div>
 
-          <div className="flex m-10">
+          <div className="flex mt-4">
             <div className="flex justify-center flex-col items-center w-full">
+              <h4 className="justify-center text-indigo-500 text-center font-bold text-l uppercase self-center pr-2 mb-8">
+                Add users from CSV file
+              </h4>
               <input
                 type="file"
                 accept=".csv"
@@ -267,6 +268,9 @@ function GroupDialog({
             <div className="divider divider-horizontal">OR</div>
 
             <div className="flex justify-center flex-col items-center w-full">
+              <h4 className="justify-center text-indigo-500 text-center font-bold text-l uppercase self-center mt-2 pr-2 mb-4">
+                Add a single user
+              </h4>
               <input
                 type="text"
                 placeholder="Name"
