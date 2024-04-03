@@ -91,14 +91,14 @@ function FolderView({ home = false }) {
       text: "Create Folder",
       onclick: () => {
         createFolderModalRef.current.showModal();
-      }
+      },
     },
     {
       icon: <GroupIcon width={20} height={20} />,
       text: "Create Group",
       onclick: () => {
         createGroupModalRef.current.showModal();
-      }
+      },
     },
     {
       icon: <UploadIcon width={20} height={20} />,
@@ -142,6 +142,7 @@ function FolderView({ home = false }) {
             <CreateFolderDialog
               dialogRef={createFolderModalRef}
               folderId={folderId}
+              fetchFolderData={fetchFolderData}
             />
           </div>
           {view === "grid" ? (

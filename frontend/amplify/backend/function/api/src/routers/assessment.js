@@ -30,7 +30,6 @@ router.get("/:assessmentId", async (req, res) => {
       name: user.name,
       email: user.email,
       uploadedOn: video.updatedAt,
-      s3ref: video.s3Key,
       submissionId: video.id,
     };
   });
