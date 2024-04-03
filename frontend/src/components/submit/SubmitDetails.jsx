@@ -28,10 +28,22 @@ const formatSeconds = (seconds) => {
 };
 
 const SubmitDetails = ({ assessmentData, begin }) => {
-  const { name, description, dueDate, timeLimitSeconds, completedOn } =
+  const { name, description, dueDate, timeLimitSeconds, completedOn, closed } =
     assessmentData;
 
-  return (
+  return closed ? (
+    <div className="grid grid-cols-1 place-items-center min-h-dvh py-5 max-md:px-5">
+      <div className="self-start flex w-[770px] max-w-full flex-col my-2 max-md:my-10">
+        <span className="text-black text-6xl self-center max-md:max-w-full max-md:text-4xl">
+          {name}
+        </span>
+        <div className="bg-black self-stretch mt-1 shrink-0 h-0.5 max-md:max-w-full" />
+        <div className="text-center h-96 flex flex-col justify-end">
+          <h2 className="text-4xl font-semibold">Assessment is closed</h2>
+        </div>
+      </div>
+    </div>
+  ) : (
     <div className="grid grid-cols-1 place-items-center min-h-dvh py-5 max-md:px-5">
       <div className="self-start flex w-[770px] max-w-full flex-col my-2 max-md:my-10">
         <span className="text-black text-6xl self-center max-md:max-w-full max-md:text-4xl">
