@@ -1,5 +1,7 @@
 {
-  "providers": ["awscloudformation"],
+  "providers": [
+    "awscloudformation"
+  ],
   "projectName": "backend",
   "version": "3.1",
   "frontend": "javascript",
@@ -7,9 +9,10 @@
     "framework": "react",
     "config": {
       "SourceDir": "src",
-      "DistributionDir": "build",
+      "DistributionDir": "dist",
       "BuildCommand": "npm run-script build",
-      "StartCommand": "npm run-script start"
+      "StartCommand": "npm run-script start",
+      "ServerlessContainers": false
     }
   }
 }
