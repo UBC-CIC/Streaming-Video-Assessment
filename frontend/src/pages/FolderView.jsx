@@ -112,7 +112,7 @@ function FolderView({ home = false }) {
   ];
 
   return (
-    <div className="flex flex-col pl-16 pr-20 py-12 max-md:px-5">
+    <div className="flex flex-col pl-16 pr-20 pb-12 max-md:px-5">
       <SearchBar />
       {isLoading ? (
         <div className="flex justify-center h-full w-full fixed">

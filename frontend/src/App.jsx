@@ -16,6 +16,7 @@ import ViewAllSubmissions from "./pages/ViewAllSubmissions";
 import ViewSubmission from "./pages/ViewSubmission";
 import ConfirmSignUpView from "./pages/ConfirmSignUpView";
 import Logout from "./pages/Logout";
+import Drawer from "./components/Drawer";
 
 const router = createBrowserRouter([
   {
@@ -27,7 +28,9 @@ const router = createBrowserRouter([
     path: "/home",
     element: (
       <PrivateRoute>
-        <FolderView home={true} />
+        <Drawer>
+          <FolderView home={true} />
+        </Drawer>
       </PrivateRoute>
     ),
   },
