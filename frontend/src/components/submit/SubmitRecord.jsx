@@ -28,6 +28,7 @@ const SubmitRecord = ({
 
   const [intentRecording, setIntentRecording] = useState(false);
   const [recording, setRecording] = useState(false);
+  const [videoLoaded, setVideoLoaded] = useState("NotReady");
 
   const [secondsRemaining, setSecondsRemaining] = useState(timeLimitSeconds);
   const [blurface, setBlurface] = useState(false);
@@ -206,6 +207,7 @@ const SubmitRecord = ({
               mediaRecorderRef={mediaRecorderRef}
               canvasRef={canvasRef}
               audioStreamTrackRef={audioStreamTrackRef}
+              setVideoLoaded={setVideoLoaded}
               className="w-full flex align-center justify-center"
             />
           )}
@@ -247,6 +249,7 @@ const SubmitRecord = ({
               blurface={blurface}
               setBlurface={setBlurface}
               modelsLoaded={modelsLoaded}
+              videoLoaded={videoLoaded}
             />
           )}
         </div>

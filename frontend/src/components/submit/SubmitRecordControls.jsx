@@ -15,6 +15,7 @@ const SubmitRecordControls = ({
   blurface,
   setBlurface,
   modelsLoaded,
+  videoLoaded,
 }) => {
   return (
     <div className="flex flex-wrap place-content-between justify-items-center align-center">
@@ -30,15 +31,24 @@ const SubmitRecordControls = ({
             Stop Recording
           </button>
         ) : (
-          <button
-            className="button text-white text-center justify-center text-l font-black bg-green-500 hover:bg-green-400 self-center px-5 py-2 text-nowrap rounded-md"
-            onClick={() => {
-              setIntentRecording(true);
-            }}
-            disabled={intentRecording}
+          <div
+            {...(videoLoaded === "PermissionError" && {
+              className: "tooltip tooltip-open tooltip-bottom tooltip-error",
+              "data-tip":
+                "Please enable your webcam,\n\rrefresh, and try again.",
+              style: { whiteSpace: "pre-line" },
+            })}
           >
-            Start Recording
-          </button>
+            <button
+              className="button text-white text-center justify-center text-l font-black bg-green-500 hover:bg-green-400 self-center px-5 py-2 text-nowrap rounded-md disabled:bg-slate-500 disabled:hover:bg-slate-400 disabled:hover:cursor-not-allowed"
+              onClick={() => {
+                setIntentRecording(true);
+              }}
+              disabled={intentRecording || videoLoaded !== "Ready"}
+            >
+              Start Recording
+            </button>
+          </div>
         )}
       </div>
       <div className="flex flex-wrap self-center justify-center items-center p-2">
