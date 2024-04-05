@@ -227,14 +227,13 @@ function applyExtraSetup(sequelize) {
   });
 
   assessment.addHook("beforeDestroy", async (a, options) => {
-    // 1. delete all videos in s3
+    // 1. delete all videos. TODO: This should maybe be a cascade instead of in a hook
     // 2. delete all upload requests
 
     const videos = await a.getVideos();
 
     await Promise.all(
       videos.map(async (v) => {
-        // TODO: delete it on s3
         await v.destroy();
       }),
     );
@@ -243,6 +242,10 @@ function applyExtraSetup(sequelize) {
       where: { assessmentId: a.id },
     });
   });
+
+  video.addHook("beforeDestroy", async (v, options) => {
+    // @hmitgang TODO: delete video from s3
+  }
 
   // We don't actually need to do anything special here:
   // uploaderGroup.addHook("beforeDestroy", async (uploaderGroup, options) => {});
