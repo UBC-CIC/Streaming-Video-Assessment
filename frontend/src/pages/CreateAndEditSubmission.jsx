@@ -51,6 +51,15 @@ function CreateAndEditSubmission({ edit = false }) {
   };
 
   useEffect(() => {
+    if (!submissionData) {
+      if (submissionId === null || submissionId === undefined) {
+        navigate(`/home`);
+      } else {
+        navigate(`/submission/${submissionId}`);
+      }
+      return;
+    }
+
     // Check the checkbox if its value matches the value to check against
     if (edit) {
       setIsLoading(true);
