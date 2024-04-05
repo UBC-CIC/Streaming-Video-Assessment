@@ -245,7 +245,7 @@ function applyExtraSetup(sequelize) {
 
   video.addHook("beforeDestroy", async (v, options) => {
     // @hmitgang TODO: delete video from s3
-  }
+  });
 
   // We don't actually need to do anything special here:
   // uploaderGroup.addHook("beforeDestroy", async (uploaderGroup, options) => {});
