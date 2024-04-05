@@ -5,7 +5,12 @@ import { getIcon } from "../helpers/getIcon";
 import GroupDialog from "./dialogs/GroupDialog";
 import { useDrag, useDrop } from "react-dnd";
 import { BsThreeDots } from "react-icons/bs";
-import { moveFile } from "../helpers/submissionCreatorApi";
+import {
+  deleteAssessment,
+  deleteFolder,
+  deleteGroup,
+  moveFile,
+} from "../helpers/submissionCreatorApi";
 
 function File({ file, removeFile, fetchFolderData }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -42,12 +47,28 @@ function File({ file, removeFile, fetchFolderData }) {
     }
     console.log("rename");
   };
-  const deleteHandler = () => {
-    const elem = document.activeElement;
-    if (elem) {
-      elem?.blur();
+  const deleteHandler = async () => {
+    // TODO: give a confirmation dialog
+
+    // TODO: show some loading state
+    try {
+      switch (file.type) {
+        case "folder":
+          await deleteFolder(file.id);
+          break;
+        case "group":
+          await deleteGroup(file.id);
+          break;
+        case "assessment":
+          await deleteAssessment(file.id);
+          break;
+      }
+
+      removeFile(file);
+      console.log("delete", file);
+    } catch (error) {
+      console.error("Error deleting file", error);
     }
-    console.log("delete");
   };
 
   const [{ canDrop, isOver }, drop] = useDrop(() => ({
@@ -112,14 +133,14 @@ function File({ file, removeFile, fetchFolderData }) {
             <BsThreeDots size={22} />
           </button>
           <ul className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-40">
-            {/* <li onClick={moveHandler}>
-              <a>Move</a>
-            </li> */}
-            <li onClick={renameHandler}>
+            {/* @aryang13 TODO: implement rename? */}
+            {/* <li onClick={renameHandler}>
               <a>Rename</a>
-            </li>
-            <li onClick={deleteHandler}>
-              <a className="text-rose-600">Delete</a>
+            </li> */}
+            <li>
+              <button onClick={deleteHandler} className="text-rose-600">
+                Delete
+              </button>
             </li>
           </ul>
         </div>

@@ -9,7 +9,12 @@ import GroupIcon from "../assets/icons/GroupIcon";
 import { useNavigate } from "react-router-dom";
 
 import { useDrag, useDrop } from "react-dnd";
-import { moveFile } from "../helpers/submissionCreatorApi";
+import {
+  moveFile,
+  deleteFolder,
+  deleteAssessment,
+  deleteGroup,
+} from "../helpers/submissionCreatorApi";
 
 function ListViewFile({ index, file, removeFile }) {
   const navigate = useNavigate();
@@ -45,6 +50,30 @@ function ListViewFile({ index, file, removeFile }) {
         };
       default:
         return () => {};
+    }
+  };
+
+  const deleteHandler = async () => {
+    // TODO: give a confirmation dialog
+
+    // TODO: show some loading state
+    try {
+      switch (file.type) {
+        case "folder":
+          await deleteFolder(file.id);
+          break;
+        case "group":
+          await deleteGroup(file.id);
+          break;
+        case "assessment":
+          await deleteAssessment(file.id);
+          break;
+      }
+
+      removeFile(file);
+      console.log("delete", file);
+    } catch (error) {
+      console.error("Error deleting file", error);
     }
   };
 
@@ -117,7 +146,7 @@ function ListViewFile({ index, file, removeFile }) {
           className="p-2"
           onClick={(e) => {
             e.stopPropagation();
-            console.log("Trash");
+            deleteHandler();
           }}
         >
           <FaTrash className="text-stone-500 hover:text-stone-700 cursor-pointer" />

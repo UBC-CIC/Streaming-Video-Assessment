@@ -116,8 +116,17 @@ router.put("/:groupId", async (req, res) => {
   res.json({ success: "put call succeed!", url: req.url, body: req.body });
 });
 
-router.delete("/:groupId", (req, res) => {
-  // TODO: implement delete group, ensure ownership
+router.delete("/:groupId", async (req, res) => {
+  const group = await uploaderGroup.findByPk(req.params.groupId, {
+    include: [uploader],
+  });
+
+  if (!group || (await group.getOwner()).email !== req["userEmail"]) {
+    return res.status(403).json({ error: "Forbidden" });
+  }
+
+  await group.destroy();
+
   res.json({ success: "delete call succeed!", url: req.url });
 });
 

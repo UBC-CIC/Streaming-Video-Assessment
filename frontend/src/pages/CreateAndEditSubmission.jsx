@@ -51,7 +51,7 @@ function CreateAndEditSubmission({ edit = false }) {
   };
 
   useEffect(() => {
-    if (!submissionData) {
+    if (!submissionData && !folderId) {
       if (submissionId === null || submissionId === undefined) {
         navigate(`/home`);
       } else {
@@ -117,7 +117,7 @@ function CreateAndEditSubmission({ edit = false }) {
 
   const assessmentHandler = async () => {
     setTitleError(null);
-    setDescriptionError(null)
+    setDescriptionError(null);
     setTimeLimitError(null);
     setDueDateError(null);
     if (hasInvalidInputs()) return;

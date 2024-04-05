@@ -206,6 +206,46 @@ function applyExtraSetup(sequelize) {
     });
     return folder.owner;
   };
+
+  folder.addHook("beforeDestroy", async (f, options) => {
+    // -- recursively delete contents incl folders
+    await Promise.all([
+      f
+        .getUploaderGroups()
+        .then((groups) => Promise.all(groups.map((g) => g.destroy()))),
+      f
+        .getAssessments()
+        .then((assessments) =>
+          Promise.all(assessments.map((a) => a.destroy())),
+        ),
+      f
+        .getChildFolders()
+        .then((folders) =>
+          Promise.all(folders.map((subfolder) => subfolder.destroy())),
+        ),
+    ]);
+  });
+
+  assessment.addHook("beforeDestroy", async (a, options) => {
+    // 1. delete all videos in s3
+    // 2. delete all upload requests
+
+    const videos = await a.getVideos();
+
+    await Promise.all(
+      videos.map(async (v) => {
+        // TODO: delete it on s3
+        await v.destroy();
+      }),
+    );
+
+    await uploadRequest.destroy({
+      where: { assessmentId: a.id },
+    });
+  });
+
+  // We don't actually need to do anything special here:
+  // uploaderGroup.addHook("beforeDestroy", async (uploaderGroup, options) => {});
 }
 
 module.exports = { applyExtraSetup };
