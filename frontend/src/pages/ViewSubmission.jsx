@@ -158,7 +158,7 @@ function ViewSubmission() {
                 setIsDownloading(false);
               }}
             >
-              {true ? (
+              {isDownloading ? (
                 <ProgressLoader
                   percentage={downloadingPercentage}
                   loaderSize={"2rem"}
