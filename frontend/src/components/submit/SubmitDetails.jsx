@@ -32,7 +32,7 @@ const SubmitDetails = ({ assessmentData, begin }) => {
     assessmentData;
 
   if (closed) {
-    return closed ? (
+    return (
       <div className="grid grid-cols-1 place-items-center min-h-dvh py-5 max-md:px-5">
         <div className="self-start flex w-[770px] max-w-full flex-col my-2 max-md:my-10">
           <span className="text-black text-6xl self-center max-md:max-w-full max-md:text-4xl">
@@ -44,9 +44,9 @@ const SubmitDetails = ({ assessmentData, begin }) => {
           </div>
         </div>
       </div>
-    )
+    );
   }
-  
+
   return (
     <div className="grid grid-cols-1 place-items-center min-h-dvh py-5 max-md:px-5">
       <div className="self-start flex w-[770px] max-w-full flex-col my-2 max-md:my-10">
