@@ -11,6 +11,7 @@ import { IoMdArrowDropdown } from "react-icons/io";
 import { IoChevronForward, IoChevronBack } from "react-icons/io5";
 import { FaArrowLeft } from "react-icons/fa";
 import { downloadVideo } from "../helpers/downloadVideo";
+import ProgressLoader from "../components/ProgressLoader";
 
 function loader({ params }) {
   let submissionId = null;
@@ -48,7 +49,10 @@ function SubmissionDropdown({ submissions, submissionIndex, assessmentId }) {
                 );
               }}
             >
-              {submission.name}
+              <div className="flex flex-col">
+                <p>{submission.name}</p>
+                <p className="text-gray-400">{submission.email}</p>
+              </div>
             </a>
           </li>
         ))}
@@ -65,6 +69,8 @@ function ViewSubmission() {
   const [currentSubmission, setCurrentSubmissions] = useState({});
   const [submissionIndex, setSubmissionIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [isDownloading, setIsDownloading] = useState(false);
+  const [downloadingPercentage, setDownloadingPercentage] = useState(0);
 
   useEffect(() => {
     const fetchSubmissionData = async () => {
@@ -141,11 +147,29 @@ function ViewSubmission() {
           </div>
           <div className="flex flex-col mt-5 items-center">
             <button
-              className="flex flex-row justify-between text-md btn btn-md w-[75%]"
-              onClick={() => downloadVideo(videoURL, currentSubmission.name)}
+              className={`flex flex-row ${isDownloading ? "jusitfy-center" : "justify-between"} text-md btn btn-md w-[75%]`}
+              onClick={async () => {
+                setIsDownloading(true);
+                await downloadVideo(
+                  videoURL,
+                  currentSubmission.name,
+                  setDownloadingPercentage,
+                );
+                setIsDownloading(false);
+              }}
             >
-              Download
-              <BsDownload />
+              {true ? (
+                <ProgressLoader
+                  percentage={downloadingPercentage}
+                  loaderSize={"2rem"}
+                  textClassName="text-[0.55rem]"
+                />
+              ) : (
+                <>
+                  Download
+                  <BsDownload />
+                </>
+              )}
             </button>
           </div>
         </div>

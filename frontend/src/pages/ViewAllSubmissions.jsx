@@ -13,6 +13,7 @@ import FolderPath from "../components/assessment/FolderPath";
 import { useToast } from "../components/Toast/ToastService";
 import { downloadVideo } from "../helpers/downloadVideo";
 import { FaArrowLeft } from "react-icons/fa";
+import ProgressLoader from "../components/ProgressLoader";
 
 function loader({ params }) {
   let submissionId = null;
@@ -150,15 +151,6 @@ function ViewAllSubmissions() {
     return navigate(`/folder/${folderId}`);
   };
 
-  const onDownloadSubmission = async (submission) => {
-    const res = await getAssessmentSubmissionInfo(
-      submissionId,
-      submission.submissionId,
-    );
-
-    downloadVideo(res.videoUrl, submission.name);
-  };
-
   return isLoading ? (
     <div className="flex justify-center h-full w-full fixed">
       <span className="loading loading-spinner loading-lg"></span>
@@ -248,12 +240,9 @@ function ViewAllSubmissions() {
                       {submission.name}
                     </abbr>
                   </div>
-                  <BsDownload
-                    className="text-stone-500 hover:text-stone-900 cursor-pointer"
-                    onClick={async (e) => {
-                      e.stopPropagation();
-                      await onDownloadSubmission(submission);
-                    }}
+                  <DownloadingButton
+                    submissionId={submissionId}
+                    submission={submission}
                   />
                 </div>
               );
@@ -271,6 +260,38 @@ function ViewAllSubmissions() {
         isPassDueDate={isPassDueDate}
       />
     </div>
+  );
+}
+
+function DownloadingButton({ submissionId, submission }) {
+  const [isDownloading, setIsDownloading] = useState(false);
+  const [downloadingPercentage, setDownloadingPercentage] = useState(0);
+
+  return isDownloading ? (
+    <ProgressLoader
+      percentage={downloadingPercentage}
+      loaderSize={"2rem"}
+      textClassName="text-[0.55rem]"
+    />
+  ) : (
+    <BsDownload
+      className="text-stone-500 hover:text-stone-900 cursor-pointer"
+      onClick={async (e) => {
+        e.stopPropagation();
+        setIsDownloading(true);
+        const res = await getAssessmentSubmissionInfo(
+          submissionId,
+          submission.submissionId,
+        );
+
+        await downloadVideo(
+          res.videoUrl,
+          submission.name,
+          setDownloadingPercentage,
+        );
+        setIsDownloading(false);
+      }}
+    />
   );
 }
 
