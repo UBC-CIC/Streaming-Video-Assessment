@@ -12,7 +12,7 @@ function SideBar() {
       <li className="flex flex-row" onClick={onLogoutClick}>
         <div className="w-full text-red-600">
           <IoLogOutOutline size={22} />
-          <a className="text-md">Log Out</a>
+          <a className="text-md">Log out</a>
         </div>
       </li>
     </ul>
