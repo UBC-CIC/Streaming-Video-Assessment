@@ -6,6 +6,7 @@ const Video = ({
   detectFaces,
   canvasRef,
   audioStreamTrackRef,
+  setVideoLoaded,
 }) => {
   const videoRef = useRef(null);
   const requestRef = useRef();
@@ -84,9 +85,13 @@ const Video = ({
         context.canvas.width = settings.width;
         context.canvas.height = settings.height;
 
-        return video.play();
+        return video.play().then(() => setVideoLoaded("Ready"));
       })
       .catch((error) => {
+        console.log({ error });
+        if (error.code !== 20 /* This is when react calls .play() twice */) {
+          setVideoLoaded("PermissionError");
+        }
         console.error("Error accessing webcam:", error);
       })
       .then(() => {
