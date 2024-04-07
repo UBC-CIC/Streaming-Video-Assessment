@@ -1,4 +1,4 @@
-import { get, post, put } from "aws-amplify/api";
+import { get, post, put, del } from "aws-amplify/api";
 
 class ForbiddenError extends Error {
   constructor(message) {
@@ -258,4 +258,33 @@ export const getAssessmentSubmissionInfo = async (
   } catch (error) {
     console.error("GET call failed: ", error);
   }
+};
+
+const deleteObject = async (path) => {
+  try {
+    const restOperation = del({
+      apiName: "backend",
+      path: path,
+    });
+    const { body } = await restOperation.response;
+    const response = await body.json();
+    console.log("DELETE call succeeded: ", response);
+    return response;
+  } catch (error) {
+    console.error("DELETE call failed: ", error);
+  }
+
+  return null;
+};
+
+export const deleteFolder = async (folderId) => {
+  return await deleteObject(`/api/folder/${folderId}`);
+};
+
+export const deleteGroup = async (groupId) => {
+  return await deleteObject(`/api/group/${groupId}`);
+};
+
+export const deleteAssessment = async (assessmentId) => {
+  return await deleteObject(`/api/assessment/${assessmentId}`);
 };

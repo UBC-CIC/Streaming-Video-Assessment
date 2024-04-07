@@ -140,8 +140,21 @@ router.patch("/:folderId", async (req, res) => {
   }
 });
 
-router.delete("/:folderId", (req, res) => {
-  // TODO: Implement delete, must delete all children folders and files, and ensure ownership
+router.delete("/:folderId", async (req, res) => {
+  const query = await folder.findByPk(req.params.folderId, {
+    include: [
+      {
+        association: "owner",
+      },
+    ],
+  });
+
+  if (!query || query.owner.email !== req["userEmail"]) {
+    return res.status(403).json({ error: "Forbidden" });
+  }
+
+  await query.destroy();
+
   res.json({ success: "delete call succeed!", url: req.url });
 });
 
