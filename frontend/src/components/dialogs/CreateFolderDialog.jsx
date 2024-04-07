@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { createFolder } from "../../helpers/submissionCreatorApi";
 import { IoIosInformationCircleOutline } from "react-icons/io";
+import { useToast } from "../Toast/ToastService";
 
-function CreateFolderDialog({ dialogRef, folderId }) {
-  const navigate = useNavigate();
+function CreateFolderDialog({ dialogRef, folderId, fetchFolderData }) {
   const [folderName, setFolderName] = useState("");
+  const toast = useToast();
 
   return (
     <dialog id="folder-modal" className="modal" ref={dialogRef}>
@@ -17,15 +17,16 @@ function CreateFolderDialog({ dialogRef, folderId }) {
           </button>
         </form>
         <div className="flex justify-center items-center mt-2">
-            <h3 className="justify-center text-indigo-500 text-center font-bold text-xl uppercase self-center mt-2 pr-2">
-              Create Folder
-            </h3>
-            <div
-              className="tooltip tooltip-bottom tooltip-lg"
-              data-tip={`Folders can be used to store assessments, groups, and other folders.`}>
-              <IoIosInformationCircleOutline size={20} />
-            </div>
+          <h3 className="justify-center text-indigo-500 text-center font-bold text-xl uppercase self-center mt-2 pr-2">
+            Create Folder
+          </h3>
+          <div
+            className="tooltip tooltip-bottom tooltip-lg"
+            data-tip={`Folders can be used to store assessments, groups, and other folders.`}
+          >
+            <IoIosInformationCircleOutline size={20} />
           </div>
+        </div>
         <div className="flex justify-center mt-5">
           <input
             type="text"
@@ -39,9 +40,14 @@ function CreateFolderDialog({ dialogRef, folderId }) {
             <button
               className="btn w-44 text-white bg-indigo-500 btn-lg"
               onClick={async () => {
-                await createFolder(folderName, folderId);
+                const res = await createFolder(folderName, folderId);
+                if (res.success) {
+                  toast.success("Folder created successfully");
+                } else {
+                  toast.error("Failed to create folder");
+                }
+                await fetchFolderData();
                 setFolderName(null);
-                navigate(0);
               }}
             >
               Create

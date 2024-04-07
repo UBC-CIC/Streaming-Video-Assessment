@@ -20,7 +20,7 @@ import {
 } from "../helpers/submissionCreatorApi";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import { handleSignOut } from "../helpers/authenticationHandler";
+import Drawer from "../components/Drawer";
 
 function loader({ params }) {
   let folderId = null;
@@ -119,56 +119,59 @@ function FolderView({ home = false }) {
   ];
 
   return (
-    <div className="flex flex-col px-12 py-6 max-md:px-5">
-      {/* <SearchBar /> */}
-      {isLoading ? (
-        <div className="flex justify-center h-full w-full fixed">
-          <span className="loading loading-spinner loading-lg"></span>
-        </div>
-      ) : (
-        <>
-          <div className="self-center flex w-full items-center justify-between gap-5 max-md:max-w-full max-md:flex-wrap">
-            <div className="justify-center text-black text-lg flex flex-row">
-              <DndProvider backend={HTML5Backend}>
-                <FolderPath folderPath={folderData.path} />
-              </DndProvider>
-            </div>
-            <div className="self-stretch flex items-stretch justify-between gap-2.5">
-              <ToggleViewStyle view={view} setView={setView} />
-              <ButtonDropdown
-                buttonIcon={<GoPlus size={30} />}
-                dropdownItems={dropdownItems}
+    <Drawer>
+      <div className="flex flex-col px-12 py-6 max-md:px-5">
+        {/* <SearchBar /> */}
+        {isLoading ? (
+          <div className="flex justify-center h-full w-full fixed">
+            <span className="loading loading-spinner loading-lg"></span>
+          </div>
+        ) : (
+          <>
+            <div className="self-center flex w-full items-center justify-between gap-5 max-md:max-w-full max-md:flex-wrap">
+              <div className="justify-center text-black text-lg flex flex-row">
+                <DndProvider backend={HTML5Backend}>
+                  <FolderPath folderPath={folderData.path} />
+                </DndProvider>
+              </div>
+              <div className="self-stretch flex items-stretch justify-between gap-2.5">
+                <ToggleViewStyle view={view} setView={setView} />
+                <ButtonDropdown
+                  buttonIcon={<GoPlus size={30} />}
+                  dropdownItems={dropdownItems}
+                />
+              </div>
+              <GroupDialog
+                dialogRef={createGroupModalRef}
+                isEdit={false}
+                parentId={folderId}
+                fetchFolderData={fetchFolderData}
+              />
+              <CreateFolderDialog
+                dialogRef={createFolderModalRef}
+                folderId={folderId}
+                fetchFolderData={fetchFolderData}
               />
             </div>
-            <GroupDialog
-              dialogRef={createGroupModalRef}
-              isEdit={false}
-              parentId={folderId}
-              fetchFolderData={fetchFolderData}
-            />
-            <CreateFolderDialog
-              dialogRef={createFolderModalRef}
-              folderId={folderId}
-            />
-          </div>
-          {view === "grid" ? (
-            <GridView
-              folderData={folderData}
-              removeFile={removeFile}
-              addFile={addFile}
-              fetchFolderData={fetchFolderData}
-            />
-          ) : (
-            // TODO: add drag and drop functionality
-            <ListView
-              folderData={folderData}
-              removeFile={removeFile}
-              addFile={addFile}
-            />
-          )}
-        </>
-      )}
-    </div>
+            {view === "grid" ? (
+              <GridView
+                folderData={folderData}
+                removeFile={removeFile}
+                addFile={addFile}
+                fetchFolderData={fetchFolderData}
+              />
+            ) : (
+              // TODO: add drag and drop functionality
+              <ListView
+                folderData={folderData}
+                removeFile={removeFile}
+                addFile={addFile}
+              />
+            )}
+          </>
+        )}
+      </div>
+    </Drawer>
   );
 }
 

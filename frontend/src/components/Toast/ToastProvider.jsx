@@ -24,11 +24,12 @@ function ToastProvider({ children }) {
           />
         </svg>
         <span>{message}</span>
-        <div className="flex items-center">
-          <button className="btn btn-sm" onClick={() => close(id)}>
-            <IoMdClose />
-          </button>
-        </div>
+        <button
+          className="btn btn-sm bg-transparent border-0"
+          onClick={() => close(id)}
+        >
+          <IoMdClose />
+        </button>
       </div>
     );
 
