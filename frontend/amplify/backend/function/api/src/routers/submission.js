@@ -8,6 +8,8 @@ const {
   completeUpload,
 } = require("../helpers/s3");
 
+const { s3BucketFolderName } = require("../config");
+
 const { getUploadRequest } = require("../helpers/uploadRequests");
 const sequelize = require("../sequelize");
 
@@ -54,7 +56,7 @@ router.get("/assessment-info/:assessmentId", async (req, res) => {
 router.post("/init-upload", async (req, res) => {
   const assessmentId = parseInt(req.body["assessmentId"]);
   const secret = req.body["secret"];
-  const key = `public/${assessmentId}/${secret}.webm`;
+  const key = `${s3BucketFolderName}/${assessmentId}/${secret}.webm`;
 
   const uploadRequest = await getUploadRequest(secret, assessmentId);
   if (!uploadRequest) {
@@ -79,7 +81,7 @@ router.post("/next-upload-url", async (req, res) => {
   const secret = req.body["secret"];
   const uploadId = req.body["uploadId"];
   const partNumber = req.body["partNumber"];
-  const key = `public/${assessmentId}/${secret}.webm`;
+  const key = `${s3BucketFolderName}/${assessmentId}/${secret}.webm`;
   console.log("NEXT UPLOAD URL", key, req.body);
 
   const uploadRequest = await getUploadRequest(secret, assessmentId);
@@ -109,7 +111,7 @@ router.post("/complete-upload", async (req, res) => {
   }
 
   console.log("COMPLETE UPLOAD", req.body);
-  const key = `public/${assessmentId}/${secret}.webm`;
+  const key = `${s3BucketFolderName}/${assessmentId}/${secret}.webm`;
 
   const out = await completeUpload(key, uploadId, parts);
 
