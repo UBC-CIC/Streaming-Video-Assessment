@@ -1,5 +1,14 @@
 import { get, post, put } from "aws-amplify/api";
 
+class ForbiddenError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = "ForbiddenError";
+  }
+}
+
+export { ForbiddenError };
+
 export const getHomeFolderId = async () => {
   try {
     const restOperation = get({
@@ -26,10 +35,12 @@ export const getFolderData = async (folderId) => {
     console.log("GET call succeeded: ", response);
     return response.data;
   } catch (error) {
-    console.error("GET call failed: ", error);
+    if (error.$metadata.httpStatusCode === 403) {
+      throw new ForbiddenError(
+        "You do not have permission to view this folder.",
+      );
+    }
   }
-
-  return null;
 };
 
 export const createFolder = async (folderName, parentId) => {
@@ -128,7 +139,11 @@ export const getSubmissionData = async (submissionId) => {
     console.log("GET call succeeded: ", response);
     return response.data;
   } catch (error) {
-    console.error("GET call failed: ", error);
+    if (error.$metadata.httpStatusCode === 403) {
+      throw new ForbiddenError(
+        "You do not have permission to view this assessment.",
+      );
+    }
   }
 };
 
