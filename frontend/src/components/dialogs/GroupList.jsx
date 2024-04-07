@@ -6,7 +6,7 @@ function GroupList({ groupList, removeUserFromGroupList }) {
       {groupList.map((group, index) => (
         <div
           key={index}
-          className="container flex items-center justify-between border-b border-gray-300 py-2 px-4 w-[50%]"
+          className="container flex items-center justify-between border-b border-gray-300 py-2 px-4 w-[90%] lg:w-[70%]"
         >
           <div className="flex flex-col w-[85%]">
             <span
