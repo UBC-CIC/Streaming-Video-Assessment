@@ -1,3 +1,5 @@
+// TODO: This is not being implemented/used in our first version for this capstone project
+
 import { BsSearch } from "react-icons/bs";
 
 function SearchBar() {
