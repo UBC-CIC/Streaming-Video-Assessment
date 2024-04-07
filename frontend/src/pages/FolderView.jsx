@@ -17,6 +17,7 @@ import GroupDialog from "../components/dialogs/GroupDialog";
 import {
   getFolderData,
   getHomeFolderId,
+  ForbiddenError,
 } from "../helpers/submissionCreatorApi";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
@@ -58,8 +59,15 @@ function FolderView({ home = false }) {
 
   const fetchFolderData = async () => {
     setIsLoading(true);
-    const fetchedFolderData = await getFolderData(folderId);
-    setFolderData(fetchedFolderData);
+    try {
+      const fetchedFolderData = await getFolderData(folderId);
+      setFolderData(fetchedFolderData);
+    } catch (error) {
+      if (error instanceof ForbiddenError) {
+        navigate("/home");
+      }
+    }
+
     setIsLoading(false);
   };
 

@@ -183,8 +183,15 @@ router.put("/:assessmentId", async (req, res) => {
   res.json({ success: "put call succeed!", body: assessmentQuery });
 });
 
-router.delete("/:assessmentId", (req, res) => {
-  // @aryang13 TODO: implement this and protect this endpoint
+router.delete("/:assessmentId", async (req, res) => {
+  const query = await assessment.findByPk(parseInt(req.params.assessmentId));
+
+  if (!query || (await query.getOwner()).email !== req["userEmail"]) {
+    return res.status(403).json({ error: "Forbidden" });
+  }
+
+  await query.destroy();
+
   res.json({ success: "delete call succeed!", url: req.url });
 });
 

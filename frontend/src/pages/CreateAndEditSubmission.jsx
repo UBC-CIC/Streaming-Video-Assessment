@@ -51,6 +51,15 @@ function CreateAndEditSubmission({ edit = false }) {
   };
 
   useEffect(() => {
+    if (!submissionData && !folderId) {
+      if (submissionId === null || submissionId === undefined) {
+        navigate(`/home`);
+      } else {
+        navigate(`/submission/${submissionId}`);
+      }
+      return;
+    }
+
     // Check the checkbox if its value matches the value to check against
     if (edit) {
       setIsLoading(true);
@@ -108,7 +117,7 @@ function CreateAndEditSubmission({ edit = false }) {
 
   const assessmentHandler = async () => {
     setTitleError(null);
-    setDescriptionError(null)
+    setDescriptionError(null);
     setTimeLimitError(null);
     setDueDateError(null);
     if (hasInvalidInputs()) return;

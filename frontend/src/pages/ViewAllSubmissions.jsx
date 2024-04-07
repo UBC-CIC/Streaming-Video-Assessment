@@ -8,6 +8,7 @@ import AssessmentOpenDialog from "../components/AssessmentOpenDialog";
 import {
   editAssessment,
   getAssessmentSubmissionInfo,
+  ForbiddenError,
 } from "../helpers/submissionCreatorApi";
 import FolderPath from "../components/assessment/FolderPath";
 import { useToast } from "../components/Toast/ToastService";
@@ -42,8 +43,14 @@ function ViewAllSubmissions() {
   useEffect(() => {
     const fetchSubmissionData = async () => {
       setIsLoading(true);
-      const fetchedSubmissionData = await getSubmissionData(submissionId);
-      setSubmissionData(fetchedSubmissionData);
+      try {
+        const fetchedSubmissionData = await getSubmissionData(submissionId);
+        setSubmissionData(fetchedSubmissionData);
+      } catch (error) {
+        if (error instanceof ForbiddenError) {
+          navigate("/home");
+        }
+      }
       setIsLoading(false);
     };
 

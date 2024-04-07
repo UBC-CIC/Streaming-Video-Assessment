@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 
 function GroupList({ groupList, removeUserFromGroupList }) {
   return (
-    <div className="flex flex-col items-center mt-2 overflow-y-auto h-[35%]">
+    <div className="flex flex-col items-center mt-2 overflow-scroll h-full">
       {groupList.map((group, index) => (
         <div
           key={index}
