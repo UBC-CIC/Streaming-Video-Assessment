@@ -35,6 +35,19 @@ function GroupDialog({
   const toast = useToast();
   const fileInputRef = useRef(null);
 
+  const closeModal = () => {
+    setGroupList([]);
+    setName("");
+    setEmail("");
+    setGroupName("");
+    setGroupNameError(false);
+    setNameError(false);
+    setEmailError(null);
+    setCsvError("");
+    setCsvProblemUsers([]);
+    setIsOpen(false);
+  };
+
   const removeUserFromGroupList = (index) => {
     const newGroupList = [...groupList]; // Create a copy of the original array
     newGroupList.splice(index, 1);
@@ -77,11 +90,7 @@ function GroupDialog({
       }
     }
 
-    setGroupList([]);
-    setName("");
-    setEmail("");
-    setGroupName("");
-    setIsOpen(false);
+    closeModal();
   };
 
   const addUserToGroupList = () => {
@@ -146,27 +155,18 @@ function GroupDialog({
       className="modal"
       ref={dialogRef}
     >
-      <div className="modal-box max-w-none w-[70%] max-h-none h-[80%]">
+      <div className="modal-box max-w-none w-[70%] max-h-none h-[80%] max-sm:h-full max-sm:w-full">
         <form method="dialog">
           {/* if there is a button in form, it will close the modal */}
           <button
             className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
-            onClick={() => {
-              setGroupList([]);
-              setName("");
-              setEmail("");
-              setGroupName("");
-              setGroupNameError(false);
-              setNameError(false);
-              setEmailError(null);
-              setIsOpen(false);
-            }}
+            onClick={closeModal}
           >
             ✕
           </button>
         </form>
-        <div className="flex flex-col h-full justify-between">
-          <div className="h-[65%]">
+        <div className="flex flex-col h-full">
+          <div>
             <div className="flex justify-center items-center mt-2">
               <h3 className="justify-center text-indigo-500 text-center font-bold text-xl uppercase self-center mt-2 pr-2">
                 {isEdit ? "Edit Group" : "Create Group"}
@@ -195,7 +195,7 @@ function GroupDialog({
               )}
             </div>
 
-            <div className="flex mt-4">
+            <div className="flex mt-4 max-sm:flex-col">
               <div className="flex justify-top flex-col items-center w-full">
                 <h4 className="justify-center text-indigo-500 text-center font-bold text-l uppercase self-center pr-2 mb-4">
                   Add users from CSV file
@@ -267,55 +267,57 @@ function GroupDialog({
                 )}
               </div>
 
-              <div className="divider divider-horizontal">OR</div>
+              <div className="divider sm:divider-horizontal">OR</div>
 
               <div className="flex justify-top flex-col items-center w-full">
                 <h4 className="justify-center text-indigo-500 text-center font-bold text-l uppercase self-center pr-2 mb-4">
                   Add a single user
                 </h4>
-                <input
-                  type="text"
-                  placeholder="Name"
-                  value={name}
-                  className={`input input-bordered w-full max-w-sm border-black ${nameError ? "border-red-500" : ""}`}
-                  onChange={(e) => {
-                    setName(e.target.value);
-                  }}
-                />
-                {nameError && <InputError error={"Name cannot be empty"} />}
-                <input
-                  type="text"
-                  placeholder="Email"
-                  value={email}
-                  className={`input input-bordered w-full max-w-sm border-black mt-4 ${emailError ? "border-red-500" : ""}`}
-                  onChange={(e) => {
-                    setEmail(e.target.value);
-                  }}
-                />
-                {emailError && <InputError error={emailError} />}
-                <button
-                  className="btn uppercase mt-4 text-white bg-indigo-500"
-                  onClick={addUserToGroupList}
+                <form
+                  action="javascript:void(0);"
+                  onSubmit={addUserToGroupList}
                 >
-                  Add
-                </button>
+                  <input
+                    type="text"
+                    placeholder="Name"
+                    value={name}
+                    className={`input input-bordered w-full max-w-sm border-black ${nameError ? "border-red-500" : ""}`}
+                    onChange={(e) => {
+                      setName(e.target.value);
+                    }}
+                  />
+                  {nameError && <InputError error={"Name cannot be empty"} />}
+                  <input
+                    type="text"
+                    placeholder="Email"
+                    value={email}
+                    className={`input input-bordered w-full max-w-sm border-black mt-4 ${emailError ? "border-red-500" : ""}`}
+                    onChange={(e) => {
+                      setEmail(e.target.value);
+                    }}
+                  />
+                  {emailError && <InputError error={emailError} />}
+                  <button className="btn uppercase mt-4 text-white bg-indigo-500">
+                    Add
+                  </button>
+                </form>
               </div>
             </div>
           </div>
-          <div className="h-[35%]">
+          <div>
             <GroupList
               groupList={groupList}
               removeUserFromGroupList={removeUserFromGroupList}
             />
-            <div className="modal-action absolute right-5 bottom-5">
-              <button
-                className="btn uppercase text-white bg-indigo-500"
-                onClick={createGroup}
-              >
-                {isEdit ? "Save" : "Create"}
-              </button>
-            </div>
           </div>
+        </div>
+        <div className="modal-action absolute right-5 bottom-5">
+          <button
+            className="btn uppercase text-white bg-indigo-500"
+            onClick={createGroup}
+          >
+            {isEdit ? "Save" : "Create"}
+          </button>
         </div>
       </div>
     </dialog>
