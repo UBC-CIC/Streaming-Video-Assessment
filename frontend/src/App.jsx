@@ -76,12 +76,13 @@ const router = createBrowserRouter([
     loader: ViewAllSubmissions.loader,
   },
   {
-    path: "/submission/:submissionId/view",
+    path: "/submission/:assessmentId/view/:submissionId",
     element: (
       <PrivateRoute>
         <ViewSubmission />
       </PrivateRoute>
     ),
+    loader: ViewSubmission.loader,
   },
   {
     path: "/submit/:submissionId",

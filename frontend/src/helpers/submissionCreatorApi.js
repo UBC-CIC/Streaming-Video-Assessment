@@ -58,7 +58,7 @@ export const createFolder = async (folderName, parentId) => {
     const { body } = await restOperation.response;
     const response = await body.json();
     console.log("POST call succeeded: ", response);
-    return response.data;
+    return response;
   } catch (error) {
     console.error("POST call failed: ", error);
   }

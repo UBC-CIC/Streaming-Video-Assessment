@@ -7,10 +7,14 @@ import AssessmentClosedDialog from "../components/AssessmentClosedDialog";
 import AssessmentOpenDialog from "../components/AssessmentOpenDialog";
 import {
   editAssessment,
+  getAssessmentSubmissionInfo,
   ForbiddenError,
 } from "../helpers/submissionCreatorApi";
 import FolderPath from "../components/assessment/FolderPath";
 import { useToast } from "../components/Toast/ToastService";
+import { downloadVideo } from "../helpers/downloadVideo";
+import { FaArrowLeft } from "react-icons/fa";
+import ProgressLoader from "../components/ProgressLoader";
 
 function loader({ params }) {
   let submissionId = null;
@@ -160,25 +164,32 @@ function ViewAllSubmissions() {
     </div>
   ) : (
     <div className="flex flex-col w-full md:flex-row h-[100vh]">
-      <div className="pr-5 pl-5 md:w-[75%]">
-        <div className="mt-4 mb-2">
+      <div className="pr-5 pl-5 md:w-[70%]">
+        <div className="mt-3">
+          <button
+            className="flex items-center cursor-pointer hover:underline focus:outline-none"
+            onClick={() => navigate(`/folder/${submissionData.folderId}`)}
+          >
+            <FaArrowLeft className="mr-1" />
+            Back
+          </button>
           <FolderPath
             folderPath={submissionData.folderPath}
             onClickHandler={folderOnClickHandler}
             makeLastCrumbClickable={false}
           />
         </div>
-        <div className="flex flex-col justify-between pb-6 md:flex-row">
+        <div className="flex flex-col justify-between pb-4 md:flex-row">
           <div className="flex flex-col text-black pb-2 md:pb-0">
             <div className="text-4xl">{submissionData.name}</div>
             <div className="bg-black h-0.5" />
             {!submissionData.closed ? (
-              <div className="mt-2 text-2xl text-green-600">Open</div>
+              <div className="mt-1 text-2xl text-green-600">Open</div>
             ) : (
-              <div className="mt-2 text-2xl text-red-600">Closed</div>
+              <div className="mt-1 text-2xl text-red-600">Closed</div>
             )}
-            <div className="mt-5 text-2xl">Complete By: {dueDate.current}</div>
-            <div className="mt-5 text-2xl">
+            <div className="mt-3 text-2xl">Complete By: {dueDate.current}</div>
+            <div className="mt-1 text-2xl">
               Time Limit: {timeLimit.current.hours} hours{" "}
               {timeLimit.current.minutes} mins
             </div>
@@ -207,49 +218,40 @@ function ViewAllSubmissions() {
             </button>
           </div>
         </div>
-        <div className="bg-gray-200 rounded-lg text-lg overflow-y-auto p-5 h-[70%] whitespace-pre-wrap">
+        <div className="bg-gray-200 rounded-lg text-lg overflow-y-auto p-5 h-[65%] whitespace-pre-wrap">
           {submissionData.description}
         </div>
       </div>
       <div className="divider md:divider-horizontal"></div>
-      <div className="pr-5 pl-5 flex flex-col justify-between mt-14 items-center md:w-[25%]">
-        <div className="w-full">
+      <div className="pr-5 pl-5 flex flex-col justify-between mt-5 items-center md:w-[30%]">
+        <div className="w-full h-full">
           <div className="text-4xl">Submissions</div>
           <div className="bg-black h-0.5" />
-          <div className="mt-5 overflow-y-auto">
+          <div className="mt-5 overflow-y-auto h-[90%] whitespace-pre-wrap">
             {submissionData.submissions?.map((submission, index) => {
               return (
-                submission.s3ref && (
-                  <div
-                    className="mb-4 flex flex-row justify-between text-lg btn btn-lg"
-                    onClick={() => {
-                      navigate(`/submission/${submission.submissionId}/view`, {
-                        state: {
-                          submissionData,
-                          submissions: submissionData.submissions,
-                          submissionIndex: index,
-                        },
-                      });
-                    }}
-                    key={index}
-                  >
-                    <div className="truncate w-[70%] flex justify-start">
-                      <abbr
-                        title={submission.name}
-                        style={{ textDecoration: "none" }}
-                      >
-                        {submission.name}
-                      </abbr>
-                    </div>
-                    <BsDownload
-                      className="text-stone-500 hover:text-stone-900 cursor-pointer"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        console.log("Downloading Submission");
-                      }}
-                    />
+                <div
+                  className="mb-4 flex flex-row justify-between text-lg btn btn-lg"
+                  onClick={() => {
+                    navigate(
+                      `/submission/${submissionId}/view/${submission.submissionId}`,
+                    );
+                  }}
+                  key={index}
+                >
+                  <div className="truncate w-[70%] flex justify-start">
+                    <abbr
+                      title={submission.name}
+                      style={{ textDecoration: "none" }}
+                    >
+                      {submission.name}
+                    </abbr>
                   </div>
-                )
+                  <DownloadingButton
+                    submissionId={submissionId}
+                    submission={submission}
+                  />
+                </div>
               );
             })}
           </div>
@@ -265,6 +267,38 @@ function ViewAllSubmissions() {
         isPassDueDate={isPassDueDate}
       />
     </div>
+  );
+}
+
+function DownloadingButton({ submissionId, submission }) {
+  const [isDownloading, setIsDownloading] = useState(false);
+  const [downloadingPercentage, setDownloadingPercentage] = useState(0);
+
+  return isDownloading ? (
+    <ProgressLoader
+      percentage={downloadingPercentage}
+      loaderSize={"2rem"}
+      textClassName="text-[0.55rem]"
+    />
+  ) : (
+    <BsDownload
+      className="text-stone-500 hover:text-stone-900 cursor-pointer"
+      onClick={async (e) => {
+        e.stopPropagation();
+        setIsDownloading(true);
+        const res = await getAssessmentSubmissionInfo(
+          submissionId,
+          submission.submissionId,
+        );
+
+        await downloadVideo(
+          res.videoUrl,
+          submission.name,
+          setDownloadingPercentage,
+        );
+        setIsDownloading(false);
+      }}
+    />
   );
 }
 
