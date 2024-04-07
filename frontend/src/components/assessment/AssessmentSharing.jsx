@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import GroupViewModal from "./GroupViewModal/GroupViewModal";
 import InputError from "../InputError";
 import { validateEmail } from "../../helpers/inputValidation";
@@ -18,6 +18,7 @@ function AssessmentSharing({
 }) {
   const [nameError, setNameError] = useState(false);
   const [emailError, setEmailError] = useState(null);
+  const nameRef = useRef(null);
 
   const removeSharedWithUser = (index) => {
     const newSharedWithList = [...sharedWithList];
@@ -98,6 +99,7 @@ function AssessmentSharing({
       setEmail("");
 
       newSharedWithList.push({ name: usersName, email: email });
+      nameRef.current?.focus();
     }
 
     setSharedWithList(newSharedWithList);
@@ -142,6 +144,7 @@ function AssessmentSharing({
               placeholder="Name"
               className={`input input-bordered w-full max-w-md border-black ${nameError ? "border-red-500" : ""}`}
               value={usersName}
+              ref={nameRef}
               onChange={(e) => setUsersName(e.target.value)}
             />
             {nameError && <InputError error={"Name cannot be empty"} />}

@@ -23,6 +23,8 @@ function GroupDialog({
 }) {
   const initialGroupListRef = useRef([]);
   const initialGroupNameRef = useRef("");
+  const nameRef = useRef(null);
+
   const [groupList, setGroupList] = useState([]); // [{name: "", email: ""}]
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
@@ -127,6 +129,7 @@ function GroupDialog({
     setName("");
     setEmail("");
     setGroupList([...groupList, { name: name, email: email }]);
+    nameRef.current?.focus();
   };
 
   useEffect(() => {
@@ -281,6 +284,7 @@ function GroupDialog({
                     type="text"
                     placeholder="Name"
                     value={name}
+                    ref={nameRef}
                     className={`input input-bordered w-full max-w-sm border-black ${nameError ? "border-red-500" : ""}`}
                     onChange={(e) => {
                       setName(e.target.value);
