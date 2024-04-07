@@ -27,16 +27,16 @@ function CreateFolderDialog({ dialogRef, folderId, fetchFolderData }) {
             <IoIosInformationCircleOutline size={20} />
           </div>
         </div>
-        <div className="flex justify-center mt-5">
-          <input
-            type="text"
-            placeholder="Folder Name"
-            className="input input-bordered w-full max-w-sm border-black"
-            onChange={(e) => setFolderName(e.target.value)}
-          />
-        </div>
-        <div className="modal-action flex justify-center">
-          <form method="dialog">
+        <form method="dialog">
+          <div className="flex justify-center mt-5">
+            <input
+              type="text"
+              placeholder="Folder Name"
+              className="input input-bordered w-full max-w-sm border-black"
+              onChange={(e) => setFolderName(e.target.value)}
+            />
+          </div>
+          <div className="modal-action flex justify-center">
             <button
               className="btn w-44 text-white bg-indigo-500 btn-lg"
               onClick={async () => {
@@ -52,8 +52,8 @@ function CreateFolderDialog({ dialogRef, folderId, fetchFolderData }) {
             >
               Create
             </button>
-          </form>
-        </div>
+          </div>
+        </form>
       </div>
     </dialog>
   );
