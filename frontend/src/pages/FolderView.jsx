@@ -1,7 +1,6 @@
 import PropTypes from "prop-types";
 import { useEffect, useState, useRef } from "react";
 import { GoPlus } from "react-icons/go";
-import { FaSignOutAlt } from "react-icons/fa";
 import { useLoaderData, useNavigate } from "react-router-dom";
 import FolderIcon from "../assets/icons/FolderIcon";
 import GroupIcon from "../assets/icons/GroupIcon";
@@ -10,7 +9,7 @@ import ButtonDropdown from "../components/Dropdown";
 import FolderPath from "../components/FolderPath";
 import GridView from "../components/GridView";
 import ListView from "../components/ListView";
-import SearchBar from "../components/SearchBar";
+// import SearchBar from "../components/SearchBar";
 import ToggleViewStyle from "../components/ToggleViewStyle";
 import CreateFolderDialog from "../components/dialogs/CreateFolderDialog";
 import GroupDialog from "../components/dialogs/GroupDialog";
@@ -99,14 +98,14 @@ function FolderView({ home = false }) {
       text: "Create Folder",
       onclick: () => {
         createFolderModalRef.current.showModal();
-      }
+      },
     },
     {
       icon: <GroupIcon width={20} height={20} />,
       text: "Create Group",
       onclick: () => {
         createGroupModalRef.current.showModal();
-      }
+      },
     },
     {
       icon: <UploadIcon width={20} height={20} />,
@@ -120,15 +119,15 @@ function FolderView({ home = false }) {
   ];
 
   return (
-    <div className="flex flex-col pl-16 pr-20 py-12 max-md:px-5">
-      <SearchBar />
+    <div className="flex flex-col px-12 py-6 max-md:px-5">
+      {/* <SearchBar /> */}
       {isLoading ? (
         <div className="flex justify-center h-full w-full fixed">
           <span className="loading loading-spinner loading-lg"></span>
         </div>
       ) : (
         <>
-          <div className="self-center flex w-full items-center justify-between gap-5 mt-7 max-md:max-w-full max-md:flex-wrap">
+          <div className="self-center flex w-full items-center justify-between gap-5 max-md:max-w-full max-md:flex-wrap">
             <div className="justify-center text-black text-lg flex flex-row">
               <DndProvider backend={HTML5Backend}>
                 <FolderPath folderPath={folderData.path} />

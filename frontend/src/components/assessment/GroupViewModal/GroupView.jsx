@@ -48,7 +48,7 @@ function GroupView({
           <h1 className="text-4xl flex justify-center">Groups</h1>
           <FolderPath folderPath={path} onClickHandler={fetchGroups} />
           <div className="w-full self-start pt-3 max-md:mt-10">
-            <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 place-center">
               {files.map((file, index) => (
                 <FileView
                   dialogRef={dialogRef}
