@@ -120,7 +120,7 @@ function FolderView({ home = false }) {
 
   return (
     <Drawer>
-      <div className="flex flex-col px-12 py-6 max-md:px-5">
+      <div className="flex flex-col px-12 pb-4 max-md:px-5">
         {/* <SearchBar /> */}
         {isLoading ? (
           <div className="flex justify-center h-full w-full fixed">
