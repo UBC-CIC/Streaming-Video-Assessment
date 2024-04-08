@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import GroupViewModal from "./GroupViewModal/GroupViewModal";
 import InputError from "../InputError";
 import { validateEmail } from "../../helpers/inputValidation";
@@ -18,6 +18,7 @@ function AssessmentSharing({
 }) {
   const [nameError, setNameError] = useState(false);
   const [emailError, setEmailError] = useState(null);
+  const nameRef = useRef(null);
 
   const removeSharedWithUser = (index) => {
     const newSharedWithList = [...sharedWithList];
@@ -98,6 +99,7 @@ function AssessmentSharing({
       setEmail("");
 
       newSharedWithList.push({ name: usersName, email: email });
+      nameRef.current?.focus();
     }
 
     setSharedWithList(newSharedWithList);
@@ -134,33 +136,34 @@ function AssessmentSharing({
     <div className="w-full">
       <div className="text-4xl text-center pb-1">Sharing</div>
       <div className="bg-black h-0.5" />
-      <div className="grid grid-rows-3 gap-2 grid-flow-col w-full mt-4">
-        <div>
-          <input
-            type="text"
-            placeholder="Name"
-            className={`input input-bordered w-full max-w-md border-black ${nameError ? "border-red-500" : ""}`}
-            value={usersName}
-            onChange={(e) => setUsersName(e.target.value)}
-          />
-          {nameError && <InputError error={"Name cannot be empty"} />}
+      <form action="javascript:void(0);" onSubmit={addToSharedList}>
+        <div className="grid grid-rows-3 gap-2 grid-flow-col w-full mt-4">
+          <div>
+            <input
+              type="text"
+              placeholder="Name"
+              className={`input input-bordered w-full max-w-md border-black ${nameError ? "border-red-500" : ""}`}
+              value={usersName}
+              ref={nameRef}
+              onChange={(e) => setUsersName(e.target.value)}
+            />
+            {nameError && <InputError error={"Name cannot be empty"} />}
+          </div>
+          <div>
+            <input
+              type="text"
+              placeholder="Email"
+              className={`input input-bordered w-full max-w-md border-black ${emailError ? "border-red-500" : ""}`}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            {emailError && <InputError error={emailError} />}
+          </div>
+          <div className="flex justify-center pb-2">
+            <button className="btn btn-wide">Share with a user</button>
+          </div>
         </div>
-        <div>
-          <input
-            type="text"
-            placeholder="Email"
-            className={`input input-bordered w-full max-w-md border-black ${emailError ? "border-red-500" : ""}`}
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          {emailError && <InputError error={emailError} />}
-        </div>
-        <div className="flex justify-center pb-2">
-          <button className="btn btn-wide" onClick={addToSharedList}>
-            Share with a user
-          </button>
-        </div>
-      </div>
+      </form>
       <div className="divider">OR</div>
       <GroupViewModal addToSharedList={addToSharedList} />
       <div className="max-h-[32rem] overflow-y-auto ">
