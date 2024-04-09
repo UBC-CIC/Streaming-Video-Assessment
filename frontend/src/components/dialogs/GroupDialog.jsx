@@ -15,6 +15,7 @@ import { useToast } from "../Toast/ToastService";
 function GroupDialog({
   dialogRef,
   isEdit,
+  groupNameInputRef,
   groupId = null,
   parentId = null,
   isOpen = false,
@@ -188,6 +189,7 @@ function GroupDialog({
                 type="text"
                 placeholder="Group Name"
                 value={groupName}
+                ref={groupNameInputRef}
                 className={`input input-bordered w-full max-w-sm border-black ${groupNameError ? "border-red-500" : ""}`}
                 onChange={(e) => {
                   setGroupName(e.target.value);
