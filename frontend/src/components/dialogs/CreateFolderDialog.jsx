@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createFolder } from "../../helpers/submissionCreatorApi";
 import { IoIosInformationCircleOutline } from "react-icons/io";
 import { useToast } from "../Toast/ToastService";
 
-function CreateFolderDialog({ dialogRef, folderId, fetchFolderData }) {
+function CreateFolderDialog({ dialogRef, folderId, fetchFolderData, folderNameInputRef }) {
   const [folderName, setFolderName] = useState("");
   const toast = useToast();
 
@@ -33,6 +33,7 @@ function CreateFolderDialog({ dialogRef, folderId, fetchFolderData }) {
               type="text"
               placeholder="Folder Name"
               className="input input-bordered w-full max-w-sm border-black"
+              ref={folderNameInputRef}
               onChange={(e) => setFolderName(e.target.value)}
             />
           </div>

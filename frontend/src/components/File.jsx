@@ -14,6 +14,7 @@ import {
 
 function File({ file, removeFile, fetchFolderData }) {
   const [isOpen, setIsOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const navigate = useNavigate();
   const editGroupModalRef = useRef(null);
 
@@ -49,8 +50,8 @@ function File({ file, removeFile, fetchFolderData }) {
   };
   const deleteHandler = async () => {
     // TODO: give a confirmation dialog
+    setIsDeleting(true);
 
-    // TODO: show some loading state
     try {
       switch (file.type) {
         case "folder":
@@ -67,6 +68,7 @@ function File({ file, removeFile, fetchFolderData }) {
       removeFile(file);
       console.log("delete", file);
     } catch (error) {
+      setIsDeleting(false);
       console.error("Error deleting file", error);
     }
   };
@@ -124,6 +126,8 @@ function File({ file, removeFile, fetchFolderData }) {
         style={{ backgroundColor, opacity }}
       >
         <div className="dropdown dropdown-bottom dropdown-end flex justify-end px-2 pt-1">
+         {isDeleting ? (<span className="loading loading-spinner loading-s"></span>) : (
+          <>
           <button
             id="dropdownButton"
             data-dropdown-toggle="dropdown"
@@ -133,17 +137,16 @@ function File({ file, removeFile, fetchFolderData }) {
             <BsThreeDots size={22} />
           </button>
           <ul className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-40">
-            {/* @aryang13 TODO: implement rename? */}
-            {/* <li onClick={renameHandler}>
-              <a>Rename</a>
-            </li> */}
             <li>
               <button onClick={deleteHandler} className="text-rose-600">
                 Delete
               </button>
             </li>
           </ul>
+          </>
+          )}
         </div>
+        
         <div
           className="flex flex-col items-center pb-5 cursor-pointer"
           onClick={onClickHandler}
