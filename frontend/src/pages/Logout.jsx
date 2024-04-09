@@ -6,6 +6,7 @@ const Logout = () => {
   const navigate = useNavigate();
   useEffect(() => {
     localStorage.removeItem("folderViewMode");
+    localStorage.removeItem("folderSortType");
     (async () => {
       await handleSignOut();
       navigate("/login");
