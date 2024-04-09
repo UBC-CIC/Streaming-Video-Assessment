@@ -179,9 +179,14 @@ function ListViewFile({ index, file, removeFile, fetchFolderData }) {
             deleteHandler();
           }}
         >
-          {isDeleting ? <span className="loading loading-spinner loading-xs"></span> : <FaTrash className="text-stone-500 hover:text-stone-700" />}
+          {isDeleting ? (
+            <span className="loading loading-spinner loading-xs"></span>
+          ) : (
+            <FaTrash className="text-stone-500 hover:text-stone-700" />
+          )}
         </td>
       </tr>
+      {/* // TODO: this can't be in the table */}
       {file.type === "group" && (
         <GroupDialog
           dialogRef={editGroupModalRef}

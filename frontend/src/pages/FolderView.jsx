@@ -50,6 +50,9 @@ function FolderView({ home = false }) {
   const [view, setView] = useState(
     localStorage.getItem("folderViewMode") ?? "grid",
   );
+  const [sortType, setSortType] = useState(
+    localStorage.getItem("folderSortType") ?? "name",
+  );
 
   useEffect(() => {
     localStorage.setItem("folderViewMode", view);
@@ -65,15 +68,13 @@ function FolderView({ home = false }) {
   const folderNameInputRef = useRef(null);
   const groupNameInputRef = useRef(null);
 
-  const sortByDateModified = (a, b) => {
-    const dateA = new Date(a.dateModified);
-    const dateB = new Date(b.dateModified);
-
-    // Compare dates
-    if (dateA > dateB) return -1;
-    if (dateA < dateB) return 1;
-    return 0;
+  const sortDate = (a, b) => {
+    return (b ? new Date(b) : 0) - (a ? new Date(a) : 0);
   };
+
+  const sortByDateModified = (a, b) => sortDate(a.updatedAt, b.updatedAt);
+  const sortByDateCreated = (a, b) => sortDate(a.createdAt, b.createdAt);
+  const sortByDueDate = (a, b) => sortDate(a.dueDate, b.dueDate);
 
   const sortByName = (a, b) => {
     const nameA = a.name.toLowerCase();
@@ -82,26 +83,33 @@ function FolderView({ home = false }) {
     return nameA.localeCompare(nameB);
   };
 
-  // finish sorting
-  const sortedFolderData = useCallback((folderData) => {
+  const sortedFolderData = (folderData, _sortType) => {
     const { files = [] } = folderData;
 
-    const sortFun = {
-      dateModified: sortByDateModified,
-      name: sortByName,
-    }["name"];
+    const sortFun =
+      {
+        dateModified: sortByDateModified,
+        name: sortByName,
+        dateCreated: sortByDateCreated,
+        dateDue: sortByDueDate,
+      }[_sortType] || sortByName;
 
     return {
       ...folderData,
       files: files.sort(sortFun),
     };
-  }, []);
+  };
+
+  useEffect(() => {
+    localStorage.setItem("folderSortType", sortType);
+    setFolderData(sortedFolderData(folderData, sortType));
+  }, [sortType]);
 
   const fetchFolderData = async () => {
     setIsLoading(true);
     try {
       const fetchedFolderData = await getFolderData(folderId);
-      setFolderData(sortedFolderData(fetchedFolderData));
+      setFolderData(sortedFolderData(fetchedFolderData, sortType));
     } catch (error) {
       if (error instanceof ForbiddenError) {
         navigate("/home");
@@ -173,6 +181,16 @@ function FolderView({ home = false }) {
                 </DndProvider>
               </div>
               <div className="self-stretch flex items-stretch align-center justify-between gap-2.5">
+                <select
+                  className="select select-bordered w-full max-w-xs self-center"
+                  onChange={(e) => setSortType(e.target.value)}
+                  value={sortType}
+                >
+                  <option value="name">Name</option>
+                  <option value="dateModified">Date Modified</option>
+                  <option value="dateCreated">Date Created</option>
+                  <option value="dateDue">Due Date</option>
+                </select>
                 <ToggleViewStyle view={view} setView={setView} />
                 <ButtonDropdown
                   buttonIcon={<GoPlus size={30} />}
@@ -204,6 +222,8 @@ function FolderView({ home = false }) {
                 folderData={folderData}
                 removeFile={removeFile}
                 fetchFolderData={fetchFolderData}
+                sortType={sortType}
+                setSortType={setSortType}
               />
             )}
           </>
