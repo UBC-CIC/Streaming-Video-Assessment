@@ -279,8 +279,10 @@ function GroupDialog({
                   Add a single user
                 </h4>
                 <form
-                  action="javascript:void(0);"
-                  onSubmit={addUserToGroupList}
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    addUserToGroupList();
+                  }}
                 >
                   <input
                     type="text"

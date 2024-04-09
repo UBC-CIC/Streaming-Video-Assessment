@@ -136,7 +136,10 @@ function AssessmentSharing({
     <div className="w-full">
       <div className="text-4xl text-center pb-1">Sharing</div>
       <div className="bg-black h-0.5" />
-      <form action="javascript:void(0);" onSubmit={addToSharedList}>
+      <form onSubmit={(e) => {
+        e.preventDefault();
+        addToSharedList();
+        }}>
         <div className="grid grid-rows-3 gap-2 grid-flow-col w-full mt-4">
           <div>
             <input
