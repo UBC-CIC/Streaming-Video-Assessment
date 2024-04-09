@@ -45,7 +45,7 @@ async function sendEmail(toAddresses, subject, message) {
             Data: subject,
           },
         },
-        Source: "hmitgang@student.ubc.ca",
+        Source: "sf.21.2024.capstone@gmail.com",
       }),
     );
   } catch (e) {
