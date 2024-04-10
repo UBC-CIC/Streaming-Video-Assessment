@@ -27,7 +27,12 @@ function loader({ params }) {
   return { submissionId, assessmentId };
 }
 
-function SubmissionDropdown({ submissions, submissionIndex, assessmentId }) {
+function SubmissionDropdown({
+  submissions,
+  submissionIndex,
+  assessmentId,
+  setVideoURL,
+}) {
   const navigate = useNavigate();
 
   return (
@@ -44,6 +49,7 @@ function SubmissionDropdown({ submissions, submissionIndex, assessmentId }) {
             <a
               className={`menu-item ${index === submissionIndex ? "bg-gray-200" : ""}`}
               onClick={() => {
+                setVideoURL(null);
                 navigate(
                   `/submission/${assessmentId}/view/${submissions[index].submissionId}`,
                 );
@@ -134,6 +140,7 @@ function ViewSubmission() {
               submissions={submissionData.submissions}
               submissionIndex={submissionIndex}
               assessmentId={assessmentId}
+              setVideoURL={setVideoURL}
             />
           </div>
           <div className="flex flex-col mt-10">
