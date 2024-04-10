@@ -184,6 +184,7 @@ function ViewSubmission() {
           <button
             className="flex flex-row justify-between text-md btn btn-md w-32"
             onClick={() => {
+              setVideoURL(null);
               navigate(
                 `/submission/${assessmentId}/view/${submissionData.submissions[submissionIndex - 1].submissionId}`,
               );
@@ -197,6 +198,7 @@ function ViewSubmission() {
           <button
             className="flex flex-row justify-between text-md btn btn-md w-32"
             onClick={() => {
+              setVideoURL(null);
               navigate(
                 `/submission/${assessmentId}/view/${submissionData.submissions[submissionIndex + 1].submissionId}`,
               );
