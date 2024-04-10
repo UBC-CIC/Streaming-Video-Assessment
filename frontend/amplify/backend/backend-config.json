@@ -89,6 +89,22 @@
           "resourceName": "amplifyhosting"
         }
       ]
+    },
+    "AMPLIFY_storage_backendd759f609_bucketName": {
+      "usedBy": [
+        {
+          "category": "storage",
+          "resourceName": "backendd759f609"
+        }
+      ]
+    },
+    "AMPLIFY_storage_backendd759f609_region": {
+      "usedBy": [
+        {
+          "category": "storage",
+          "resourceName": "backendd759f609"
+        }
+      ]
     }
   },
   "storage": {
