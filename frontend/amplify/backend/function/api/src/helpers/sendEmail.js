@@ -57,7 +57,7 @@ async function sendEmail(toAddresses, subject, message) {
 }
 
 async function sendUploadRequestEmail(uploader, assessment, uploadRequest) {
-  const url = `http://localhost:5173/submit/${assessment.id}?secret=${uploadRequest.id}`;
+  const url = `https://main.dmcvp4nfj9t9x.amplifyapp.com/submit/${assessment.id}?secret=${uploadRequest.id}`;
 
   const subject = `Upload Request for ${assessment.name}`;
   const message =
