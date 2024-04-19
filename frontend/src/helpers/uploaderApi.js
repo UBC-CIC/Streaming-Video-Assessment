@@ -80,7 +80,7 @@ export const uploadPart = async (url, blob) => {
   const response = await fetch(url, {
     method: "PUT",
     headers: {
-      "Content-Type": "video/webm",
+      "Content-Type": "video/mp4",
     },
     body: blob,
   });
