@@ -1,25 +1,3 @@
-const getMonthName = (monthIndex) => {
-  const months = [
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
-    "May",
-    "Jun",
-    "Jul",
-    "Aug",
-    "Sep",
-    "Oct",
-    "Nov",
-    "Dec",
-  ];
-  return months[monthIndex];
-};
-
-const padZero = (num) => {
-  return num < 10 ? `0${num}` : num;
-};
-
 export const formatDateTime = (dateObj) => {
   const months = [
     "Jan",
@@ -40,7 +18,7 @@ export const formatDateTime = (dateObj) => {
   const day = dateObj.getDate();
   const monthIndex = dateObj.getMonth();
   const year = dateObj.getFullYear();
-  let hour = dateObj.getHours();
+  let hour = dateObj.getUTCHours();
   const minute = dateObj.getMinutes();
   let period = "AM";
 
@@ -49,7 +27,7 @@ export const formatDateTime = (dateObj) => {
     hour = 12;
   } else if (hour == 12) {
     period = "PM";
-  } else {
+  } else if (hour > 12) {
     hour -= 12;
     period = "PM";
   }
@@ -70,7 +48,7 @@ export const formatTimeForInput = (dateObj) => {
   const year = dateObj.getFullYear();
   const month = pad(dateObj.getMonth() + 1); // Month is zero-based
   const day = pad(dateObj.getDate());
-  const hours = pad(dateObj.getHours());
+  const hours = pad(dateObj.getUTCHours());
   const minutes = pad(dateObj.getMinutes());
 
   // Create datetime-local string
