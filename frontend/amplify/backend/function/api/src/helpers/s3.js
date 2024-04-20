@@ -6,18 +6,13 @@ const {
   GetObjectCommand,
 } = require("@aws-sdk/client-s3");
 const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
-const getCredentials = require("./getCredentials");
 
 const BUCKET = "video-storage-sf21";
 
 const initializeUpload = async (key) => {
   console.log("Initialize UPLOAD");
 
-  const credentials = await getCredentials();
-  const s3 = new S3Client({
-    region: "ca-central-1",
-    credentials,
-  });
+  const s3 = new S3Client();
 
   const params = {
     Bucket: BUCKET,
@@ -33,11 +28,7 @@ const initializeUpload = async (key) => {
 };
 
 const getUploadUrl = async (key, uploadId, partNumber) => {
-  const credentials = await getCredentials();
-  const s3 = new S3Client({
-    region: "ca-central-1",
-    credentials,
-  });
+  const s3 = new S3Client();
 
   const params = {
     Bucket: BUCKET,
@@ -53,11 +44,7 @@ const getUploadUrl = async (key, uploadId, partNumber) => {
 };
 
 const completeUpload = async (key, uploadId, parts) => {
-  const credentials = await getCredentials();
-  const s3 = new S3Client({
-    region: "ca-central-1",
-    credentials,
-  });
+  const s3 = new S3Client();
 
   const params = {
     Bucket: BUCKET,
@@ -73,11 +60,7 @@ const completeUpload = async (key, uploadId, parts) => {
 
 // TODO: do we need to authenticate this
 const getUrlForKey = async (key) => {
-  const credentials = await getCredentials();
-  const s3 = new S3Client({
-    region: "ca-central-1",
-    credentials,
-  });
+  const s3 = new S3Client();
 
   const params = {
     Bucket: BUCKET,
@@ -87,8 +70,6 @@ const getUrlForKey = async (key) => {
   return await getSignedUrl(s3, new GetObjectCommand(params), {
     expiresIn: 3600,
   });
-
-  return `https://${BUCKET}.s3.ca-central-1.amazonaws.com/${key}`;
 };
 
 module.exports = {

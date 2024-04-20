@@ -16,6 +16,7 @@ const groupRouter = require("./routers/group");
 const assessmentRouter = require("./routers/assessment");
 const submissionRouter = require("./routers/submission");
 const sequelize = require("./sequelize");
+console.log(process.env)
 
 const region = "ca-central-1";
 const userPoolId = "ca-central-1_RGMoyaPVY";
