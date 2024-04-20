@@ -10,7 +10,7 @@ import {
   getNextUploadUrl,
 } from "../../helpers/uploaderApi";
 
-const mimeType = "video/webm; codecs=vp9";
+const mimeType = "video/mp4";
 const RECORDER_TIME_SLICE = 60000; // ms
 
 const SubmitRecord = ({

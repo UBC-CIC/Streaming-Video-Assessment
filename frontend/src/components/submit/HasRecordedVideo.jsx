@@ -9,11 +9,9 @@ const HasRecordedVideo = ({ className, uploadedVideoUrl }) => {
 
   return (
     <div className={className}>
-      <video
-        controls
-        src={uploadedVideoUrl}
-        className="max-w-full max-h-full"
-      ></video>
+      <video controls className="max-w-full max-h-full">
+        <source src={uploadedVideoUrl} type="video/mp4" />
+      </video>
     </div>
   );
 };

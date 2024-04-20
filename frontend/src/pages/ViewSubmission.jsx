@@ -129,7 +129,7 @@ function ViewSubmission() {
           {videoURL && (
             <div className="w-full h-full flex align-center justify-center relative overflow-hidden	">
               <video controls className="mt-5 w-full h-full">
-                <source src={videoURL} type="video/webm" />
+                <source src={videoURL} type="video/mp4" />
               </video>
             </div>
           )}

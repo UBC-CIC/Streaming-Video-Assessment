@@ -1,4 +1,5 @@
 import React, { useRef, useState, useEffect } from "react";
+import "context-filter-polyfill";
 
 const Video = ({
   className,
