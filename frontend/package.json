@@ -16,7 +16,6 @@
   "dependencies": {
     "@aws-amplify/auth": "^6.0.16",
     "aws-amplify": "^6.0.13",
-    "context-filter-polyfill": "^0.3.13",
     "face-api.js": "^0.22.2",
     "papaparse": "^5.4.1",
     "prop-types": "^15.8.1",
