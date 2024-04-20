@@ -77,16 +77,14 @@ function AssessmentSettings({
       </div>
       <div className="flex flex-row text-xl w-full items-center">
         Close Submissions On:
-        <div
-          className="pl-5 flex items-center tooltip tooltip-bottom tooltip-lg"
-          data-tip={`Make sure to set both the date and the time of submission`}
-        >
+        <div className="pl-5 flex items-center tooltip tooltip-bottom tooltip-lg"
+             data-tip={`Make sure to set both the date and the time of submission`}>
           {/* TODO: test if there is timezone issues */}
           <input
             className={`w-full ${dueDateError ? "border-red-500" : ""}`}
             type="datetime-local"
             value={dueDate ? formatTimeForInput(new Date(dueDate)) : ""}
-            onChange={(e) => setDueDate(e.target.value + "Z")}
+            onChange={(e) => setDueDate(e.target.value)}
           />
         </div>
       </div>
