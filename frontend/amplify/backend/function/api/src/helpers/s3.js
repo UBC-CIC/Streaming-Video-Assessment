@@ -22,7 +22,7 @@ const initializeUpload = async (key) => {
   const params = {
     Bucket: BUCKET,
     Key: key,
-    ContentType: "video/mp4",
+    ContentType: "video/webm",
   };
 
   const createMultipartUploadCommand = new CreateMultipartUploadCommand(params);
