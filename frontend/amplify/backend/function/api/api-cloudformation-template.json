@@ -1,6 +1,6 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
-  "Description": "{\"createdOn\":\"Windows\",\"createdBy\":\"Amplify\",\"createdWith\":\"12.10.1\",\"stackType\":\"function-Lambda\",\"metadata\":{}}",
+  "Description": "{\"createdOn\":\"Windows\",\"createdBy\":\"Amplify\",\"createdWith\":\"12.11.1\",\"stackType\":\"function-Lambda\",\"metadata\":{}}",
   "Parameters": {
     "CloudWatchRule": {
       "Type": "String",
@@ -17,6 +17,9 @@
       "Type": "String"
     },
     "authbackendd8f920f8UserPoolId": {
+      "Type": "String"
+    },
+    "authbackendd8f920f8AppClientIDWeb": {
       "Type": "String"
     }
   },
@@ -72,6 +75,12 @@
             },
             "REGION": {
               "Ref": "AWS::Region"
+            },
+            "USER_POOL": {
+              "Ref": "authbackendd8f920f8UserPoolId"
+            },
+            "APP_CLIENT_ID_WEB": {
+              "Ref": "authbackendd8f920f8AppClientIDWeb"
             }
           }
         },
