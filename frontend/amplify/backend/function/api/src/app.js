@@ -11,6 +11,8 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 const awsServerlessExpressMiddleware = require("aws-serverless-express/middleware");
 
+const requireSignIn = require("./requireSignIn.js");
+
 // router import
 const folderRouter = require("./routers/folder");
 const groupRouter = require("./routers/group");
@@ -18,22 +20,6 @@ const assessmentRouter = require("./routers/assessment");
 const submissionRouter = require("./routers/submission");
 const sequelize = require("./sequelize");
 
-const region = "ca-central-1";
-const userPoolId = "ca-central-1_RGMoyaPVY";
-const clientId = "2q1vlf8f8vkl965un3pists4bo";
-
-const jwksUrl = `https://cognito-idp.${region}.amazonaws.com/${userPoolId}/.well-known/jwks.json`;
-var jwt = require("jsonwebtoken");
-var jwksClient = require("jwks-rsa");
-var client = jwksClient({
-  jwksUri: jwksUrl,
-});
-function getKey(header, callback) {
-  client.getSigningKey(header.kid, function (err, key) {
-    var signingKey = key.publicKey || key.rsaPublicKey;
-    callback(null, signingKey);
-  });
-}
 // declare a new express app
 const app = express();
 app.use(cors());
@@ -48,32 +34,6 @@ app.use(function (req, res, next) {
   next();
 });
 
-// TODO: this function shouldn't use callbacks.
-async function requireSignIn(req, res, next) {
-  // console.log("method: ", req.method);
-  const claim = req.headers.authorization;
-  // console.log("claim: ", claim);
-  jwt.verify(
-    claim,
-    getKey,
-    {
-      algorithms: ["RS256"],
-      token_use: "id",
-      issuer: `https://cognito-idp.${region}.amazonaws.com/${userPoolId}`,
-      audience: clientId,
-    },
-    function (err, decodedToken) {
-      if (err) {
-        console.error(err);
-        return res.status(401).json({ error: "Unauthorized" });
-      }
-      // console.log("decodedToken: ", decodedToken);
-      req["userEmail"] = decodedToken.email;
-      // console.log("userEmail: ", req["userEmail"]);
-      next();
-    },
-  );
-}
 
 app.use("/api/folder", requireSignIn, folderRouter);
 app.use("/api/group", requireSignIn, groupRouter);
