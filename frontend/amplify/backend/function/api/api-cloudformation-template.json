@@ -21,6 +21,9 @@
     },
     "authbackendd8f920f8AppClientIDWeb": {
       "Type": "String"
+    },
+    "storages3268a4e01BucketName": {
+      "Type": "String"
     }
   },
   "Conditions": {
@@ -76,11 +79,14 @@
             "REGION": {
               "Ref": "AWS::Region"
             },
-            "USER_POOL": {
+            "USER_POOL_ID": {
               "Ref": "authbackendd8f920f8UserPoolId"
             },
             "APP_CLIENT_ID_WEB": {
               "Ref": "authbackendd8f920f8AppClientIDWeb"
+            },
+            "BUCKET_NAME": {
+              "Ref": "storages3268a4e01BucketName"
             }
           }
         },

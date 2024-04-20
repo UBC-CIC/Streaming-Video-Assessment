@@ -7,7 +7,7 @@ const {
 } = require("@aws-sdk/client-s3");
 const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
 
-const BUCKET = "video-storage-sf21";
+const BUCKET = process.env.BUCKET_NAME;
 
 const initializeUpload = async (key) => {
   console.log("Initialize UPLOAD");
