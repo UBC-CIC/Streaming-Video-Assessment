@@ -84,7 +84,7 @@ function AssessmentSettings({
             className={`w-full ${dueDateError ? "border-red-500" : ""}`}
             type="datetime-local"
             value={dueDate ? formatTimeForInput(new Date(dueDate)) : ""}
-            onChange={(e) => setDueDate(e.target.value)}
+            onChange={(e) => setDueDate(e.target.value + "Z")}
           />
         </div>
       </div>
