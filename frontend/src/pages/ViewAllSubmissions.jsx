@@ -32,8 +32,8 @@ function ViewAllSubmissions() {
   const navigate = useNavigate();
   const submissionId = useLoaderData();
   const [submissionData, setSubmissionData] = useState({});
-  const dueDate = useRef(null);
-  const timeLimit = useRef({ hours: 0, minutes: 0 });
+  const [dueDate, setDueDate] = useState(null);
+  const [timeLimit, setTimeLimt] = useState({ hours: 0, minutes: 0 });
   const [isLoading, setIsLoading] = useState(true);
   const assessmentClosedDialogRef = useRef(null);
   const assessmentOpenDialogRef = useRef(null);
@@ -59,17 +59,17 @@ function ViewAllSubmissions() {
 
   useEffect(() => {
     if (submissionData.dueDate) {
-      dueDate.current = formatDateTime(new Date(submissionData.dueDate));
+      setDueDate(formatDateTime(new Date(submissionData.dueDate)));
     }
 
     if (submissionData.timeLimitSeconds) {
       const hours = Math.floor(submissionData.timeLimitSeconds / 3600);
       const remainingSeconds = submissionData.timeLimitSeconds % 3600;
       const minutes = Math.floor(remainingSeconds / 60);
-      timeLimit.current = {
+      setTimeLimt({
         hours: hours,
         minutes: minutes,
-      };
+      });
     }
 
     document.title = submissionData.name;
@@ -122,8 +122,8 @@ function ViewAllSubmissions() {
 
       const newDate = body.dueDate
         ? formatDateTime(new Date(body.dueDate))
-        : dueDate.current;
-      dueDate.current = newDate;
+        : dueDate;
+      setDueDate(newDate);
       newSubmissionData.dueDate = body.dueDate
         ? body.dueDate
         : submissionData.dueDate;
@@ -188,10 +188,9 @@ function ViewAllSubmissions() {
             ) : (
               <div className="mt-1 text-2xl text-red-600">Closed</div>
             )}
-            <div className="mt-3 text-2xl">Complete By: {dueDate.current}</div>
+            <div className="mt-3 text-2xl">Complete By: {dueDate}</div>
             <div className="mt-1 text-2xl">
-              Time Limit: {timeLimit.current.hours} hours{" "}
-              {timeLimit.current.minutes} mins
+              Time Limit: {timeLimit.hours} hours {timeLimit.minutes} mins
             </div>
           </div>
           <div className="flex flex-col">
