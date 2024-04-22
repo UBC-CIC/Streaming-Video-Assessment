@@ -13,14 +13,13 @@
     "aws-sdk": "^2.1553.0",
     "aws-serverless-express": "^3.3.5",
     "body-parser": "^1.17.1",
+    "cors": "^2.8.5",
     "express": "^4.15.2",
     "jsonwebtoken": "^9.0.2",
     "jwks-rsa": "^3.1.0",
     "mysql": "^2.18.1",
     "mysql2": "^3.9.1",
-    "sequelize": "^6.36.0",
-    "sqlite": "^5.1.1",
-    "sqlite3": "^5.1.7"
+    "sequelize": "^6.36.0"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.92",

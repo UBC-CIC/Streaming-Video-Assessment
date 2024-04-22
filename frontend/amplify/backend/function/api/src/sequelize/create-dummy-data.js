@@ -3,11 +3,13 @@
 // CREATE DATABASE dropzone;
 //
 // Sequelize will recreate the tables, and this will populate it with some dummy data.
+import { s3BucketFolderName } from "../config";
+
 const {
   createUploadRequestsForAssessment,
 } = require("../helpers/uploadRequests");
 
-module.exports = async function create(sequelize) {
+module.exports.createDummyData = async function (sequelize) {
   const { user, folder, uploaderGroup, uploader, assessment, video } =
     sequelize.models;
 
@@ -91,8 +93,29 @@ module.exports = async function create(sequelize) {
   });
 
   const video1 = await video.create({
-    s3Key: "public/abc/1.webm",
+    s3Key: `${s3BucketFolderName}/abc/1.webm`,
     uploaderId: uploader1.id,
     assessmentId: spanish1test1.id,
   });
+};
+
+module.exports.createUser = async function (sequelize, email) {
+  const { user } = sequelize.models;
+
+  return await user.create(
+    {
+      email,
+      isPlatformManager: true,
+      isAssessmentCreator: true,
+      folders: [
+        // Create root folder along with user
+        {
+          name: "Home",
+        },
+      ],
+    },
+    {
+      include: [user.folders],
+    },
+  );
 };

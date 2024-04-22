@@ -1,4 +1,4 @@
-const HasRecordedVideo = ({ uploadedVideoUrl }) => {
+const HasRecordedVideo = ({ className, uploadedVideoUrl }) => {
   if (!uploadedVideoUrl) {
     return (
       <div className="flex items-center justify-center w-100 h-48">
@@ -8,8 +8,12 @@ const HasRecordedVideo = ({ uploadedVideoUrl }) => {
   }
 
   return (
-    <div>
-      <video controls src={uploadedVideoUrl}></video>
+    <div className={className}>
+      <video
+        controls
+        src={uploadedVideoUrl}
+        className="max-w-full max-h-full"
+      ></video>
     </div>
   );
 };

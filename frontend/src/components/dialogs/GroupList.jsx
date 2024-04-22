@@ -2,11 +2,11 @@ import PropTypes from "prop-types";
 
 function GroupList({ groupList, removeUserFromGroupList }) {
   return (
-    <div className="flex flex-col items-center mt-2 overflow-y-auto h-[35%]">
+    <div className="flex flex-col items-center mt-2 overflow-scroll h-full">
       {groupList.map((group, index) => (
         <div
           key={index}
-          className="container flex items-center justify-between border-b border-gray-300 py-2 px-4 w-[50%]"
+          className="container flex items-center justify-between border-b border-gray-300 py-2 px-4 w-[90%] lg:w-[70%]"
         >
           <div className="flex flex-col w-[85%]">
             <span

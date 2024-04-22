@@ -1,4 +1,28 @@
-import { get, post, put } from "aws-amplify/api";
+import { get, post, put, del } from "aws-amplify/api";
+
+class ForbiddenError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = "ForbiddenError";
+  }
+}
+
+export { ForbiddenError };
+
+export const getHomeFolderId = async () => {
+  try {
+    const restOperation = get({
+      apiName: "backend",
+      path: "/api/folder/home",
+    });
+    const { body } = await restOperation.response;
+    const response = await body.json();
+    console.log("GET call succeeded: ", response);
+    return response.rootId;
+  } catch (error) {
+    console.error("GET call failed: ", error);
+  }
+};
 
 export const getFolderData = async (folderId) => {
   try {
@@ -11,13 +35,15 @@ export const getFolderData = async (folderId) => {
     console.log("GET call succeeded: ", response);
     return response.data;
   } catch (error) {
-    console.error("GET call failed: ", error);
+    if (error.$metadata.httpStatusCode === 403) {
+      throw new ForbiddenError(
+        "You do not have permission to view this folder.",
+      );
+    }
   }
-
-  return null;
 };
 
-export const createFolder = async (folderName, parentId, userId) => {
+export const createFolder = async (folderName, parentId) => {
   try {
     const restOperation = post({
       apiName: "backend",
@@ -26,14 +52,13 @@ export const createFolder = async (folderName, parentId, userId) => {
         body: {
           name: folderName,
           parentId: parentId,
-          ownerId: userId,
         },
       },
     });
     const { body } = await restOperation.response;
     const response = await body.json();
     console.log("POST call succeeded: ", response);
-    return response.data;
+    return response;
   } catch (error) {
     console.error("POST call failed: ", error);
   }
@@ -114,7 +139,11 @@ export const getSubmissionData = async (submissionId) => {
     console.log("GET call succeeded: ", response);
     return response.data;
   } catch (error) {
-    console.error("GET call failed: ", error);
+    if (error.$metadata.httpStatusCode === 403) {
+      throw new ForbiddenError(
+        "You do not have permission to view this assessment.",
+      );
+    }
   }
 };
 
@@ -211,4 +240,51 @@ export const editGroup = async (groupId, groupName, parentId, groupUsers) => {
   }
 
   return null;
+};
+
+export const getAssessmentSubmissionInfo = async (
+  assessmentId,
+  submissionId,
+) => {
+  try {
+    const restOperation = get({
+      apiName: "backend",
+      path: `/api/assessment/${assessmentId}/video/${submissionId}`,
+    });
+    const { body } = await restOperation.response;
+    const response = await body.json();
+    console.log("GET call succeeded: ", response);
+    return response.data;
+  } catch (error) {
+    console.error("GET call failed: ", error);
+  }
+};
+
+const deleteObject = async (path) => {
+  try {
+    const restOperation = del({
+      apiName: "backend",
+      path: path,
+    });
+    const { body } = await restOperation.response;
+    const response = await body.json();
+    console.log("DELETE call succeeded: ", response);
+    return response;
+  } catch (error) {
+    console.error("DELETE call failed: ", error);
+  }
+
+  return null;
+};
+
+export const deleteFolder = async (folderId) => {
+  return await deleteObject(`/api/folder/${folderId}`);
+};
+
+export const deleteGroup = async (groupId) => {
+  return await deleteObject(`/api/group/${groupId}`);
+};
+
+export const deleteAssessment = async (assessmentId) => {
+  return await deleteObject(`/api/assessment/${assessmentId}`);
 };

@@ -7,6 +7,11 @@ npm i
 npm start
 ```
 
+then in /frontend, run 
+```
+npm run dev
+```
+
 Make sure to connect local backend to frontend:
 
 change in ```frontend/src/amplifyconfiguration.json```

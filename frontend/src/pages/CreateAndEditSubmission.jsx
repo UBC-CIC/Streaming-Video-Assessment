@@ -9,6 +9,7 @@ import {
 import AssessmentInputFields from "../components/assessment/AssessmentInputFields";
 import AssessmentSettings from "../components/assessment/AssessmentSettings";
 import AssessmentSharing from "../components/assessment/AssessmentSharing";
+import { useToast } from "../components/Toast/ToastService";
 
 function loader({ params }) {
   let submissionId = null;
@@ -34,9 +35,14 @@ function CreateAndEditSubmission({ edit = false }) {
   const [sharedWithList, setSharedWithList] = useState([]);
   const [email, setEmail] = useState("");
   const [usersName, setUsersName] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [addedToSharedList, setAddedToSharedList] = useState([]);
   const [removedFromSharedList, setRemovedFromSharedList] = useState([]);
+  const [titleError, setTitleError] = useState("");
+  const [descriptionError, setDescriptionError] = useState("");
+  const [timeLimitError, setTimeLimitError] = useState("");
+  const [dueDateError, setDueDateError] = useState("");
+  const toast = useToast();
 
   const getSharedWithListAsync = async (submissionId) => {
     const res = await getSharedWithList(submissionId);
@@ -45,6 +51,15 @@ function CreateAndEditSubmission({ edit = false }) {
   };
 
   useEffect(() => {
+    if (!submissionData && !folderId) {
+      if (submissionId === null || submissionId === undefined) {
+        navigate(`/home`);
+      } else {
+        navigate(`/submission/${submissionId}`);
+      }
+      return;
+    }
+
     // Check the checkbox if its value matches the value to check against
     if (edit) {
       setIsLoading(true);
@@ -63,10 +78,52 @@ function CreateAndEditSubmission({ edit = false }) {
         setIsLoading(false);
       });
     }
+
+    setIsLoading(false);
   }, [submissionData]); // Re-run effect when valueToCheck changes
 
+  const hasInvalidInputs = () => {
+    let hasInvalidInputs = false;
+
+    if (name.trim() == "") {
+      setTitleError("Submission name cannot be empty");
+      hasInvalidInputs = true;
+    }
+
+    if (description.trim() == "") {
+      setDescriptionError("Submission Description cannot be empty");
+      hasInvalidInputs = true;
+    }
+
+    if (timeLimit.hours == 0 && timeLimit.minutes == 0) {
+      setTimeLimitError("Time limit should be set");
+      hasInvalidInputs = true;
+    }
+
+    const currentTime = new Date();
+    const dueDateObj = new Date(dueDate);
+
+    if (dueDateObj < currentTime) {
+      setDueDateError("Due date should be in the future");
+      hasInvalidInputs = true;
+    }
+
+    if (hasInvalidInputs) {
+      return true;
+    }
+
+    return false;
+  };
+
   const assessmentHandler = async () => {
+    setTitleError(null);
+    setDescriptionError(null);
+    setTimeLimitError(null);
+    setDueDateError(null);
+    if (hasInvalidInputs()) return;
+
     setIsLoading(true);
+
     const data = {
       folderId: folderId,
       name: name,
@@ -98,13 +155,18 @@ function CreateAndEditSubmission({ edit = false }) {
       data.newSharedGroups = newSharedGroups;
       data.removeSharedUploaders = removeSharedUploaders;
       data.removeSharedGroups = removeSharedGroups;
+      data.hasUploaderChanges =
+        newSharedUploaders.length > 0 ||
+        removeSharedUploaders.length > 0 ||
+        newSharedGroups.length > 0 ||
+        removeSharedGroups.length > 0;
       const response = await editAssessment(submissionId, data);
       setIsLoading(false);
       if (response.success) {
-        alert("Assessment edits successfully");
+        toast.success("Assessment edits successfully");
         navigate(`/submission/${response.body.id}`);
       } else {
-        alert("Assessment editing failed");
+        toast.error("Assessment editing failed");
       }
     } else {
       const uploaders = [];
@@ -121,10 +183,10 @@ function CreateAndEditSubmission({ edit = false }) {
       const response = await createAssessment(data);
       setIsLoading(false);
       if (response.success) {
-        alert("Assessment created successfully");
+        toast.success("Assessment created successfully");
         navigate(`/submission/${response.body.id}`);
       } else {
-        alert("Assessment creation failed");
+        toast.error("Assessment creation failed");
       }
     }
   };
@@ -134,7 +196,7 @@ function CreateAndEditSubmission({ edit = false }) {
       <span className="loading loading-spinner loading-lg"></span>
     </div>
   ) : (
-    <div className="flex flex-col m-10">
+    <div className="flex flex-col mt-5 mr-10 ml-10">
       <div className="flex flex-col w-full md:flex-row">
         <div className="md:w-[70%]">
           <AssessmentInputFields
@@ -142,6 +204,8 @@ function CreateAndEditSubmission({ edit = false }) {
             description={description}
             setName={setName}
             setDescription={setDescription}
+            titleError={titleError}
+            descriptionError={descriptionError}
           />
           <AssessmentSettings
             timeLimit={timeLimit}
@@ -150,6 +214,8 @@ function CreateAndEditSubmission({ edit = false }) {
             setAllowFaceBlur={setAllowFaceBlur}
             dueDate={dueDate}
             setDueDate={setDueDate}
+            timeLimitError={timeLimitError}
+            dueDateError={dueDateError}
           />
         </div>
         <div className="divider md:divider-horizontal"></div>
@@ -167,15 +233,25 @@ function CreateAndEditSubmission({ edit = false }) {
             removedFromSharedList={removedFromSharedList}
             setRemovedFromSharedList={setRemovedFromSharedList}
           />
+          <div className="flex flex-col self-center md:self-end mt-10 md:flex-row">
+            <div className="mr-2">
+              <button
+                className="btn bg-red-500 btn-lg text-white hover:text-black"
+                onClick={() => navigate(-1)}
+              >
+                Cancel
+              </button>
+            </div>
+            <div>
+              <button
+                className="btn bg-indigo-500 btn-lg text-white hover:text-black pr-8 pl-8"
+                onClick={assessmentHandler}
+              >
+                {edit ? "Save" : "Create"}
+              </button>
+            </div>
+          </div>
         </div>
-      </div>
-      <div className="flex justify-end mt-10">
-        <button
-          className="btn bg-indigo-500 btn-lg text-white hover:text-black"
-          onClick={assessmentHandler}
-        >
-          {edit ? "Save" : "Create"}
-        </button>
       </div>
     </div>
   );

@@ -1,13 +1,13 @@
 import { getIcon } from "../../../helpers/getIcon";
-import FolderPath from "./FolderPath";
+import FolderPath from "../FolderPath";
 
-function FileView({ file, index, fetchGroups, addToSharedList }) {
+function FileView({ dialogRef, file, index, fetchGroups, addToSharedList }) {
   const icon = getIcon(file);
 
   const onClickHandler = () => {
     if (file.type === "group") {
       addToSharedList("group", file);
-      document.getElementById("groupView").close();
+      dialogRef.current.close();
     } else {
       fetchGroups(file.id);
     }
@@ -29,7 +29,14 @@ function FileView({ file, index, fetchGroups, addToSharedList }) {
   );
 }
 
-function GroupView({ isLoading, files, path, fetchGroups, addToSharedList }) {
+function GroupView({
+  dialogRef,
+  isLoading,
+  files,
+  path,
+  fetchGroups,
+  addToSharedList,
+}) {
   return (
     <>
       {isLoading ? (
@@ -39,11 +46,12 @@ function GroupView({ isLoading, files, path, fetchGroups, addToSharedList }) {
       ) : (
         <div className="flex flex-col justify-center">
           <h1 className="text-4xl flex justify-center">Groups</h1>
-          <FolderPath folderPath={path} fetchGroups={fetchGroups} />
+          <FolderPath folderPath={path} onClickHandler={fetchGroups} />
           <div className="w-full self-start pt-3 max-md:mt-10">
-            <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 place-center">
               {files.map((file, index) => (
                 <FileView
+                  dialogRef={dialogRef}
                   key={index}
                   file={file}
                   index={index}

@@ -15,6 +15,7 @@ import SubmitView, { loader as SubmitViewLoader } from "./pages/SubmitView";
 import ViewAllSubmissions from "./pages/ViewAllSubmissions";
 import ViewSubmission from "./pages/ViewSubmission";
 import ConfirmSignUpView from "./pages/ConfirmSignUpView";
+import Logout from "./pages/Logout";
 
 const router = createBrowserRouter([
   {
@@ -24,30 +25,64 @@ const router = createBrowserRouter([
   },
   {
     path: "/home",
-    element: PrivateRoute(<FolderView home={true} />),
+    element: (
+      <PrivateRoute>
+        <FolderView home={true} />
+      </PrivateRoute>
+    ),
   },
   {
     path: "/folder/:folderId",
-    element: PrivateRoute(<FolderView />),
+    element: (
+      <PrivateRoute>
+        <FolderView />
+      </PrivateRoute>
+    ),
     loader: FolderView.loader,
   },
   {
     path: "/submission",
-    element: PrivateRoute(<CreateAndEditSubmission />),
+    element: (
+      <PrivateRoute>
+        <CreateAndEditSubmission />
+      </PrivateRoute>
+    ),
   },
   {
     path: "/submission/:submissionId/edit",
-    element: PrivateRoute(<CreateAndEditSubmission edit={true} />),
+    element: (
+      <PrivateRoute>
+        <CreateAndEditSubmission edit={true} />
+      </PrivateRoute>
+    ),
     loader: CreateAndEditSubmission.loader,
   },
   {
     path: "/submission/:submissionId",
-    element: PrivateRoute(<ViewAllSubmissions />),
+    element: (
+      <PrivateRoute>
+        <ViewAllSubmissions />
+      </PrivateRoute>
+    ),
     loader: ViewAllSubmissions.loader,
   },
   {
-    path: "/submission/:submissionId/view",
-    element: PrivateRoute(<ViewSubmission />),
+    path: "/logout",
+    element: (
+      <PrivateRoute>
+        <Logout />
+      </PrivateRoute>
+    ),
+    loader: ViewAllSubmissions.loader,
+  },
+  {
+    path: "/submission/:assessmentId/view/:submissionId",
+    element: (
+      <PrivateRoute>
+        <ViewSubmission />
+      </PrivateRoute>
+    ),
+    loader: ViewSubmission.loader,
   },
   {
     path: "/submit/:submissionId",

@@ -93,6 +93,19 @@ function applyExtraSetup(sequelize) {
     return path;
   };
 
+  folder.isOwnedBy = async function (folderId, email) {
+    const f = await this.findByPk(folderId, {
+      include: [
+        {
+          association: "owner",
+          where: { email },
+        },
+      ],
+    });
+
+    return !!f;
+  };
+
   folder.prototype.move = async function (newParentId) {
     const newParent = await folder.findByPk(newParentId);
 
@@ -171,6 +184,71 @@ function applyExtraSetup(sequelize) {
     await this.removeUploaders(uploadersToRemove);
     await this.removeUploaderGroups(groupsToRemove);
   };
+
+  assessment.prototype.getOwner = async function () {
+    const folder = await this.getFolder({
+      include: [
+        {
+          association: "owner",
+        },
+      ],
+    });
+    return folder.owner;
+  };
+
+  uploaderGroup.prototype.getOwner = async function () {
+    const folder = await this.getFolder({
+      include: [
+        {
+          association: "owner",
+        },
+      ],
+    });
+    return folder.owner;
+  };
+
+  folder.addHook("beforeDestroy", async (f, options) => {
+    // -- recursively delete contents incl folders
+    await Promise.all([
+      f
+        .getUploaderGroups()
+        .then((groups) => Promise.all(groups.map((g) => g.destroy()))),
+      f
+        .getAssessments()
+        .then((assessments) =>
+          Promise.all(assessments.map((a) => a.destroy())),
+        ),
+      f
+        .getChildFolders()
+        .then((folders) =>
+          Promise.all(folders.map((subfolder) => subfolder.destroy())),
+        ),
+    ]);
+  });
+
+  assessment.addHook("beforeDestroy", async (a, options) => {
+    // 1. delete all videos. TODO: This should maybe be a cascade instead of in a hook
+    // 2. delete all upload requests
+
+    const videos = await a.getVideos();
+
+    await Promise.all(
+      videos.map(async (v) => {
+        await v.destroy();
+      }),
+    );
+
+    await uploadRequest.destroy({
+      where: { assessmentId: a.id },
+    });
+  });
+
+  video.addHook("beforeDestroy", async (v, options) => {
+    // @hmitgang TODO: delete video from s3
+  });
+
+  // We don't actually need to do anything special here:
+  // uploaderGroup.addHook("beforeDestroy", async (uploaderGroup, options) => {});
 }
 
 module.exports = { applyExtraSetup };

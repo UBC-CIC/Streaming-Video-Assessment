@@ -1,5 +1,5 @@
 const sequelize = require("../sequelize");
-const sendUploadRequestEmail = require("./sendEmail");
+const { sendUploadRequestEmail } = require("./sendEmail");
 
 // Will create all upload requests for all users and groups on the assignment
 async function createUploadRequestsForAssessment(

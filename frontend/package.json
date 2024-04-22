@@ -10,12 +10,14 @@
     "preview": "vite preview",
     "format:check": "prettier --check .",
     "format": "prettier --write .",
-    "test": "jest"
+    "test": "jest",
+    "cypress:open": "cypress open"
   },
   "dependencies": {
     "@aws-amplify/auth": "^6.0.16",
     "aws-amplify": "^6.0.13",
     "face-api.js": "^0.22.2",
+    "papaparse": "^5.4.1",
     "prop-types": "^15.8.1",
     "react": "^18.2.0",
     "react-dnd": "^16.0.1",
@@ -30,6 +32,7 @@
     "@types/react-dom": "^18.2.17",
     "@vitejs/plugin-react": "^4.2.1",
     "autoprefixer": "^10.4.16",
+    "cypress": "^13.7.2",
     "daisyui": "^4.6.0",
     "eslint": "^8.55.0",
     "eslint-plugin-jest": "^27.6.3",

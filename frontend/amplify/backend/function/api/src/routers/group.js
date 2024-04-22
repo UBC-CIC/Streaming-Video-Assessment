@@ -39,12 +39,21 @@ router.get("/", async (req, res) => {
 // Define your routes here
 router.get("/:groupId", async (req, res) => {
   const group = await uploaderGroup.findByPk(req.params.groupId);
+
+  if (!group || (await group.getOwner()).email !== req["userEmail"]) {
+    return res.status(403).json({ error: "Forbidden" });
+  }
+
   const groupMembers = await group.getUploaders();
   group.dataValues.users = groupMembers;
   res.json({ success: "get call succeed!", data: group });
 });
 
 router.post("/", async (req, res) => {
+  if (!(await folder.isOwnedBy(req.body.folderId, req["userEmail"]))) {
+    return res.status(403).json({ error: "Forbidden" });
+  }
+
   // Create a group
   const newGroup = await uploaderGroup.create({
     name: req.body.name,
@@ -73,15 +82,13 @@ router.put("/:groupId", async (req, res) => {
     include: [uploader],
   });
 
-  if (!group) {
-    res.status(404).json({ error: "Group not found" });
-    return;
+  if (!group || (await group.getOwner()).email !== req["userEmail"]) {
+    return res.status(403).json({ error: "Forbidden" });
   }
 
   // update group name
   await group.update({
     name: req.body.name,
-    folderId: req.body.folderId,
   });
 
   // remove uploaders
@@ -95,13 +102,13 @@ router.put("/:groupId", async (req, res) => {
   // add new uploaders
   await Promise.all(
     req.body.users.map(async (user) => {
-      const newUser = await uploader.findOrCreate({
+      const [newUser, created] = await uploader.findOrCreate({
         where: { email: user.email },
         defaults: { name: user.name },
       });
-      const addUser = !(await group.hasUploader(newUser[0]));
+      const addUser = !(await group.hasUploader(newUser));
       if (addUser) {
-        await group.addUploader(newUser[0]);
+        await group.addUploader(newUser);
       }
     }),
   );
@@ -109,7 +116,17 @@ router.put("/:groupId", async (req, res) => {
   res.json({ success: "put call succeed!", url: req.url, body: req.body });
 });
 
-router.delete("/:groupId", (req, res) => {
+router.delete("/:groupId", async (req, res) => {
+  const group = await uploaderGroup.findByPk(req.params.groupId, {
+    include: [uploader],
+  });
+
+  if (!group || (await group.getOwner()).email !== req["userEmail"]) {
+    return res.status(403).json({ error: "Forbidden" });
+  }
+
+  await group.destroy();
+
   res.json({ success: "delete call succeed!", url: req.url });
 });
 

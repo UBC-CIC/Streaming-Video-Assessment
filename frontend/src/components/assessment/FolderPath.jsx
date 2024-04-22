@@ -1,9 +1,9 @@
-function Crumb({ path, index, lastPath, fetchGroups }) {
-  return lastPath ? (
+function Crumb({ path, index, lastCrumb, onClickHandler }) {
+  return lastCrumb ? (
     <li key={index}>
       <a
         onClick={() => {
-          fetchGroups(path.id);
+          onClickHandler(path.id, index);
         }}
       >
         {path.name}
@@ -14,7 +14,11 @@ function Crumb({ path, index, lastPath, fetchGroups }) {
   );
 }
 
-function FolderPath({ folderPath, fetchGroups }) {
+function FolderPath({
+  folderPath,
+  onClickHandler,
+  makeLastCrumbClickable = true,
+}) {
   return (
     <div className="text-md breadcrumbs">
       <ul>
@@ -23,8 +27,10 @@ function FolderPath({ folderPath, fetchGroups }) {
             key={index}
             path={path}
             index={index}
-            lastPath={index !== folderPath.length - 1}
-            fetchGroups={fetchGroups}
+            lastCrumb={
+              index !== folderPath.length - 1 || !makeLastCrumbClickable
+            }
+            onClickHandler={onClickHandler}
           />
         ))}
       </ul>

@@ -1,15 +1,22 @@
 import PropTypes from "prop-types";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getIcon } from "../helpers/getIcon";
 import GroupDialog from "./dialogs/GroupDialog";
 import { useDrag, useDrop } from "react-dnd";
 import { BsThreeDots } from "react-icons/bs";
-import { moveFile } from "../helpers/submissionCreatorApi";
+import {
+  deleteAssessment,
+  deleteFolder,
+  deleteGroup,
+  moveFile,
+} from "../helpers/submissionCreatorApi";
 
-function File({ file, removeFile }) {
+function File({ file, removeFile, fetchFolderData }) {
   const [isOpen, setIsOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const navigate = useNavigate();
+  const editGroupModalRef = useRef(null);
 
   const getOnClickFunction = () => {
     switch (file.type) {
@@ -20,7 +27,7 @@ function File({ file, removeFile }) {
       case "group":
         return () => {
           setIsOpen(true);
-          document.getElementById("edit-group-modal").showModal();
+          editGroupModalRef.current.showModal();
         };
       case "assessment":
         return () => {
@@ -41,12 +48,29 @@ function File({ file, removeFile }) {
     }
     console.log("rename");
   };
-  const deleteHandler = () => {
-    const elem = document.activeElement;
-    if (elem) {
-      elem?.blur();
+  const deleteHandler = async () => {
+    // TODO: give a confirmation dialog
+    setIsDeleting(true);
+
+    try {
+      switch (file.type) {
+        case "folder":
+          await deleteFolder(file.id);
+          break;
+        case "group":
+          await deleteGroup(file.id);
+          break;
+        case "assessment":
+          await deleteAssessment(file.id);
+          break;
+      }
+
+      removeFile(file);
+      console.log("delete", file);
+    } catch (error) {
+      setIsDeleting(false);
+      console.error("Error deleting file", error);
     }
-    console.log("delete");
   };
 
   const [{ canDrop, isOver }, drop] = useDrop(() => ({
@@ -102,6 +126,8 @@ function File({ file, removeFile }) {
         style={{ backgroundColor, opacity }}
       >
         <div className="dropdown dropdown-bottom dropdown-end flex justify-end px-2 pt-1">
+         {isDeleting ? (<span className="loading loading-spinner loading-s"></span>) : (
+          <>
           <button
             id="dropdownButton"
             data-dropdown-toggle="dropdown"
@@ -111,17 +137,16 @@ function File({ file, removeFile }) {
             <BsThreeDots size={22} />
           </button>
           <ul className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-40">
-            {/* <li onClick={moveHandler}>
-              <a>Move</a>
-            </li> */}
-            <li onClick={renameHandler}>
-              <a>Rename</a>
-            </li>
-            <li onClick={deleteHandler}>
-              <a className="text-rose-600">Delete</a>
+            <li>
+              <button onClick={deleteHandler} className="text-rose-600">
+                Delete
+              </button>
             </li>
           </ul>
+          </>
+          )}
         </div>
+        
         <div
           className="flex flex-col items-center pb-5 cursor-pointer"
           onClick={onClickHandler}
@@ -134,11 +159,13 @@ function File({ file, removeFile }) {
       </div>
       {file.type === "group" && (
         <GroupDialog
+          dialogRef={editGroupModalRef}
           isEdit={true}
           groupId={file.id}
           parentId={file.folderId}
           isOpen={isOpen}
           setIsOpen={setIsOpen}
+          fetchFolderData={fetchFolderData}
         />
       )}
     </div>

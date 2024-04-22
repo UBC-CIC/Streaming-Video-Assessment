@@ -7,8 +7,11 @@ See the License for the specific language governing permissions and limitations 
 */
 
 const express = require("express");
+const cors = require("cors");
 const bodyParser = require("body-parser");
 const awsServerlessExpressMiddleware = require("aws-serverless-express/middleware");
+
+const requireSignIn = require("./requireSignIn.js");
 
 // router import
 const folderRouter = require("./routers/folder");
@@ -17,66 +20,25 @@ const assessmentRouter = require("./routers/assessment");
 const submissionRouter = require("./routers/submission");
 const sequelize = require("./sequelize");
 
-const region = process.env.REGION;
-const userPoolId = process.env.USER_POOL_ID;
-const clientId = process.env.APP_CLIENT_ID_WEB;
 
-const jwksUrl = `https://cognito-idp.${region}.amazonaws.com/${userPoolId}/.well-known/jwks.json`;
-var jwt = require("jsonwebtoken");
-var jwksClient = require("jwks-rsa");
-var client = jwksClient({
-  jwksUri: jwksUrl,
-});
-function getKey(header, callback) {
-  client.getSigningKey(header.kid, function (err, key) {
-    var signingKey = key.publicKey || key.rsaPublicKey;
-    callback(null, signingKey);
-  });
-}
 // declare a new express app
 const app = express();
+app.use(cors());
 app.use(bodyParser.json());
 app.use(awsServerlessExpressMiddleware.eventContext());
 
 // Enable CORS for all methods
 app.use(function (req, res, next) {
-  // CORS will force the browser to send pre-flight every time
-  // pre-flight doesn't have authorization header so it'll get flagged without fail
-  if (req.method === "OPTIONS") {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "*");
-    return res.status(200).send();
-  }
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "*");
+  res.header("Access-Control-Allow-Methods", "*");
   next();
 });
-app.use(async function (req, res, next) {
-  // console.log("method: ", req.method);
-  const claim = req.headers.authorization;
-  // console.log("claim: ", claim);
-  jwt.verify(
-    claim,
-    getKey,
-    {
-      algorithms: ["RS256"],
-      token_use: "id",
-      issuer: `https://cognito-idp.${region}.amazonaws.com/${userPoolId}`,
-      audience: clientId,
-    },
-    function (err, decodedToken) {
-      if (err) {
-        console.error(err);
-        return res.status(401).send("Unauthorized");
-      }
-      console.log("decodedToken: ", decodedToken);
-      req["userEmail"] = decodedToken.email;
-      // console.log("userEmail: ", req["userEmail"]);
-      next();
-    },
-  );
-});
-app.use("/api/folder", folderRouter);
-app.use("/api/group", groupRouter);
-app.use("/api/assessment", assessmentRouter);
+
+
+app.use("/api/folder", requireSignIn, folderRouter);
+app.use("/api/group", requireSignIn, groupRouter);
+app.use("/api/assessment", requireSignIn, assessmentRouter);
 app.use("/api/submission", submissionRouter);
 
 app.get("/api/ping", function (req, res) {

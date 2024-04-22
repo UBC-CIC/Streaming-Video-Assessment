@@ -1,3 +1,4 @@
+import { useRef, useState } from "react";
 import PropTypes from "prop-types";
 import { GoPencil } from "react-icons/go";
 import { FaTrash } from "react-icons/fa";
@@ -5,13 +6,23 @@ import FolderIcon from "../assets/icons/FolderIcon";
 import UploadIcon from "../assets/icons/UploadIcon";
 import GroupIcon from "../assets/icons/GroupIcon";
 
+import GroupDialog from "./dialogs/GroupDialog";
+
 import { useNavigate } from "react-router-dom";
 
 import { useDrag, useDrop } from "react-dnd";
-import { moveFile } from "../helpers/submissionCreatorApi";
+import {
+  moveFile,
+  deleteFolder,
+  deleteAssessment,
+  deleteGroup,
+} from "../helpers/submissionCreatorApi";
 
-function ListViewFile({ index, file, removeFile }) {
+function ListViewFile({ index, file, removeFile, fetchFolderData }) {
   const navigate = useNavigate();
+  const editGroupModalRef = useRef(null);
+  const [isOpen, setIsOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const getIcon = (type) => {
     switch (type) {
@@ -35,7 +46,7 @@ function ListViewFile({ index, file, removeFile }) {
       case "group":
         return () => {
           setIsOpen(true);
-          document.getElementById("edit-group-modal").showModal();
+          editGroupModalRef.current.showModal();
         };
       case "assessment":
         return () => {
@@ -43,6 +54,30 @@ function ListViewFile({ index, file, removeFile }) {
         };
       default:
         return () => {};
+    }
+  };
+
+  const deleteHandler = async () => {
+    setIsDeleting(true);
+    // TODO: give a confirmation dialog
+    try {
+      switch (file.type) {
+        case "folder":
+          await deleteFolder(file.id);
+          break;
+        case "group":
+          await deleteGroup(file.id);
+          break;
+        case "assessment":
+          await deleteAssessment(file.id);
+          break;
+      }
+
+      removeFile(file);
+      console.log("delete", file);
+    } catch (error) {
+      setIsDeleting(false);
+      console.error("Error deleting file", error);
     }
   };
 
@@ -73,6 +108,32 @@ function ListViewFile({ index, file, removeFile }) {
     [file],
   );
 
+  const formatDate = (date) => {
+    if (!date) return;
+
+    const d = new Date(date);
+    const now = new Date();
+    const diff = now - d;
+
+    if (diff < 0) {
+      return d.toLocaleString();
+    }
+
+    if (diff < 1000 * 60) {
+      return "Just now";
+    }
+
+    if (diff < 1000 * 60 * 60) {
+      return `${Math.floor(diff / (1000 * 60))} minutes ago`;
+    }
+
+    if (diff < 1000 * 60 * 60 * 24) {
+      return `${Math.floor(diff / (1000 * 60 * 60))} hours ago`;
+    }
+
+    return d.toLocaleString();
+  };
+
   const [{ canDrop, isOver }, drop] = useDrop(() => ({
     accept: file.type != "folder" ? [] : ["group", "folder", "assessment"],
     drop: () => ({
@@ -93,15 +154,15 @@ function ListViewFile({ index, file, removeFile }) {
       <tr
         key={index}
         ref={drag}
-        className="bg-white text-stone-500 hover:bg-gray-100"
+        className="bg-white text-stone-500 hover:bg-gray-100 cursor-pointer"
         onClick={getOnClickFunction()}
         style={{ backgroundColor, opacity }}
       >
-        <td className="p-2">{icon}</td>
+        <td className="p-2 w-[1%] whitespace-nowrap">{icon}</td>
         <td className="p-2">{file.name}</td>
-        <td className="p-2">{file.dueDate}</td>
-        <td className="p-2">{file.dateModified}</td>
-        <td className="p-2">{file.dateCreated}</td>
+        <td className="p-2 max-sm:hidden">{formatDate(file.dueDate)}</td>
+        <td className="p-2 max-md:hidden">{formatDate(file.updatedAt)}</td>
+        <td className="p-2 max-md:hidden">{formatDate(file.createdAt)}</td>
         <td
           className="p-2"
           onClick={(e) => {
@@ -109,18 +170,34 @@ function ListViewFile({ index, file, removeFile }) {
             console.log("Edit");
           }}
         >
-          <GoPencil className="text-stone-500 hover:text-stone-700 cursor-pointer" />
+          <GoPencil className="text-stone-500 hover:text-stone-700" />
         </td>
         <td
           className="p-2"
           onClick={(e) => {
             e.stopPropagation();
-            console.log("Trash");
+            deleteHandler();
           }}
         >
-          <FaTrash className="text-stone-500 hover:text-stone-700 cursor-pointer" />
+          {isDeleting ? (
+            <span className="loading loading-spinner loading-xs"></span>
+          ) : (
+            <FaTrash className="text-stone-500 hover:text-stone-700" />
+          )}
         </td>
       </tr>
+      {/* // TODO: this can't be in the table */}
+      {file.type === "group" && (
+        <GroupDialog
+          dialogRef={editGroupModalRef}
+          isEdit={true}
+          groupId={file.id}
+          parentId={file.folderId}
+          isOpen={isOpen}
+          setIsOpen={setIsOpen}
+          fetchFolderData={fetchFolderData}
+        />
+      )}
     </tbody>
   );
 }
