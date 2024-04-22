@@ -46,6 +46,23 @@
   "function": {
     "api": {
       "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "UserPoolId",
+            "AppClientIDWeb"
+          ],
+          "category": "auth",
+          "resourceName": "backendd8f920f8"
+        },
+        {
+          "attributes": [
+            "BucketName"
+          ],
+          "category": "storage",
+          "resourceName": "s3268a4e01"
+        }
+      ],
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
     }

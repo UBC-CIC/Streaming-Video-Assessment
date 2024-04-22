@@ -1,6 +1,6 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
-  "Description": "{\"createdOn\":\"Windows\",\"createdBy\":\"Amplify\",\"createdWith\":\"12.10.1\",\"stackType\":\"function-Lambda\",\"metadata\":{}}",
+  "Description": "{\"createdOn\":\"Windows\",\"createdBy\":\"Amplify\",\"createdWith\":\"12.11.1\",\"stackType\":\"function-Lambda\",\"metadata\":{}}",
   "Parameters": {
     "CloudWatchRule": {
       "Type": "String",
@@ -14,6 +14,15 @@
       "Type": "String"
     },
     "s3Key": {
+      "Type": "String"
+    },
+    "authbackendd8f920f8UserPoolId": {
+      "Type": "String"
+    },
+    "authbackendd8f920f8AppClientIDWeb": {
+      "Type": "String"
+    },
+    "storages3268a4e01BucketName": {
       "Type": "String"
     }
   },
@@ -69,6 +78,15 @@
             },
             "REGION": {
               "Ref": "AWS::Region"
+            },
+            "USER_POOL_ID": {
+              "Ref": "authbackendd8f920f8UserPoolId"
+            },
+            "APP_CLIENT_ID_WEB": {
+              "Ref": "authbackendd8f920f8AppClientIDWeb"
+            },
+            "BUCKET_NAME": {
+              "Ref": "storages3268a4e01BucketName"
             }
           }
         },
@@ -164,6 +182,42 @@
           ]
         }
       }
+    },
+    "CustomLambdaExecutionPolicy": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyName": "custom-lambda-execution-policy",
+        "PolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Action": [
+                "s3:*",
+                "s3-object-lambda:*"
+              ],
+              "Resource": [
+                "*"
+              ]
+            },
+            {
+              "Effect": "Allow",
+              "Action": [
+                "ses:*"
+              ],
+              "Resource": [
+                "*"
+              ]
+            }
+          ]
+        },
+        "Roles": [
+          {
+            "Ref": "LambdaExecutionRole"
+          }
+        ]
+      },
+      "DependsOn": "LambdaExecutionRole"
     }
   },
   "Outputs": {

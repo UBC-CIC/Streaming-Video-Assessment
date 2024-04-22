@@ -1,5 +1,4 @@
 const { SESClient, SendEmailCommand } = require("@aws-sdk/client-ses");
-const getCredentials = require("./getCredentials");
 
 async function sendEmail(toAddresses, subject, message) {
   console.log(
@@ -15,11 +14,7 @@ async function sendEmail(toAddresses, subject, message) {
     return true;
   }
 
-  const credentials = await getCredentials();
-  const ses = new SESClient({
-    region: "ca-central-1",
-    credentials,
-  });
+  const ses = new SESClient();
 
   // https://stackoverflow.com/questions/37528301/email-address-is-not-verified-aws-ses
   // When your SES account is in "sandbox" mode, you can:

@@ -20,6 +20,7 @@ const assessmentRouter = require("./routers/assessment");
 const submissionRouter = require("./routers/submission");
 const sequelize = require("./sequelize");
 
+
 // declare a new express app
 const app = express();
 app.use(cors());
