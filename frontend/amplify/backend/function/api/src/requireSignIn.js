@@ -1,6 +1,6 @@
-const region = "ca-central-1";
-const userPoolId = "ca-central-1_RGMoyaPVY";
-const clientId = "2q1vlf8f8vkl965un3pists4bo";
+const region = process.env.REGION;
+const userPoolId = process.env.USER_POOL_ID;
+const clientId = process.env.APP_CLIENT_ID_WEB;
 
 const jwksUrl = `https://cognito-idp.${region}.amazonaws.com/${userPoolId}/.well-known/jwks.json`;
 var jwt = require("jsonwebtoken");
