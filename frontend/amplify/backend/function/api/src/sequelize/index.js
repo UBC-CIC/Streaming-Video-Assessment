@@ -15,7 +15,7 @@ if (process.env.NODE_ENV === "test") {
   const password = "password123";
 
   sequelize = new Sequelize("dropzone", username, password, {
-    host: "serverless-mysql-instance-1.ccsegbn7t5iu.ca-central-1.rds.amazonaws.com",
+    host: `mysql://${process.env.DATABASE_ENDPOINT}`,
     dialect: "mysql",
   });
 }

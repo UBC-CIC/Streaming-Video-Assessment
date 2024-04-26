@@ -7,7 +7,7 @@ let sequelize = null;
 
 async function loadSequelize() {
   const sequelize = new Sequelize(
-    "mysql://serverless-mysql-instance-1.ccsegbn7t5iu.ca-central-1.rds.amazonaws.com:3306",
+    `mysql://${process.env.DATABASE_ENDPOINT}`,
     {
       // (...)
       pool: {
