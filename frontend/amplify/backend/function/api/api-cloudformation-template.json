@@ -113,7 +113,22 @@
         },
         "Runtime": "nodejs18.x",
         "Layers": [],
-        "Timeout": 25
+        "Timeout": 25,
+        "VpcConfig": {
+          "SecurityGroupIds": [
+            {
+              "Ref": "customdatabaseSecurityGroupId"
+            }
+          ],
+          "SubnetIds": [
+            {
+              "Ref": "customdatabaseSubnetId0"
+            },
+            {
+              "Ref": "customdatabaseSubnetId1"
+            }
+          ]
+        }
       }
     },
     "LambdaExecutionRole": {
@@ -193,6 +208,16 @@
                   }
                 ]
               }
+            },
+            {
+              "Effect": "Allow",
+              "Action": [
+                "ec2:CreateNetworkInterface",
+                "ec2:DescribeNetworkInterfaces",
+                "ec2:DetachNetworkInterface",
+                "ec2:DeleteNetworkInterface"
+              ],
+              "Resource": "*"
             }
           ]
         }
