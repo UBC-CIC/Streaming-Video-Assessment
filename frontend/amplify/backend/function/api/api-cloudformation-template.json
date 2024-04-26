@@ -24,6 +24,9 @@
     },
     "storages3268a4e01BucketName": {
       "Type": "String"
+    },
+    "customdatabaseDatabaseEndpoint": {
+      "Type": "String"
     }
   },
   "Conditions": {
@@ -87,6 +90,9 @@
             },
             "BUCKET_NAME": {
               "Ref": "storages3268a4e01BucketName"
+            },
+            "DATABASE_ENDPOINT": {
+              "Ref": "customdatabaseDatabaseEndpoint"
             }
           }
         },

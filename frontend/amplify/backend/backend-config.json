@@ -67,6 +67,13 @@
           ],
           "category": "storage",
           "resourceName": "s3268a4e01"
+        },
+        {
+          "attributes": [
+            "DatabaseEndpoint"
+          ],
+          "category": "custom",
+          "resourceName": "database"
         }
       ],
       "providerPlugin": "awscloudformation",

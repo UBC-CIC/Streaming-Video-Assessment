@@ -33,17 +33,22 @@ export class cdkStack extends cdk.Stack {
           subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS
         }
       ]
-    })
-    // const cluster = new rds.DatabaseCluster(this, 'Database', {
-    //   engine: rds.DatabaseClusterEngine.auroraMysql({ version: rds.AuroraMysqlEngineVersion.VER_3_06_0 }),
-    //   writer: rds.ClusterInstance.serverlessV2('writer', {
-    //     publiclyAccessible: true
-    //   }),
-    //   vpcSubnets: {
-    //     subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS
-    //   },
-    //   vpc: vpc
-    // })
+    });
+
+    const cluster = new rds.DatabaseCluster(this, 'Database', {
+      engine: rds.DatabaseClusterEngine.auroraMysql({ version: rds.AuroraMysqlEngineVersion.VER_3_06_0 }),
+      writer: rds.ClusterInstance.serverlessV2('writer', {
+        publiclyAccessible: true
+      }),
+      vpcSubnets: {
+        subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS
+      },
+      vpc: vpc
+    });
+
+    new cdk.CfnOutput(this, 'DatabaseEndpoint', {
+      value: cluster.clusterEndpoint.socketAddress
+    });
 
     
     // Example 1: Set up an SQS queue with an SNS topic 

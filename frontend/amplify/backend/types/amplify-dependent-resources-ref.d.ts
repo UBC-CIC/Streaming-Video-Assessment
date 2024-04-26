@@ -17,6 +17,11 @@ export type AmplifyDependentResourcesAttributes = {
       "UserPoolName": "string"
     }
   },
+  "custom": {
+    "database": {
+      "DatabaseEndpoint": "string"
+    }
+  },
   "function": {
     "api": {
       "Arn": "string",
