@@ -20,7 +20,19 @@ export class cdkStack extends cdk.Stack {
     /* AWS CDK code goes here - learn more: https://docs.aws.amazon.com/cdk/latest/guide/home.html */
 
     const vpc = new ec2.Vpc(this, 'VPC', {
-      ipAddresses: ec2.IpAddresses.cidr('172.30.0.0/16')
+      ipAddresses: ec2.IpAddresses.cidr('10.0.0.0/16'),
+      subnetConfiguration: [
+        {
+          cidrMask: 24,
+          name: 'public-subnet',
+          subnetType: ec2.SubnetType.PUBLIC
+        },
+        {
+          cidrMask: 24,
+          name: 'private-subnet',
+          subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS
+        }
+      ]
     })
     // const cluster = new rds.DatabaseCluster(this, 'Database', {
     //   engine: rds.DatabaseClusterEngine.auroraMysql({ version: rds.AuroraMysqlEngineVersion.VER_3_06_0 }),
