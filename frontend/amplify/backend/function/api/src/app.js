@@ -18,8 +18,10 @@ const folderRouter = require("./routers/folder");
 const groupRouter = require("./routers/group");
 const assessmentRouter = require("./routers/assessment");
 const submissionRouter = require("./routers/submission");
-const sequelize = require("./sequelize");
+console.log(process.env)
 
+
+const sequelize = require("./sequelize");
 
 // declare a new express app
 const app = express();

@@ -70,7 +70,10 @@
         },
         {
           "attributes": [
-            "DatabaseEndpoint"
+            "DatabaseEndpoint",
+            "SecurityGroupId",
+            "SubnetId0",
+            "SubnetId1"
           ],
           "category": "custom",
           "resourceName": "database"

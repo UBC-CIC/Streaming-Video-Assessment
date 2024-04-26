@@ -27,6 +27,15 @@
     },
     "customdatabaseDatabaseEndpoint": {
       "Type": "String"
+    },
+    "customdatabaseSecurityGroupId": {
+      "Type": "String"
+    },
+    "customdatabaseSubnetId0": {
+      "Type": "String"
+    },
+    "customdatabaseSubnetId1": {
+      "Type": "String"
     }
   },
   "Conditions": {

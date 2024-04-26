@@ -19,7 +19,10 @@ export type AmplifyDependentResourcesAttributes = {
   },
   "custom": {
     "database": {
-      "DatabaseEndpoint": "string"
+      "DatabaseEndpoint": "string",
+      "SecurityGroupId": "string",
+      "SubnetId0": "string",
+      "SubnetId1": "string"
     }
   },
   "function": {

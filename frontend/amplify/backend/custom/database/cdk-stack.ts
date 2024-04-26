@@ -26,8 +26,16 @@ export class cdkStack extends cdk.Stack {
           name: 'private-subnet',
           subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS
         }
-      ]
+      ],
+      maxAzs: 2
     });
+
+    const dbsg = new ec2.SecurityGroup(this, 'DatabaseSecurityGroup', {
+      vpc: vpc,
+      allowAllOutbound: true
+    });
+    dbsg.addIngressRule(dbsg, ec2.Port.allTraffic(), "all from self");
+    dbsg.addEgressRule(ec2.Peer.ipv4('0.0.0.0/0'), ec2.Port.allTraffic(), "all out");
 
     const cluster = new rds.DatabaseCluster(this, 'Database', {
       engine: rds.DatabaseClusterEngine.auroraMysql({ version: rds.AuroraMysqlEngineVersion.VER_3_06_0 }),
@@ -37,11 +45,24 @@ export class cdkStack extends cdk.Stack {
       vpcSubnets: {
         subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS
       },
-      vpc: vpc
+      vpc: vpc,
+      securityGroups: [dbsg]
     });
 
     new cdk.CfnOutput(this, 'DatabaseEndpoint', {
       value: cluster.instanceEndpoints[0].socketAddress
     });
+
+    new cdk.CfnOutput(this, `SecurityGroupId`, {
+      value: dbsg.securityGroupId
+    })
+
+    new cdk.CfnOutput(this, "SubnetId0", {
+      value: vpc.privateSubnets[0].subnetId
+    })
+
+    new cdk.CfnOutput(this, "SubnetId1", {
+      value: vpc.privateSubnets[1].subnetId
+    })
   }
 }
