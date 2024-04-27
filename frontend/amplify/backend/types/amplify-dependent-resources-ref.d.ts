@@ -20,6 +20,7 @@ export type AmplifyDependentResourcesAttributes = {
   "custom": {
     "database": {
       "DatabaseEndpoint": "string",
+      "SecretName": "string",
       "SecurityGroupId": "string",
       "SubnetId0": "string",
       "SubnetId1": "string"

@@ -39,9 +39,10 @@ export class cdkStack extends cdk.Stack {
 
     const cluster = new rds.DatabaseCluster(this, 'Database', {
       engine: rds.DatabaseClusterEngine.auroraMysql({ version: rds.AuroraMysqlEngineVersion.VER_3_06_0 }),
-      writer: rds.ClusterInstance.serverlessV2('writer', {
+      writer: rds.ClusterInstance.provisioned('writer', {
         publiclyAccessible: true
       }),
+      defaultDatabaseName: "dropzone",
       vpcSubnets: {
         subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS
       },
@@ -50,7 +51,7 @@ export class cdkStack extends cdk.Stack {
     });
 
     new cdk.CfnOutput(this, 'DatabaseEndpoint', {
-      value: cluster.instanceEndpoints[0].socketAddress
+      value: cluster.instanceEndpoints[0].hostname
     });
 
     new cdk.CfnOutput(this, `SecurityGroupId`, {
@@ -63,6 +64,10 @@ export class cdkStack extends cdk.Stack {
 
     new cdk.CfnOutput(this, "SubnetId1", {
       value: vpc.privateSubnets[1].subnetId
+    })
+
+    new cdk.CfnOutput(this, "SecretName", {
+      value: cluster.secret.secretName
     })
   }
 }

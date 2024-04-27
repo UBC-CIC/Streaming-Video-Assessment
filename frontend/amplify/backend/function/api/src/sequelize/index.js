@@ -1,5 +1,6 @@
 const { Sequelize } = require("sequelize");
 const { applyExtraSetup } = require("./extra-setup");
+const { GetSecretValueCommand, SecretsManagerClient } = require("@aws-sdk/client-secrets-manager");
 
 // In a real app, you should keep the database connection URL as an environment variable.
 // But for this example, we will just use a local SQLite database.
@@ -10,12 +11,17 @@ let sequelize;
 if (process.env.NODE_ENV === "test") {
   sequelize = new Sequelize("sqlite::memory:");
 } else {
-  // TODO: do better for credentials
-  const username = "admin";
-  const password = "password123";
+
+  const secretsManagerClient = new SecretsManagerClient();
+  const getSecretValueResponse = await secretsManagerClient.send(
+    new GetSecretValueCommand({
+      SecretId: process.env.SECRET_NAME
+    })
+  )
+  console.log(getSecretValueResponse)
 
   sequelize = new Sequelize("dropzone", username, password, {
-    host: `mysql://${process.env.DATABASE_ENDPOINT}`,
+    host: process.env.DATABASE_ENDPOINT,
     dialect: "mysql",
   });
 }

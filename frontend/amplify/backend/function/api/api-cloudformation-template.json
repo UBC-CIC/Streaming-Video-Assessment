@@ -36,6 +36,9 @@
     },
     "customdatabaseSubnetId1": {
       "Type": "String"
+    },
+    "customdatabaseSecretName": {
+      "Type": "String"
     }
   },
   "Conditions": {
@@ -102,6 +105,9 @@
             },
             "DATABASE_ENDPOINT": {
               "Ref": "customdatabaseDatabaseEndpoint"
+            },
+            "SECRET_NAME": {
+              "Ref": "customdatabaseSecretName"
             }
           }
         },
@@ -244,6 +250,15 @@
               "Effect": "Allow",
               "Action": [
                 "ses:*"
+              ],
+              "Resource": [
+                "*"
+              ]
+            },
+            {
+              "Effect": "Allow",
+              "Action": [
+                "secretsmanager:GetSecretValue"
               ],
               "Resource": [
                 "*"

@@ -7,7 +7,7 @@ let sequelize = null;
 
 async function loadSequelize() {
   const sequelize = new Sequelize(
-    `mysql://${process.env.DATABASE_ENDPOINT}`,
+    `mysql://${process.env.DATABASE_ENDPOINT}:3306`,
     {
       // (...)
       pool: {

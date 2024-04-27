@@ -73,7 +73,8 @@
             "DatabaseEndpoint",
             "SecurityGroupId",
             "SubnetId0",
-            "SubnetId1"
+            "SubnetId1",
+            "SecretName"
           ],
           "category": "custom",
           "resourceName": "database"
@@ -88,40 +89,6 @@
       "providerPlugin": "awscloudformation",
       "service": "amplifyhosting",
       "type": "manual"
-    }
-  },
-  "parameters": {
-    "AMPLIFY_function_api_deploymentBucketName": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "api"
-        }
-      ]
-    },
-    "AMPLIFY_function_api_s3Key": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "api"
-        }
-      ]
-    },
-    "AMPLIFY_hosting_amplifyhosting_appId": {
-      "usedBy": [
-        {
-          "category": "hosting",
-          "resourceName": "amplifyhosting"
-        }
-      ]
-    },
-    "AMPLIFY_hosting_amplifyhosting_type": {
-      "usedBy": [
-        {
-          "category": "hosting",
-          "resourceName": "amplifyhosting"
-        }
-      ]
     }
   },
   "storage": {
