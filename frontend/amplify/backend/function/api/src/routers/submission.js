@@ -11,131 +11,139 @@ const {
 const { s3BucketFolderName } = require("../config");
 
 const { getUploadRequest } = require("../helpers/uploadRequests");
-const sequelize = require("../sequelize");
+const sequelizePromise = require("../sequelize");
 
-// Define your routes here
-router.get("/assessment-info/:assessmentId", async (req, res) => {
-  const assessmentId = parseInt(req.params["assessmentId"]);
-  const secret = req.query["secret"];
+const submissionRouterPromise = new Promise((resolve, reject) => {
+  sequelizePromise.then((sequelize) => {
+    // Define your routes here
+    router.get("/assessment-info/:assessmentId", async (req, res) => {
+      const assessmentId = parseInt(req.params["assessmentId"]);
+      const secret = req.query["secret"];
 
-  const uploadRequest = await getUploadRequest(secret, assessmentId);
+      const uploadRequest = await getUploadRequest(secret, assessmentId);
 
-  if (!uploadRequest) {
-    res.status(404).send("Not found");
-    return;
-  }
+      if (!uploadRequest) {
+        res.status(404).send("Not found");
+        return;
+      }
 
-  if (uploadRequest.assessment.closed) {
-    return res.json({
-      id: assessmentId,
-      name: uploadRequest.assessment.name,
-      closed: true,
+      if (uploadRequest.assessment.closed) {
+        return res.json({
+          id: assessmentId,
+          name: uploadRequest.assessment.name,
+          closed: true,
+        });
+      }
+
+      const videoUpload = await uploadRequest.getVideo();
+
+      const completedOn = videoUpload?.submitted ? videoUpload.updatedAt : null;
+
+      res.json({
+        secret,
+        id: assessmentId,
+        name: uploadRequest.assessment.name,
+        description: uploadRequest.assessment.description,
+        dueDate: uploadRequest.assessment.dueDate,
+        timeLimitSeconds: uploadRequest.assessment.timeLimitSeconds,
+        allowFaceBlur: uploadRequest.assessment.faceBlurAllowed,
+        completedOn,
+      });
     });
-  }
 
-  const videoUpload = await uploadRequest.getVideo();
+    // router.post("/", (req, res) => {
+    //   res.json({ success: "post call succeed!", url: req.url, body: req.body });
+    // });
 
-  const completedOn = videoUpload?.submitted ? videoUpload.updatedAt : null;
+    router.post("/init-upload", async (req, res) => {
+      const assessmentId = parseInt(req.body["assessmentId"]);
+      const secret = req.body["secret"];
+      const key = `${s3BucketFolderName}/${assessmentId}/${secret}.webm`;
 
-  res.json({
-    secret,
-    id: assessmentId,
-    name: uploadRequest.assessment.name,
-    description: uploadRequest.assessment.description,
-    dueDate: uploadRequest.assessment.dueDate,
-    timeLimitSeconds: uploadRequest.assessment.timeLimitSeconds,
-    allowFaceBlur: uploadRequest.assessment.faceBlurAllowed,
-    completedOn,
-  });
-});
+      const uploadRequest = await getUploadRequest(secret, assessmentId);
+      if (!uploadRequest) {
+        res.status(401).send("Unauthorized");
+        return;
+      }
 
-// router.post("/", (req, res) => {
-//   res.json({ success: "post call succeed!", url: req.url, body: req.body });
-// });
+      console.log("INIT UPLOAD", key, req.body);
 
-router.post("/init-upload", async (req, res) => {
-  const assessmentId = parseInt(req.body["assessmentId"]);
-  const secret = req.body["secret"];
-  const key = `${s3BucketFolderName}/${assessmentId}/${secret}.webm`;
+      const uploadId = await initializeUpload(key);
+      const signedUrl = await getUploadUrl(key, uploadId, 1);
 
-  const uploadRequest = await getUploadRequest(secret, assessmentId);
-  if (!uploadRequest) {
-    res.status(401).send("Unauthorized");
-    return;
-  }
+      res.json({
+        uploadId,
+        signedUrl,
+        partNumber: 1,
+      });
+    });
 
-  console.log("INIT UPLOAD", key, req.body);
+    router.post("/next-upload-url", async (req, res) => {
+      const assessmentId = parseInt(req.body["assessmentId"]);
+      const secret = req.body["secret"];
+      const uploadId = req.body["uploadId"];
+      const partNumber = req.body["partNumber"];
+      const key = `${s3BucketFolderName}/${assessmentId}/${secret}.webm`;
+      console.log("NEXT UPLOAD URL", key, req.body);
 
-  const uploadId = await initializeUpload(key);
-  const signedUrl = await getUploadUrl(key, uploadId, 1);
+      const uploadRequest = await getUploadRequest(secret, assessmentId);
+      if (!uploadRequest) {
+        res.status(401).send("Unauthorized");
+        return;
+      }
 
-  res.json({
-    uploadId,
-    signedUrl,
-    partNumber: 1,
-  });
-});
+      const signedUrl = await getUploadUrl(key, uploadId, partNumber);
 
-router.post("/next-upload-url", async (req, res) => {
-  const assessmentId = parseInt(req.body["assessmentId"]);
-  const secret = req.body["secret"];
-  const uploadId = req.body["uploadId"];
-  const partNumber = req.body["partNumber"];
-  const key = `${s3BucketFolderName}/${assessmentId}/${secret}.webm`;
-  console.log("NEXT UPLOAD URL", key, req.body);
+      res.json({
+        signedUrl,
+        partNumber,
+      });
+    });
 
-  const uploadRequest = await getUploadRequest(secret, assessmentId);
-  if (!uploadRequest) {
-    res.status(401).send("Unauthorized");
-    return;
-  }
+    router.post("/complete-upload", async (req, res) => {
+      const assessmentId = parseInt(req.body["assessmentId"]);
+      const secret = req.body["secret"];
+      const uploadId = req.body["uploadId"];
+      const parts = req.body["parts"];
 
-  const signedUrl = await getUploadUrl(key, uploadId, partNumber);
+      const uploadRequest = await getUploadRequest(secret, assessmentId);
+      if (!uploadRequest) {
+        res.status(401).send("Unauthorized");
+        return;
+      }
 
-  res.json({
-    signedUrl,
-    partNumber,
-  });
-});
+      console.log("COMPLETE UPLOAD", req.body);
+      const key = `${s3BucketFolderName}/${assessmentId}/${secret}.webm`;
 
-router.post("/complete-upload", async (req, res) => {
-  const assessmentId = parseInt(req.body["assessmentId"]);
-  const secret = req.body["secret"];
-  const uploadId = req.body["uploadId"];
-  const parts = req.body["parts"];
+      const out = await completeUpload(key, uploadId, parts);
 
-  const uploadRequest = await getUploadRequest(secret, assessmentId);
-  if (!uploadRequest) {
-    res.status(401).send("Unauthorized");
-    return;
-  }
+      await sequelize.models.video.create({
+        s3Key: key,
+        uploaderId: uploadRequest.uploaderId,
+        assessmentId,
+      });
 
-  console.log("COMPLETE UPLOAD", req.body);
-  const key = `${s3BucketFolderName}/${assessmentId}/${secret}.webm`;
+      res.json({ signedUrl: await getUrlForKey(key) });
+    });
 
-  const out = await completeUpload(key, uploadId, parts);
+    router.post("/submit", async (req, res) => {
+      const assessmentId = parseInt(req.body["assessmentId"]);
+      const secret = req.body["secret"];
 
-  await sequelize.models.video.create({
-    s3Key: key,
-    uploaderId: uploadRequest.uploaderId,
-    assessmentId,
-  });
+      const uploadRequest = await getUploadRequest(secret, assessmentId);
 
-  res.json({ signedUrl: await getUrlForKey(key) });
-});
+      const video = await uploadRequest.getVideo();
 
-router.post("/submit", async (req, res) => {
-  const assessmentId = parseInt(req.body["assessmentId"]);
-  const secret = req.body["secret"];
+      await video.update({ submitted: true });
 
-  const uploadRequest = await getUploadRequest(secret, assessmentId);
+      res.status(200).send();
+    });
 
-  const video = await uploadRequest.getVideo();
-
-  await video.update({ submitted: true });
-
-  res.status(200).send();
-});
-
+    resolve(router)
+  }).catch((err) => {
+    console.log(err)
+    reject(err)
+  })
+})
 // Export the router
-module.exports = router;
+module.exports = submissionRouterPromise;

@@ -24,6 +24,21 @@
     },
     "storages3268a4e01BucketName": {
       "Type": "String"
+    },
+    "customdatabaseDatabaseEndpoint": {
+      "Type": "String"
+    },
+    "customdatabaseSecurityGroupId": {
+      "Type": "String"
+    },
+    "customdatabaseSubnetId0": {
+      "Type": "String"
+    },
+    "customdatabaseSubnetId1": {
+      "Type": "String"
+    },
+    "customdatabaseSecretName": {
+      "Type": "String"
     }
   },
   "Conditions": {
@@ -38,6 +53,9 @@
   },
   "Resources": {
     "LambdaFunction": {
+      "DependsOn": [
+        "LambdaExecutionPolicyCustom"
+      ],
       "Type": "AWS::Lambda::Function",
       "Metadata": {
         "aws:asset:path": "./src",
@@ -87,6 +105,12 @@
             },
             "BUCKET_NAME": {
               "Ref": "storages3268a4e01BucketName"
+            },
+            "DATABASE_ENDPOINT": {
+              "Ref": "customdatabaseDatabaseEndpoint"
+            },
+            "SECRET_NAME": {
+              "Ref": "customdatabaseSecretName"
             }
           }
         },
@@ -98,7 +122,22 @@
         },
         "Runtime": "nodejs18.x",
         "Layers": [],
-        "Timeout": 25
+        "Timeout": 25,
+        "VpcConfig": {
+          "SecurityGroupIds": [
+            {
+              "Ref": "customdatabaseSecurityGroupId"
+            }
+          ],
+          "SubnetIds": [
+            {
+              "Ref": "customdatabaseSubnetId0"
+            },
+            {
+              "Ref": "customdatabaseSubnetId1"
+            }
+          ]
+        }
       }
     },
     "LambdaExecutionRole": {
@@ -208,6 +247,15 @@
               "Resource": [
                 "*"
               ]
+            },
+            {
+              "Effect": "Allow",
+              "Action": [
+                "secretsmanager:GetSecretValue"
+              ],
+              "Resource": [
+                "*"
+              ]
             }
           ]
         },
@@ -218,6 +266,31 @@
         ]
       },
       "DependsOn": "LambdaExecutionRole"
+    },
+    "LambdaExecutionPolicyCustom": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyName": "lambda-execution-policy-custom",
+        "Roles": [
+          {
+            "Ref": "LambdaExecutionRole"
+          }
+        ],
+        "PolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Action": [
+                "ec2:CreateNetworkInterface",
+                "ec2:DescribeNetworkInterfaces",
+                "ec2:DeleteNetworkInterface"
+              ],
+              "Resource": "*"
+            }
+          ]
+        }
+      }
     }
   },
   "Outputs": {

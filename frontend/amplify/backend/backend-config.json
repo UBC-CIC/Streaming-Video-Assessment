@@ -43,6 +43,12 @@
       "service": "Cognito"
     }
   },
+  "custom": {
+    "database": {
+      "providerPlugin": "awscloudformation",
+      "service": "customCDK"
+    }
+  },
   "function": {
     "api": {
       "build": true,
@@ -61,6 +67,17 @@
           ],
           "category": "storage",
           "resourceName": "s3268a4e01"
+        },
+        {
+          "attributes": [
+            "DatabaseEndpoint",
+            "SecurityGroupId",
+            "SubnetId0",
+            "SubnetId1",
+            "SecretName"
+          ],
+          "category": "custom",
+          "resourceName": "database"
         }
       ],
       "providerPlugin": "awscloudformation",
@@ -104,22 +121,6 @@
         {
           "category": "hosting",
           "resourceName": "amplifyhosting"
-        }
-      ]
-    },
-    "AMPLIFY_storage_backendd759f609_bucketName": {
-      "usedBy": [
-        {
-          "category": "storage",
-          "resourceName": "backendd759f609"
-        }
-      ]
-    },
-    "AMPLIFY_storage_backendd759f609_region": {
-      "usedBy": [
-        {
-          "category": "storage",
-          "resourceName": "backendd759f609"
         }
       ]
     }

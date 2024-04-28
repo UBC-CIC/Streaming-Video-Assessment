@@ -17,6 +17,15 @@ export type AmplifyDependentResourcesAttributes = {
       "UserPoolName": "string"
     }
   },
+  "custom": {
+    "database": {
+      "DatabaseEndpoint": "string",
+      "SecretName": "string",
+      "SecurityGroupId": "string",
+      "SubnetId0": "string",
+      "SubnetId1": "string"
+    }
+  },
   "function": {
     "api": {
       "Arn": "string",
