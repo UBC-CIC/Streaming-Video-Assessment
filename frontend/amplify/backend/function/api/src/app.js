@@ -14,46 +14,61 @@ const awsServerlessExpressMiddleware = require("aws-serverless-express/middlewar
 const requireSignIn = require("./requireSignIn.js");
 
 // router import
-const folderRouter = require("./routers/folder");
-const groupRouter = require("./routers/group");
-const assessmentRouter = require("./routers/assessment");
-const submissionRouter = require("./routers/submission");
-console.log(process.env)
+const folderRouterPromise = require("./routers/folder");
+const groupRouterPromise = require("./routers/group");
+const assessmentRouterPromise = require("./routers/assessment");
+const submissionRouterPromise = require("./routers/submission");
+const sequelizePromise = require("./sequelize");
+
+const appPromise = new Promise((resolve, reject) => {
+  Promise.all([folderRouterPromise, 
+               groupRouterPromise, 
+               assessmentRouterPromise, 
+               submissionRouterPromise, 
+               sequelizePromise]).then((values) => {
+    const folderRouter = values[0]
+    const groupRouter = values[1]
+    const assessmentRouter = values[2]
+    const submissionRouter = values[3]
+    const sequelize = values[4]
+
+    // declare a new express app
+    const app = express();
+    app.use(cors());
+    app.use(bodyParser.json());
+    app.use(awsServerlessExpressMiddleware.eventContext());
+
+    // Enable CORS for all methods
+    app.use(function (req, res, next) {
+      res.header("Access-Control-Allow-Origin", "*");
+      res.header("Access-Control-Allow-Headers", "*");
+      res.header("Access-Control-Allow-Methods", "*");
+      next();
+    });
 
 
-const sequelize = require("./sequelize");
+    app.use("/api/folder", requireSignIn, folderRouter);
+    app.use("/api/group", requireSignIn, groupRouter);
+    app.use("/api/assessment", requireSignIn, assessmentRouter);
+    app.use("/api/submission", submissionRouter);
 
-// declare a new express app
-const app = express();
-app.use(cors());
-app.use(bodyParser.json());
-app.use(awsServerlessExpressMiddleware.eventContext());
+    app.get("/api/ping", function (req, res) {
+      res.send("pong");
+    });
 
-// Enable CORS for all methods
-app.use(function (req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "*");
-  res.header("Access-Control-Allow-Methods", "*");
-  next();
-});
-
-
-app.use("/api/folder", requireSignIn, folderRouter);
-app.use("/api/group", requireSignIn, groupRouter);
-app.use("/api/assessment", requireSignIn, assessmentRouter);
-app.use("/api/submission", submissionRouter);
-
-app.get("/api/ping", function (req, res) {
-  res.send("pong");
-});
-
-sequelize.sync().then(() => {
-  app.listen(3000, function () {
-    console.log("App started");
-  });
-});
+    sequelize.sync().then(() => {
+      app.listen(3000, function () {
+        console.log("App started");
+      });
+    });
+    resolve(app)
+  }).catch((err) => {
+    console.log(err)
+    reject(err)
+  })
+})
 
 // Export the app object. When executing the application local this does nothing. However,
 // to port it to AWS Lambda we will create a wrapper around that will load the app from
 // this file
-module.exports = app;
+module.exports = appPromise

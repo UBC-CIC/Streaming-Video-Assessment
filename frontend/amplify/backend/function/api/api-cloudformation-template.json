@@ -53,6 +53,9 @@
   },
   "Resources": {
     "LambdaFunction": {
+      "DependsOn": [
+        "LambdaExecutionPolicyCustom"
+      ],
       "Type": "AWS::Lambda::Function",
       "Metadata": {
         "aws:asset:path": "./src",
@@ -214,16 +217,6 @@
                   }
                 ]
               }
-            },
-            {
-              "Effect": "Allow",
-              "Action": [
-                "ec2:CreateNetworkInterface",
-                "ec2:DescribeNetworkInterfaces",
-                "ec2:DetachNetworkInterface",
-                "ec2:DeleteNetworkInterface"
-              ],
-              "Resource": "*"
             }
           ]
         }
@@ -273,6 +266,31 @@
         ]
       },
       "DependsOn": "LambdaExecutionRole"
+    },
+    "LambdaExecutionPolicyCustom": {
+      "Type": "AWS::IAM::Policy",
+      "Properties": {
+        "PolicyName": "lambda-execution-policy-custom",
+        "Roles": [
+          {
+            "Ref": "LambdaExecutionRole"
+          }
+        ],
+        "PolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Action": [
+                "ec2:CreateNetworkInterface",
+                "ec2:DescribeNetworkInterfaces",
+                "ec2:DeleteNetworkInterface"
+              ],
+              "Resource": "*"
+            }
+          ]
+        }
+      }
     }
   },
   "Outputs": {

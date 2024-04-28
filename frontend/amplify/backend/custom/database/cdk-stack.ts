@@ -39,7 +39,7 @@ export class cdkStack extends cdk.Stack {
 
     const cluster = new rds.DatabaseCluster(this, 'Database', {
       engine: rds.DatabaseClusterEngine.auroraMysql({ version: rds.AuroraMysqlEngineVersion.VER_3_06_0 }),
-      writer: rds.ClusterInstance.provisioned('writer', {
+      writer: rds.ClusterInstance.serverlessV2('writer', {
         publiclyAccessible: true
       }),
       defaultDatabaseName: "dropzone",

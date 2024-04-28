@@ -91,6 +91,40 @@
       "type": "manual"
     }
   },
+  "parameters": {
+    "AMPLIFY_function_api_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "api"
+        }
+      ]
+    },
+    "AMPLIFY_function_api_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "api"
+        }
+      ]
+    },
+    "AMPLIFY_hosting_amplifyhosting_appId": {
+      "usedBy": [
+        {
+          "category": "hosting",
+          "resourceName": "amplifyhosting"
+        }
+      ]
+    },
+    "AMPLIFY_hosting_amplifyhosting_type": {
+      "usedBy": [
+        {
+          "category": "hosting",
+          "resourceName": "amplifyhosting"
+        }
+      ]
+    }
+  },
   "storage": {
     "s3268a4e01": {
       "dependsOn": [],
