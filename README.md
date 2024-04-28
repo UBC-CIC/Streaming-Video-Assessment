@@ -6,6 +6,10 @@ The easy-to-use video assessment platform.
 
 ![Architecture Diagram](docs/architecture.png)
 
+### Database Design
+
+![Database Design](docs/db_diagram.png)
+
 ## Deployment Guide
 
 To deploy this solution, please follow the steps laid out in the [Deployment Guide](docs/DeploymentGuide.md)
