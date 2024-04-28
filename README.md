@@ -1,24 +1,24 @@
 # Dropzone
 
-To run the backend locally:
-```
-cd frontend/amplify/backend/function/api/src/
-npm i
-npm start
-```
+## High Level Architecture
 
-then in /frontend, run 
-```
-npm run dev
-```
+![Architecture Diagram](docs/architecture.png)
 
-Make sure to connect local backend to frontend:
+## Deployment Guide
 
-change in ```frontend/src/amplifyconfiguration.json```
-```
-"endpoint": https://swgcwu6tua.execute-api.ca-central-1.amazonaws.com/dev
-```
-to
-```
-"endpoint": "http://localhost:3000
-```
+To deploy this solution, please follow the steps laid out in the [Deployment Guide](docs/DeploymentGuide.md)
+
+## Demo Video
+
+**TODO** add demo video
+
+## Files And Directories
+
+1. `/frontend/amplify/backend/function/api/src`: Contains all the backend code
+    1. `/frontend/amplify/backend/function/api/src/sequelize/models`: Contains database models
+1. `/frontend/src`: Contains all frontend React code
+1. `/docs`: Contains relevant documentation files
+
+## License
+
+This project is distributed under the [MIT License](LICENSE)
