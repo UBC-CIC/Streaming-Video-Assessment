@@ -124,7 +124,9 @@ const assessmentRouterPromise = new Promise((resolve, reject) => {
       // TODO: make sure sharedUploaders and sharedGroups are in the correct format
       await linkUploaderAndGroups(newAssessment, sharedUploaders, sharedGroups);
 
-      await createUploadRequestsForAssessment(newAssessment);
+      const host = req.get("host"); // TODO: Maybe we can make this more secure
+
+      await createUploadRequestsForAssessment(newAssessment, host);
 
       res.json({
         success: "post call succeed!",
@@ -171,10 +173,12 @@ const assessmentRouterPromise = new Promise((resolve, reject) => {
           req.body.newSharedGroups,
         );
 
+        const host = req.get("host"); // TODO: Maybe we can make this more secure
         await createUploadRequestsForNewUploaders(
           assessmentQuery,
           newUploaders,
           newGroups,
+          host
         );
 
         await assessmentQuery.removeUploadersAndGroups(
