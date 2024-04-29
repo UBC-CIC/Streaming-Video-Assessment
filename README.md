@@ -1,6 +1,8 @@
 # Dropzone
+Dropzone is a video assessment application which allows an assessment creator to create assessments, to which uploaders can record a video submission. Dropzone allows for video uploaders to record a video entirely within the browser, without needing to upload files.
 
-The easy-to-use video assessment platform.
+## [Demo Video](guide_videos/Demo%20Video.mp4)
+https://github.com/UBC-CIC/Streaming-Video-Assessment/assets/46551607/9db292d9-91dc-4b13-aac6-f0b5d9efcd49
 
 ## High Level Architecture
 
@@ -14,10 +16,6 @@ The easy-to-use video assessment platform.
 
 To deploy this solution, please follow the steps laid out in the [Deployment Guide](docs/DeploymentGuide.md)
 
-## [Demo Video](guide_videos/Demo%20Video.mp4)
-
-
-https://github.com/UBC-CIC/Streaming-Video-Assessment/assets/29736701/3066ade2-3c92-4f91-aa2a-ee858ab75db6
 
 
 
