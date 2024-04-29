@@ -58,3 +58,7 @@ amplify publish --yes
     (For more information on why this is necessary, visit [this page](https://docs.aws.amazon.com/amplify/latest/userguide/redirects.html#redirects-for-single-page-web-apps-spa))
 
 Congratulations, your app is now deployed! If you'd like to deploy the app on a custom domain with Route 53, refer to [this tutorial](https://docs.aws.amazon.com/amplify/latest/userguide/custom-domains.html).
+
+### Cypress Testing
+
+If you'd like to test with Cypress, please add your Amplify endpoint to `frontend/cypress.config.js`.
