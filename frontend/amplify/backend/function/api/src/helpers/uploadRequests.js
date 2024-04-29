@@ -4,7 +4,7 @@ const { sendUploadRequestEmail } = require("./sendEmail");
 // Will create all upload requests for all users and groups on the assignment
 async function createUploadRequestsForAssessment(
   assessment,
-  doSendEmail = true,
+  host = '',
 ) {
   const uploaderGroups = await assessment.getUploaderGroups({
     include: [sequelize.models.uploader],
@@ -24,7 +24,7 @@ async function createUploadRequestsForAssessment(
 
   return await Promise.all(
     uniqueUploaders.map((uploader) =>
-      createUploadRequestForUser(assessment, uploader, doSendEmail),
+      createUploadRequestForUser(assessment, uploader, host),
     ),
   );
 }
@@ -33,7 +33,7 @@ async function createUploadRequestsForNewUploaders(
   assessment,
   newUploaders,
   newGroups,
-  doSendEmail = true,
+  host = '',
 ) {
   const uploaders = [...newUploaders];
 
@@ -51,7 +51,7 @@ async function createUploadRequestsForNewUploaders(
 
   return await Promise.all(
     uniqueUploaders.map(async (uploader) => {
-      createUploadRequestForUser(assessment, uploader, doSendEmail);
+      createUploadRequestForUser(assessment, uploader, host);
     }),
   );
 }
@@ -59,13 +59,13 @@ async function createUploadRequestsForNewUploaders(
 async function createUploadRequestForUser(
   assessment,
   user,
-  doSendEmail = true,
+  host = '',
 ) {
   const [uploadRequest, _] = await sequelize.models.uploadRequest.findOrCreate({
     where: { uploaderId: user.id, assessmentId: assessment.id },
   });
 
-  if (doSendEmail) sendUploadRequestEmail(user, assessment, uploadRequest);
+  if (host) sendUploadRequestEmail(user, assessment, uploadRequest, host);
 
   return uploadRequest;
 }

@@ -86,7 +86,7 @@ module.exports.createDummyData = async function (sequelize) {
   console.log(await uploader2.canUploadTo(spanish1test1.id));
 
   // Trigger upload requests
-  console.log(await createUploadRequestsForAssessment(spanish1test1));
+  console.log(await createUploadRequestsForAssessment(spanish1test1, 'localhost:3000'));
 
   const rootChildrenFolders = await root.getChildFolders({
     include: [{ model: folder, as: "childFolders" }],
