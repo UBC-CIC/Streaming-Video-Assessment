@@ -4,6 +4,13 @@ Dropzone is a video assessment application which allows an assessment creator to
 ## [Demo Video](guide_videos/Demo%20Video.mp4)
 https://github.com/UBC-CIC/Streaming-Video-Assessment/assets/46551607/9db292d9-91dc-4b13-aac6-f0b5d9efcd49
 
+## Files And Directories
+
+1. `/frontend/amplify/backend/function/api/src`: Contains all the backend code
+    1. `/frontend/amplify/backend/function/api/src/sequelize/models`: Contains database models
+1. `/frontend/src`: Contains all frontend React code
+1. `/docs`: Contains relevant documentation files
+
 ## High Level Architecture
 
 ![Architecture Diagram](docs/architecture.png)
@@ -17,14 +24,43 @@ https://github.com/UBC-CIC/Streaming-Video-Assessment/assets/46551607/9db292d9-9
 To deploy this solution, please follow the steps laid out in the [Deployment Guide](docs/DeploymentGuide.md)
 
 
+# Screenshots
+
+## Assesment Creator Workflow
+
+### Sign-in Page
+![](docs/images/1login.png)
+
+### Home Page (Folder View)
+![](docs/images/2homeFolderView.png)
+
+### Home Page (List View)
+![](docs/images/3homeListView.png)
+
+### Creating New Group
+![](docs/images/5CreateGroup.png)
+
+### Creating New Assessment
+![](docs/images/6CreateAssessment.png)
+
+### Viewing New Assessment
+![](docs/images/7ViewAssessment.png)
+
+### Viewing Submissions
+![](docs/images/8ViewSubmissions.png)
 
 
-## Files And Directories
+## Uploader Workflow
 
-1. `/frontend/amplify/backend/function/api/src`: Contains all the backend code
-    1. `/frontend/amplify/backend/function/api/src/sequelize/models`: Contains database models
-1. `/frontend/src`: Contains all frontend React code
-1. `/docs`: Contains relevant documentation files
+### Begin Submission
+![](docs/images/9BeginSubmission.png)
+
+### Recording Submission
+![](docs/images/11Recording.png)
+
+### Finished Submission
+![](docs/images/12FinishedSubmission.png)
+
 
 ## Future Considerations
 
