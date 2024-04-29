@@ -44,7 +44,7 @@ const {
         mockSend.mockResolvedValue({ UploadId: uploadId });
   
         const result = await initializeUpload(key);
-        expect(S3Client).toHaveBeenCalledWith({ region: "ca-central-1", credentials });
+        expect(S3Client).toHaveBeenCalledWith({ credentials });
         expect(mockSend).toHaveBeenCalledWith(expect.objectContaining({
           input: expect.objectContaining({
             Bucket: "video-storage-sf21",

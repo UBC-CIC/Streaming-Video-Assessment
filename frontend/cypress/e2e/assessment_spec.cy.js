@@ -54,7 +54,7 @@ describe("Testing Assessments", () => {
     beforeEach(() => {
       cy.intercept(
         "GET",
-        /https:\/\/swgcwu6tua\.execute-api\.ca-central-1\.amazonaws\.com\/dev\/api\/assessment\/(\d+)$/,
+        new RegExp(`${Cypress.env("backend-url")}/assessment/(\\d+)/?$`),
       ).as("getAssessmentData");
       cy.get("div[draggable=true]").contains(assessmentName).parent().click();
       cy.wait("@getAssessmentData");
@@ -64,7 +64,7 @@ describe("Testing Assessments", () => {
       cy.contains(/^Edit$/).click();
       cy.intercept(
         "GET",
-        /https:\/\/swgcwu6tua\.execute-api\.ca-central-1\.amazonaws\.com\/dev\/api\/assessment\/shared\/(\d+)$/,
+        new RegExp(`${Cypress.env("backend-url")}/assessment/shared/(\\d+)/?$`),
       ).as("getAssessmentData");
       cy.wait("@getAssessmentData");
 
@@ -119,7 +119,7 @@ describe("Testing Assessments", () => {
         });
       cy.intercept(
         "DELETE",
-        /https:\/\/swgcwu6tua\.execute-api\.ca-central-1\.amazonaws\.com\/dev\/api\/assessment\/(\d+)$/,
+        new RegExp(`${Cypress.env("backend-url")}/assessment/(\\d+)/?$`),
       ).as("deleteAssessment");
       cy.wait("@deleteAssessment");
       cy.get("h5").contains(assessmentName).should("not.exist");

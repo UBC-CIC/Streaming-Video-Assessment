@@ -25,6 +25,7 @@ describe("sendUploadRequestEmail", () => {
       uploader,
       assessment,
       uploadRequest,
+      "localhost:3000",
     );
     expect(result).toBe(true);
   });
