@@ -42,7 +42,7 @@ describe("Testing Folder", () => {
         });
       cy.intercept(
         "DELETE",
-        /https:\/\/swgcwu6tua\.execute-api\.ca-central-1\.amazonaws\.com\/dev\/api\/folder\/(\d+)$/,
+        new RegExp(`${Cypress.env("backend-url")}/folder/(\\d+)/?$`),
       ).as("deleteFolder");
       cy.wait("@deleteFolder");
       cy.get("h5").contains(folderName).should("not.exist");

@@ -52,7 +52,7 @@ describe("Testing Groups", () => {
       cy.get("div[draggable=true]").contains(groupName).parent().click();
       cy.intercept(
         "GET",
-        /https:\/\/swgcwu6tua\.execute-api\.ca-central-1\.amazonaws\.com\/dev\/api\/group\/(\d+)$/,
+        new RegExp(`${Cypress.env("backend-url")}/group/(\\d+)/?$`),
       ).as("getGroupData");
       cy.wait("@getGroupData");
     });
@@ -86,7 +86,7 @@ describe("Testing Groups", () => {
       cy.get("div[draggable=true]").contains(groupName).parent().click();
       cy.intercept(
         "GET",
-        /https:\/\/swgcwu6tua\.execute-api\.ca-central-1\.amazonaws\.com\/dev\/api\/group\/(\d+)$/,
+        new RegExp(`${Cypress.env("backend-url")}/group/(\\d+)/?$`),
       ).as("getGroupData");
       cy.wait("@getGroupData");
 
@@ -109,7 +109,7 @@ describe("Testing Groups", () => {
       cy.get("div[draggable=true]").contains(groupName).parent().click();
       cy.intercept(
         "GET",
-        /https:\/\/swgcwu6tua\.execute-api\.ca-central-1\.amazonaws\.com\/dev\/api\/group\/(\d+)$/,
+        new RegExp(`${Cypress.env("backend-url")}/group/(\\d+)/?$`),
       ).as("getGroupData");
       cy.wait("@getGroupData");
 
@@ -133,7 +133,7 @@ describe("Testing Groups", () => {
         });
       cy.intercept(
         "DELETE",
-        /https:\/\/swgcwu6tua\.execute-api\.ca-central-1\.amazonaws\.com\/dev\/api\/group\/(\d+)$/,
+        new RegExp(`${Cypress.env("backend-url")}/group/(\\d+)/?$`),
       ).as("deleteGroup");
       cy.wait("@deleteGroup");
       cy.get("h5").contains(groupName).should("not.exist");

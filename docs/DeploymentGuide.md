@@ -62,3 +62,19 @@ Congratulations, your app is now deployed! If you'd like to deploy the app on a 
 ### Cypress Testing
 
 If you'd like to test with Cypress, please add your Amplify endpoint to `frontend/cypress.config.js`.
+
+As well in order to login into the application and intercept the correct endpoints create a file `frontend/cypress.env.json` with the following content:
+
+```
+{
+  "email": "YOUR_EMAIL",
+  "password: "YOUR_PASSWORD",
+  "backend-url": "YOUR_AMPLIFY_ENDPOINT"
+}
+```
+
+Then run the following command to run the tests:
+
+```
+npm run cypress:open
+```

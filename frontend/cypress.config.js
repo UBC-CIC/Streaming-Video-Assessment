@@ -5,8 +5,4 @@ export default defineConfig({
     baseUrl: "<your_url_here>",
     supportFile: "cypress/support/e2e.js",
   },
-  env: {
-    login_email: "rrgizzcrzbwxoldzrf@cazlq.com",
-    login_password: "Password123!",
-  },
 });
