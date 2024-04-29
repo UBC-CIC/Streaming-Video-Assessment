@@ -14,9 +14,12 @@ The easy-to-use video assessment platform.
 
 To deploy this solution, please follow the steps laid out in the [Deployment Guide](docs/DeploymentGuide.md)
 
-## Demo Video
+## [Demo Video](guide_videos/Demo%20Video.mp4)
 
-**TODO** add demo video
+
+https://github.com/UBC-CIC/Streaming-Video-Assessment/assets/29736701/3066ade2-3c92-4f91-aa2a-ee858ab75db6
+
+
 
 ## Files And Directories
 
