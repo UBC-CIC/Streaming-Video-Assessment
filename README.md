@@ -70,6 +70,10 @@ To deploy this solution, please follow the steps laid out in the [Deployment Gui
 
 * Improved recording performance: We've noticed on some older devices the uploader recording page can be painfully slow. Perhaps older devices could detected and we could limit certain features (such as face blurring) to improve performance on those devices.
 
+## Credits
+
+This application was architected and developed by Eran Deutsch, Aryan Gandhi, Harrison Mitgang, Jayden Wong, and Stanley Zhao with capstone instructor Sidney Fels and TA Hamidreza Aftabi. A special thanks to Scott McMillan and Liana Leung at the UBC Cloud Innovation Centre for their guidance and support.
+
 ## License
 
 This project is distributed under the [MIT License](LICENSE)
