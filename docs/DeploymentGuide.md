@@ -33,8 +33,7 @@ amplify init
 ```
   const url = `https://prod.d1dlw3a5y6udgd.amplifyapp.com/submit/${assessment.id}?secret=${uploadRequest.id}`;
 ```
-
-    This workaround is necessary because Amplify currently does not support a trivial way to retrieve app ID in the Lambda.
+This workaround is necessary because Amplify currently does not support a trivial way to retrieve app ID in the Lambda.
 
 - At line 43, change the Source email to be the email connected to your SES identity.
 
@@ -50,7 +49,7 @@ npm i
 amplify publish --yes
 ```
 
-    This command both pushes our local backend to the cloud, and deploys it. Our backend is defined [here](../frontend/amplify/backend/). Note that Amplify allows for custom resource creation using CDK, which is where our RDS instance is defined. All our other resources (API, auth, function, storage, hosting) are default resources defined by Amplify automatically.
+This command both pushes our local backend to the cloud, and deploys it. Our backend is defined [here](../frontend/amplify/backend/). Note that Amplify allows for custom resource creation using CDK, which is where our RDS instance is defined. All our other resources (API, auth, function, storage, hosting) are default resources defined by Amplify automatically.
 
 9. Open the AWS console, go to AWS Amplify and go to your newly deployed app called `backend`. Click on the **Rewrites and redirects** tab on the left.
 
