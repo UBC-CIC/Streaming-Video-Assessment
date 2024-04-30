@@ -50,6 +50,8 @@ amplify publish --yes
 
 9. Open the AWS console, go to AWS Amplify and go to your newly deployed app called `backend`. Click on the **Rewrites and redirects** tab on the left.
 
+**Note**: Amplify allows for custom resource creation via a CDK stack which is [where the RDS instance is defined](../frontend/amplify/backend/custom/database/cdk-stack.ts)
+
 10. Click Edit to add a new rule with the following values:
 - **Source address**: `</^[^.]+$|\.(?!(css|gif|ico|jpg|js|png|txt|svg|woff|woff2|ttf|map|json|webp)$)([^.]+$)/>`
 - **Target address**: `/index.html`
