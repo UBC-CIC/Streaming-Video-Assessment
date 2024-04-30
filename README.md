@@ -1,5 +1,5 @@
 # Dropzone
-Dropzone is a video assessment application which allows an assessment creator to create assessments, to which uploaders can record a video submission. Dropzone allows for video uploaders to record a video entirely within the browser, without needing to upload files.
+Dropzone, developed for 2024 ECE Capstone, is a video assessment application which allows an assessment creator to create assessments, to which uploaders can record a video submission. Dropzone allows for video uploaders to record a video entirely within the browser, without needing to upload files.
 
 ## [Demo Video](guide_videos/Demo%20Video.mp4)
 https://github.com/UBC-CIC/Streaming-Video-Assessment/assets/46551607/9db292d9-91dc-4b13-aac6-f0b5d9efcd49
